@@ -1,0 +1,130 @@
+/* =====================================================================
+   THƯ VIỆN CHỮ (typography.css)
+   ---------------------------------------------------------------------
+   Gồm 2 phần:
+   1. Token: font, cỡ chữ, độ đậm, khoảng cách dòng, khoảng cách chữ.
+   2. Lớp tiện ích .text-* : kiểu chữ dựng sẵn, dùng thẳng trong JSX.
+      Ví dụ: <h2 className="text-h2">...</h2>
+
+   Chữ KHÔNG chứa màu ở đây (màu nằm ở colors.css), nên Light/Dark tự đúng.
+   Đổi font cả site -> sửa --font-* (và link Google Fonts trong index.html).
+
+   3 font, mỗi font một vai trò (đều hỗ trợ dấu tiếng Việt):
+   - Montserrat     : tiêu đề, nút, menu (hình học, đậm, hợp chữ IN HOA)
+   - Be Vietnam Pro : nội dung, đoạn văn (dễ đọc ở cỡ nhỏ)
+   - Dancing Script : chữ viết tay điểm xuyết (logo, dòng phụ ở hero)
+   ===================================================================== */
+
+:root {
+  /* ---------- Font ---------- */
+  --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Montserrat', var(--font-sans);
+  --font-script: 'Dancing Script', cursive;
+
+  /* ---------- Cỡ chữ ----------
+     clamp(min, giá trị co giãn, max): chữ to dần theo màn hình mà không cần media query */
+  --fs-2xs: 0.625rem;  /* 10px - số trên huy hiệu giỏ hàng */
+  --fs-xs: 0.75rem;    /* 12px - chú thích, nhãn nhỏ */
+  --fs-sm: 0.875rem;   /* 14px - nút, menu, chữ phụ */
+  --fs-base: 1rem;     /* 16px - nội dung chính */
+  --fs-md: 1.125rem;   /* 18px - đoạn dẫn */
+  --fs-lg: 1.375rem;   /* 22px - tiêu đề nhỏ */
+  --fs-xl: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);      /* tiêu đề section */
+  --fs-logo: 1.75rem;
+  --fs-script: clamp(1.5rem, 1.2rem + 1vw, 2rem);    /* chữ viết tay */
+  --fs-display: clamp(3rem, 1.4rem + 5.6vw, 6rem);     /* chữ lớn nhất ở hero */
+  --fs-display-sub: clamp(1.5rem, 0.9rem + 2.6vw, 2.75rem); /* dòng thứ 2 ở hero */
+
+  /* ---------- Độ đậm ---------- */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+
+  /* ---------- Khoảng cách dòng ---------- */
+  --lh-none: 1;
+  --lh-tight: 1.05;   /* tiêu đề rất lớn */
+  --lh-heading: 1.2;  /* tiêu đề */
+  --lh-snug: 1.35;    /* tên sản phẩm, đoạn ngắn */
+  --lh-base: 1.6;     /* đoạn văn */
+
+  /* ---------- Khoảng cách chữ ---------- */
+  --ls-tighter: -0.045em;
+  --ls-tight: -0.02em;
+  --ls-normal: 0;
+  --ls-wide: 0.06em;   /* chữ IN HOA nhỏ: menu, nút */
+  --ls-wider: 0.12em;  /* thanh thông báo */
+}
+
+/* =====================================================================
+   KIỂU CHỮ DỰNG SẴN
+   ===================================================================== */
+
+.text-display {
+  font-family: var(--font-display);
+  font-size: var(--fs-display);
+  font-weight: var(--fw-extrabold);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tighter);
+}
+
+.text-h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-tight);
+}
+
+.text-h3 {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-tight);
+}
+
+.text-title {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+}
+
+.text-lead {
+  font-size: var(--fs-md);
+  line-height: var(--lh-base);
+}
+
+.text-body {
+  font-size: var(--fs-base);
+  line-height: var(--lh-base);
+}
+
+.text-small {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-base);
+}
+
+.text-caption {
+  font-size: var(--fs-xs);
+  line-height: var(--lh-base);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+/* Chữ in hoa nhỏ, giãn chữ: dùng cho menu, nút, nhãn */
+.text-caps {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-wide);
+}
+
+/* Chữ viết tay điểm xuyết */
+.text-script {
+  font-family: var(--font-script);
+  font-size: var(--fs-script);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-none);
+}

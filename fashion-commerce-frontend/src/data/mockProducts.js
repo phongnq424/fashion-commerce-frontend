@@ -1,0 +1,80 @@
+// DỮ LIỆU GIẢ, mô phỏng dữ liệu trả về từ Backend (fashion-commerce-backend).
+// Tên sản phẩm là DỮ LIỆU ĐỘNG -> KHÔNG đưa vào từ điển i18n, không tự dịch.
+// Khi có API thật, chỉ cần sửa src/services/productService.js, component giữ nguyên.
+// Ảnh lấy từ Unsplash; nếu ảnh lỗi, ProductCard tự hiện khung thay thế.
+const img = (id) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=600&h=800&q=75`;
+
+export const mockProducts = [
+  {
+    id: 'p001',
+    name: 'Áo sơ mi linen cổ tàu',
+    price: 459000,
+    originalPrice: null,
+    image: img('photo-1596755094514-f87e34085b2c'),
+    isNew: true,
+    inStock: true,
+  },
+  {
+    id: 'p002',
+    name: 'Quần ống suông cotton',
+    price: 529000,
+    originalPrice: null,
+    image: img('photo-1594633312681-425c7b97ccd1'),
+    isNew: false,
+    inStock: true,
+  },
+  {
+    id: 'p003',
+    name: 'Đầm midi lụa xếp ly',
+    price: 890000,
+    originalPrice: 1190000,
+    image: img('photo-1595777457583-95e059d581b8'),
+    isNew: false,
+    inStock: true,
+  },
+  {
+    id: 'p004',
+    name: 'Áo khoác dạ dáng dài',
+    price: 1490000,
+    originalPrice: null,
+    image: img('photo-1591047139829-d91aecb6caea'),
+    isNew: true,
+    inStock: true,
+  },
+  {
+    id: 'p005',
+    name: 'Áo thun cotton hữu cơ',
+    price: 229000,
+    originalPrice: 290000,
+    image: img('photo-1521572163474-6864f9cf17ab'),
+    isNew: false,
+    inStock: true,
+  },
+  {
+    id: 'p006',
+    name: 'Chân váy chữ A kaki',
+    price: 389000,
+    originalPrice: null,
+    image: img('photo-1583496661160-fb5886a0aaaa'),
+    isNew: false,
+    inStock: false,
+  },
+  {
+    id: 'p007',
+    name: 'Áo len cổ lọ',
+    price: 649000,
+    originalPrice: null,
+    image: img('photo-1434389677669-e08b4cac3105'),
+    isNew: true,
+    inStock: true,
+  },
+  {
+    id: 'p008',
+    name: 'Túi tote canvas',
+    price: 259000,
+    originalPrice: null,
+    image: null, // cố tình để trống để xem khung "chưa có ảnh"
+    isNew: false,
+    inStock: true,
+  },
+];

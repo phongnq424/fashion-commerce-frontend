@@ -1,0 +1,7 @@
+/* =====================================================================
+   THEME - CỬA VÀO DUY NHẤT của thư viện thiết kế.
+   main.jsx chỉ cần import file này.
+   ===================================================================== */
+@import './colors.css';
+@import './typography.css';
+@import './spacing.css';

@@ -1,0 +1,77 @@
+/* CSS Grid tự co giãn: 4 cột desktop -> 3 -> 2 trên mobile */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-6) var(--space-5);
+}
+
+@media (max-width: 1024px) {
+  .product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5) var(--space-3);
+  }
+}
+
+/* ---------- Trạng thái lỗi / rỗng ---------- */
+.product-grid__state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-8) var(--space-4);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.product-grid__state--error {
+  background: var(--color-danger-soft);
+  border-color: var(--color-danger);
+  color: var(--color-text);
+}
+
+.product-grid__state--error > svg {
+  color: var(--color-danger);
+}
+
+/* ---------- Skeleton khi đang tải ---------- */
+.product-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.product-skeleton__media,
+.product-skeleton__line {
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-md);
+  animation: skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+.product-skeleton__media {
+  aspect-ratio: 3 / 4;
+  margin-bottom: var(--space-2);
+}
+
+.product-skeleton__line {
+  height: 14px;
+  border-radius: var(--radius-sm);
+}
+
+.product-skeleton__line--short {
+  width: 45%;
+}
+
+@keyframes skeleton-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}

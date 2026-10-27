@@ -1,0 +1,30 @@
+.logo {
+  font-family: var(--font-sans);
+  font-size: var(--fs-logo);
+  font-weight: var(--fw-extrabold);
+  letter-spacing: var(--ls-tighter);
+  line-height: var(--lh-none);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.logo__dot {
+  color: var(--color-accent);
+}
+
+.logo__name {
+  font-family: var(--font-display);
+  font-size: var(--fs-logo);
+  font-weight: var(--fw-extrabold);
+  letter-spacing: var(--ls-wider);
+  color: var(--color-heading-accent);
+}
+
+/* Chữ viết tay chồng lên mép dưới tên, giống "Boutique" trong mẫu */
+.logo__script {
+  margin-top: -0.35em;
+  font-family: var(--font-script);
+  font-size: calc(var(--fs-logo) * 0.85);
+  font-weight: var(--fw-bold);
+  color: var(--color-text);
+}

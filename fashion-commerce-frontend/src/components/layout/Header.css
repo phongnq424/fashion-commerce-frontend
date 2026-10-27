@@ -1,0 +1,207 @@
+.site-header {
+  position: sticky; /* dính ở đầu trang khi cuộn */
+  top: 0;
+  z-index: 40;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Thanh thông báo pastel, chữ in hoa giãn rộng */
+.site-header__announcement {
+  padding: var(--space-2) var(--container-pad);
+  background: var(--color-announce-bg);
+  color: var(--color-on-announce);
+  font-family: var(--font-display);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-wider);
+  text-align: center;
+}
+
+/* ---------- Desktop: 1 hàng ngang bằng Flexbox ----------
+   Logo -> Menu -> Ô tìm kiếm (đẩy sang phải) -> Icon */
+.site-header__bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: 76px;
+}
+
+.site-header__menu-btn {
+  display: none;
+}
+
+.site-nav__list {
+  display: flex;
+  gap: var(--space-5);
+}
+
+.site-nav__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-height);
+  font-family: var(--font-display);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-wide);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+/* Gạch chân mảnh trượt ra khi hover */
+.site-nav__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  height: 2px;
+  background: var(--color-brand);
+  transform: scaleX(0);
+  transition: transform var(--transition);
+}
+
+.site-nav__link:hover::after {
+  transform: scaleX(1);
+}
+
+/* Mục "Giảm giá": màu thương hiệu + đậm + gạch chân sẵn, không chỉ đổi màu */
+.site-nav__link--highlight {
+  color: var(--color-heading-accent);
+  font-weight: var(--fw-extrabold);
+}
+
+.site-nav__link--highlight::after {
+  transform: scaleX(1);
+}
+
+.site-nav__lang {
+  display: none;
+}
+
+.site-header__search {
+  flex: 0 1 320px;
+  margin-left: auto; /* đẩy ô tìm kiếm + icon sang phải */
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.site-header__lang {
+  margin-right: var(--space-2);
+}
+
+.site-header__badge {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  border: 2px solid var(--color-surface);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-extrabold);
+  line-height: var(--lh-none);
+}
+
+/* ---------- Màn hình vừa (≤ 1200px): thu gọn khoảng cách ---------- */
+@media (max-width: 1200px) {
+  .site-header__bar {
+    gap: var(--space-4);
+  }
+
+  .site-nav__list {
+    gap: var(--space-4);
+  }
+
+  .site-header__search {
+    flex-basis: 240px;
+  }
+}
+
+/* ---------- Tablet & mobile (≤ 1024px): CSS Grid 2 hàng ---------- */
+@media (max-width: 1024px) {
+  .site-header__bar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      'menu logo actions'
+      'search search search';
+    column-gap: var(--space-2);
+    row-gap: var(--space-3);
+    padding-block: var(--space-3);
+  }
+
+  .site-header__menu-btn {
+    display: inline-grid;
+    grid-area: menu;
+  }
+
+  .logo {
+    grid-area: logo;
+  }
+
+  .site-header__actions {
+    grid-area: actions;
+  }
+
+  .site-header__search {
+    grid-area: search;
+    margin-left: 0;
+  }
+
+  .site-header__lang {
+    display: none;
+  }
+
+  /* Menu trượt xuống, ẩn mặc định */
+  .site-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    padding: var(--space-4) var(--container-pad) var(--space-5);
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .site-nav--open {
+    display: block;
+  }
+
+  .site-nav__list {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .site-nav__link {
+    font-size: var(--fs-sm);
+  }
+
+  .site-nav__lang {
+    display: block;
+    margin-top: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+}
+
+@media (max-width: 420px) {
+  .site-header__account {
+    display: none;
+  }
+}

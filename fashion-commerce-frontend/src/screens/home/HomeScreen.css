@@ -1,0 +1,341 @@
+/* =====================================================================
+   CSS RIÊNG CỦA MÀN HÌNH HOME (component dùng chung có CSS riêng của chúng)
+   ===================================================================== */
+
+.home-section {
+  margin-top: var(--space-9);
+}
+
+/* =====================================================================
+   HERO: gradient pastel tỏa sáng ở giữa + mảng tròn + hoa trang trí
+   ===================================================================== */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(
+    ellipse 70% 90% at 42% 50%,
+    var(--color-hero-glow) 0%,
+    var(--color-hero-mid) 45%,
+    var(--color-hero-edge) 100%
+  );
+  color: var(--color-on-hero);
+}
+
+/* 2 mảng tròn mềm ở góc, giống các "blob" trắng trong mẫu */
+.hero::before,
+.hero::after {
+  content: '';
+  position: absolute;
+  background: var(--color-hero-blob);
+  pointer-events: none;
+}
+
+.hero::before {
+  left: -6%;
+  bottom: -22%;
+  width: clamp(180px, 22vw, 320px);
+  aspect-ratio: 1;
+  border-radius: var(--radius-blob-2);
+}
+
+.hero::after {
+  right: -4%;
+  top: -18%;
+  width: clamp(140px, 16vw, 240px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.hero__deco {
+  position: absolute;
+  color: var(--color-hero-blob);
+  pointer-events: none;
+}
+
+.hero__deco--flower-1 {
+  top: var(--space-6);
+  left: var(--space-6);
+  color: var(--color-surface);
+}
+
+.hero__deco--flower-2 {
+  bottom: var(--space-7);
+  left: 46%;
+  color: var(--color-surface);
+  opacity: 0.8;
+}
+
+.hero__inner {
+  position: relative; /* nổi trên các mảng trang trí */
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-7);
+  min-height: clamp(460px, 62vh, 640px);
+  padding-block: var(--space-8);
+}
+
+.hero__content {
+  animation: hero-in 700ms ease-out both;
+}
+
+.hero__kicker {
+  margin-bottom: var(--space-3);
+  color: var(--color-heading-accent);
+}
+
+/* Tiêu đề lớn in hoa xếp 2 tầng */
+.hero__title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  text-transform: uppercase;
+  line-height: var(--lh-none);
+}
+
+/* Tầng 1: chữ trắng khổng lồ nằm trên dải màu đậm */
+.hero__title-band {
+  padding: 0.16em 0.2em 0.04em; /* chừa chỗ phía trên cho dấu tiếng Việt (Ớ, Ề...) */
+  background: var(--color-tint-deep);
+  color: var(--color-on-tint-deep);
+  font-size: var(--fs-display);
+  letter-spacing: var(--ls-tight);
+  border-radius: var(--radius-sm);
+}
+
+/* Tầng 2: chữ màu thương hiệu trong hộp trắng có bóng mềm */
+.hero__title-box {
+  padding: 0.3em 0.6em;
+  background: var(--color-surface);
+  color: var(--color-heading-accent);
+  font-size: var(--fs-display-sub);
+  letter-spacing: var(--ls-wide);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-soft);
+}
+
+.hero__desc {
+  max-width: 44ch;
+  margin-top: var(--space-5);
+  color: var(--color-text-muted);
+}
+
+.hero__cta {
+  margin-top: var(--space-6);
+}
+
+/* Ảnh trong khung "blob" có viền trắng dày */
+.hero__media {
+  justify-self: center;
+  width: min(100%, 440px);
+  aspect-ratio: 4 / 5;
+  animation: hero-in 700ms 120ms ease-out both;
+}
+
+.hero__image,
+.hero__placeholder {
+  width: 100%;
+  height: 100%;
+  border: 8px solid var(--color-surface);
+  border-radius: var(--radius-blob-1);
+  box-shadow: var(--shadow-lg);
+}
+
+.hero__image {
+  object-fit: cover;
+}
+
+.hero__placeholder {
+  display: grid;
+  place-items: center;
+  background: var(--color-tint);
+  color: var(--color-heading-accent);
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* =====================================================================
+   LỢI ÍCH MUA HÀNG: 3 cột căn giữa trên nền tint
+   ===================================================================== */
+.benefits {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.benefits__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-5);
+  background: var(--color-tint-soft);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.benefits__icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  background: var(--color-surface);
+  color: var(--color-heading-accent);
+  border-radius: var(--radius-blob-3);
+  box-shadow: var(--shadow-sm);
+}
+
+.benefits__title {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-wide);
+}
+
+.benefits__text {
+  margin-top: var(--space-1);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+/* =====================================================================
+   ĐĂNG KÝ NHẬN TIN: khối gradient pastel, nội dung căn giữa
+   ===================================================================== */
+.newsletter {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-8) var(--space-5);
+  background: radial-gradient(
+    ellipse 60% 120% at 50% 0%,
+    var(--color-hero-glow) 0%,
+    var(--color-tint) 100%
+  );
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.newsletter__text {
+  max-width: 52ch;
+}
+
+.newsletter__title {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--color-heading-accent);
+}
+
+.newsletter__desc {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+}
+
+.newsletter__form {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: min(100%, 520px);
+  text-align: left;
+}
+
+.newsletter__field {
+  flex: 1;
+}
+
+/* Căn nút thẳng hàng với ô input (bỏ qua chiều cao của label phía trên) */
+.newsletter__submit {
+  margin-top: calc(var(--fs-sm) * 1.6 + var(--space-1));
+}
+
+.newsletter__success {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-left: 4px solid var(--color-success);
+  border-radius: var(--radius-sm);
+  font-weight: var(--fw-medium);
+  text-align: left;
+}
+
+.newsletter__success > svg {
+  flex-shrink: 0;
+  color: var(--color-success);
+}
+
+/* =====================================================================
+   RESPONSIVE
+   ===================================================================== */
+@media (max-width: 900px) {
+  /* Mobile giống mẫu: mọi thứ căn giữa, ảnh xuống dưới */
+  .hero__inner {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    min-height: 0;
+    padding-block: var(--space-7);
+    text-align: center;
+  }
+
+  .hero__title {
+    align-items: center;
+  }
+
+  .hero__desc {
+    margin-inline: auto;
+  }
+
+  .hero__media {
+    width: min(80%, 340px);
+  }
+
+  .hero__deco--flower-2 {
+    display: none;
+  }
+
+  .benefits {
+    grid-template-columns: 1fr;
+  }
+
+  .benefits__item {
+    flex-direction: row;
+    text-align: left;
+    padding: var(--space-4);
+  }
+
+  .benefits__icon {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .home-section {
+    margin-top: var(--space-8);
+  }
+
+  .newsletter {
+    padding: var(--space-7) var(--space-4);
+  }
+
+  .newsletter__form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .newsletter__submit {
+    margin-top: 0;
+  }
+}

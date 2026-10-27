@@ -1,0 +1,40 @@
+/* =====================================================================
+   KHOẢNG CÁCH, BO GÓC, BỐ CỤC (spacing.css)
+   Không phụ thuộc theme -> không cần khối Dark Mode.
+   ===================================================================== */
+
+:root {
+  /* Khoảng cách: bội số 4px */
+  --space-1: 0.25rem; /* 4px  */
+  --space-2: 0.5rem;  /* 8px  */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem;    /* 16px */
+  --space-5: 1.5rem;  /* 24px */
+  --space-6: 2rem;    /* 32px */
+  --space-7: 3rem;    /* 48px */
+  --space-8: 4rem;    /* 64px */
+  --space-9: 6rem;    /* 96px */
+
+  /* Bo góc */
+  --radius-sm: 6px;    /* nút, ô nhập (bo nhẹ như mẫu) */
+  --radius-md: 12px;   /* thẻ, ảnh */
+  --radius-lg: 24px;   /* khối lớn: newsletter, banner */
+  --radius-pill: 999px;
+  /* Hình "blob" hữu cơ cho ô danh mục & hero */
+  --radius-blob-1: 58% 42% 38% 62% / 52% 44% 56% 48%;
+  --radius-blob-2: 42% 58% 63% 37% / 41% 55% 45% 59%;
+  --radius-blob-3: 50% 50% 34% 66% / 62% 38% 62% 38%;
+
+  /* Bố cục */
+  --container-max: 1240px;
+  --container-pad: clamp(1rem, 3vw, 2rem);
+  --control-height: 44px; /* vùng bấm tối thiểu cho mobile */
+
+  /* Chuyển động */
+  --transition: 160ms ease;
+}
+
+/* Breakpoints dùng thống nhất trong media query (CSS chưa cho dùng biến trong @media):
+   - Mobile:  ≤ 640px
+   - Tablet:  ≤ 1024px
+   - Desktop: > 1024px */

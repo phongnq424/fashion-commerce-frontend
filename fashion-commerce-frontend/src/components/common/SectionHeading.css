@@ -1,0 +1,37 @@
+/* Tiêu đề section căn giữa, tô màu thương hiệu (giống "Fresh Looks Daily!" trong mẫu) */
+.section-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+  text-align: center;
+}
+
+.section-heading__title {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--color-heading-accent);
+}
+
+.section-heading__desc {
+  max-width: 56ch;
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+/* Link phụ "Xem tất cả" dưới tiêu đề */
+.section-heading__action {
+  margin-top: var(--space-1);
+  font-family: var(--font-display);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-wide);
+  color: var(--color-brand);
+  text-underline-offset: 5px;
+}
+
+.section-heading__action:hover {
+  color: var(--color-brand-hover);
+}

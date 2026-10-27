@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Báo cho trình duyệt biết trang hỗ trợ cả 2 chế độ (thanh cuộn, input mặc định đổi màu theo) -->
+    <meta name="color-scheme" content="light dark" />
+    <title>sợi. | Thời trang may tại Việt Nam</title>
+
+    <!-- 3 font đều hỗ trợ tiếng Việt: Montserrat (tiêu đề), Be Vietnam Pro (nội dung), Dancing Script (chữ viết tay) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Dancing+Script:wght@600;700&family=Montserrat:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!--
+      CHỐNG NHÁY SAI THEME (FOUC):
+      Script này chạy TRƯỚC khi React tải xong, nên trang được tô đúng màu ngay từ khung hình đầu tiên.
+      - Ưu tiên lựa chọn đã lưu trong localStorage.
+      - Nếu chưa lưu thì theo cài đặt hệ điều hành (prefers-color-scheme).
+      LƯU Ý: tên key 'fc-theme' và 'fc-lang' phải khớp với src/constants/storageKeys.js
+    -->
+    <script>
+      (function () {
+        var root = document.documentElement;
+        try {
+          var theme = localStorage.getItem('fc-theme');
+          if (theme !== 'light' && theme !== 'dark') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          root.dataset.theme = theme;
+
+          var lang = localStorage.getItem('fc-lang');
+          if (lang === 'vi' || lang === 'en') root.lang = lang;
+        } catch (e) {
+          root.dataset.theme = 'light';
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
