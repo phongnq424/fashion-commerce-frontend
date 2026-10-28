@@ -10,3 +10,14 @@ export async function getNewArrivals() {
   await new Promise((resolve) => setTimeout(resolve, 600));
   return mockProducts;
 }
+
+// Lấy sản phẩm theo danh mục. subcategory có thể bỏ trống (= cả danh mục).
+// Khi nối Backend, thay bằng:
+//   fetch(`${API}/products?category=${category}&subcategory=${subcategory ?? ''}`)
+export async function getProductsByCategory(category, subcategory) {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  return mockProducts.filter(
+    (product) =>
+      product.category === category && (!subcategory || product.subcategory === subcategory),
+  );
+}

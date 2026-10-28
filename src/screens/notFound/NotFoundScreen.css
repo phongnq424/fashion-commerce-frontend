@@ -1,0 +1,23 @@
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding-block: var(--space-9);
+  text-align: center;
+}
+
+.not-found__icon {
+  color: var(--color-heading-accent);
+}
+
+.not-found__title {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-extrabold);
+  color: var(--color-heading-accent);
+}
+
+.not-found__desc {
+  max-width: 46ch;
+  color: var(--color-text-muted);
+}

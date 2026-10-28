@@ -1,0 +1,61 @@
+.category-page {
+  padding-top: var(--space-7);
+}
+
+.category-page__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-4);
+}
+
+.category-page__title {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-extrabold);
+  text-transform: uppercase;
+  color: var(--color-heading-accent);
+}
+
+.category-page__count {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+/* Hàng "chip" lọc danh mục con, cuộn ngang được trên mobile */
+.category-page__filters {
+  display: flex;
+  gap: var(--space-2);
+  margin-block: var(--space-5) var(--space-6);
+  padding-bottom: var(--space-1);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.category-chip {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-height: 38px;
+  padding: 0 var(--space-4);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color var(--transition), background-color var(--transition);
+}
+
+.category-chip:hover {
+  border-color: var(--color-brand);
+}
+
+/* Chip đang chọn: nền đậm + chữ trắng + đậm hơn */
+.category-chip.is-active {
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  border-color: var(--color-brand);
+  font-weight: var(--fw-bold);
+}

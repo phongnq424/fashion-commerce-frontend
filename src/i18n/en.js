@@ -1,7 +1,7 @@
 // ENGLISH dictionary. Keep the same keys as vi.js.
 const en = {
   meta: {
-    title: 'sợi. | Clothing made in Vietnam',
+    title: 'TrendyLab',
   },
   common: {
     skipToContent: 'Skip to main content',
@@ -25,11 +25,54 @@ const en = {
     cart: 'Cart, {count} items',
   },
   nav: {
-    newIn: 'New in',
-    women: 'Women',
-    men: 'Men',
-    accessories: 'Accessories',
-    sale: 'Sale',
+    home: 'Home',
+    tops: 'Tops',
+    bottoms: 'Bottoms',
+    dresses: 'Dresses',
+    contact: 'Contact',
+    viewAll: 'All {name}',
+  },
+  navSub: {
+    tops: {
+      tshirts: 'T-shirts',
+      shirts: 'Shirts',
+      polos: 'Polo shirts',
+      knitwear: 'Knitwear',
+      jackets: 'Jackets',
+    },
+    bottoms: {
+      jeans: 'Jeans',
+      trousers: 'Trousers',
+      wideLeg: 'Wide-leg pants',
+      shorts: 'Shorts',
+    },
+    dresses: {
+      midi: 'Midi dresses',
+      maxi: 'Maxi dresses',
+      miniSkirts: 'Mini skirts',
+      longSkirts: 'Long skirts',
+    },
+  },
+    breadcrumb: {
+    label: 'Breadcrumb',
+    home: 'Home',
+    category: 'Categories',
+  },
+  category: {
+    count: '{count} products',
+    filterLabel: 'Filter by type',
+    all: 'All',
+    empty: 'No products here yet. Try another type above.',
+    error: 'Couldn’t load products. Check your connection, then select Try again.',
+  },
+  contact: {
+    title: 'Contact',
+    description: 'The contact page is under construction.',
+  },
+  notFound: {
+    title: 'Page not found',
+    description: 'The link may be wrong or the page has been removed.',
+    backHome: 'Back to home',
   },
   search: {
     label: 'Search products',
@@ -55,6 +98,37 @@ const en = {
       description: 'Linen, organic cotton and wool blends, sewn in our Ho Chi Minh City workshop.',
       cta: 'Shop now',
       imageAlt: 'Rack of neutral-toned clothes in a store',
+    },    hero: {
+      label: 'Promotions',
+      slideOf: 'Banner {current} of {total}',
+      prev: 'Previous banner',
+      next: 'Next banner',
+      goTo: 'Show banner {number}',
+      pause: 'Pause banner rotation',
+      play: 'Resume banner rotation',
+      slides: {
+        newArrivals: {
+          kicker: 'Fall Winter 2026',
+          title: 'New arrivals',
+          description: 'Shirts, denim skirts and accessories just landed this week.',
+          cta: 'Shop new arrivals',
+          imageAlt: 'Six models in pastel shirts, crop tops and denim skirts',
+        },
+        sale: {
+          kicker: 'This week only',
+          title: 'Up to 30% off',
+          description: 'On tees and skirts until Sunday.',
+          cta: 'Shop the sale',
+          imageAlt: 'Model holding several shopping bags',
+        },
+        member: {
+          kicker: 'New members',
+          title: 'Free shipping on your first order',
+          description: 'Create an account to get free delivery on your first order.',
+          cta: 'Create account',
+          imageAlt: 'Clothing store interior with garment racks',
+        },
+      },
     },
     categories: {
       title: 'Shop by category',

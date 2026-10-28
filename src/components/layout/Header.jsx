@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import Logo from './Logo';
+import MainNav from './MainNav';
 import Icon from '../common/Icon';
 import SearchBar from '../SearchBar/SearchBar';
 import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import { useLanguage } from '../../hooks/useLanguage';
-import { MAIN_NAV } from '../../constants/navigation';
 import './Header.css';
 
 /**
@@ -52,19 +52,7 @@ function Header({ cartCount = 0, onSearch }) {
           className={`site-nav ${menuOpen ? 'site-nav--open' : ''}`}
           aria-label={t('header.mainNav')}
         >
-          <ul className="site-nav__list">
-            {MAIN_NAV.map((item) => (
-              <li key={item.key}>
-                <a
-                  href={item.href}
-                  className={`site-nav__link ${item.highlight ? 'site-nav__link--highlight' : ''}`}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {t(item.key)}
-                </a>
-              </li>
-            ))}
-          </ul>
+          <MainNav onNavigate={() => setMenuOpen(false)} />
           {/* Trên mobile, đổi ngôn ngữ nằm trong menu cho gọn */}
           <div className="site-nav__lang">
             <LanguageSwitcher />

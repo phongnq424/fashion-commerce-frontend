@@ -3,7 +3,7 @@
 // {tenBien} sẽ được thay bằng giá trị thật khi gọi t('key', { tenBien: ... }).
 const vi = {
   meta: {
-    title: 'sợi. | Thời trang may tại Việt Nam',
+    title: 'TrendyLab',
   },
   common: {
     skipToContent: 'Bỏ qua đến nội dung chính',
@@ -26,12 +26,55 @@ const vi = {
     account: 'Tài khoản',
     cart: 'Giỏ hàng, {count} sản phẩm',
   },
-  nav: {
-    newIn: 'Hàng mới',
-    women: 'Nữ',
-    men: 'Nam',
-    accessories: 'Phụ kiện',
-    sale: 'Giảm giá',
+ nav: {
+    home: 'Trang chủ',
+    tops: 'Áo',
+    bottoms: 'Quần',
+    dresses: 'Đầm & Váy',
+    contact: 'Liên hệ',
+    viewAll: 'Tất cả {name}',
+  },
+  navSub: {
+    tops: {
+      tshirts: 'Áo thun',
+      shirts: 'Áo sơ mi',
+      polos: 'Áo polo',
+      knitwear: 'Áo len',
+      jackets: 'Áo khoác',
+    },
+    bottoms: {
+      jeans: 'Quần jeans',
+      trousers: 'Quần tây',
+      wideLeg: 'Quần ống rộng',
+      shorts: 'Quần short',
+    },
+    dresses: {
+      midi: 'Đầm midi',
+      maxi: 'Đầm maxi',
+      miniSkirts: 'Chân váy ngắn',
+      longSkirts: 'Chân váy dài',
+    },
+  },
+    breadcrumb: {
+    label: 'Đường dẫn trang',
+    home: 'Trang chủ',
+    category: 'Danh mục',
+  },
+  category: {
+    count: '{count} sản phẩm',
+    filterLabel: 'Lọc theo loại',
+    all: 'Tất cả',
+    empty: 'Chưa có sản phẩm trong mục này. Thử chọn loại khác ở trên.',
+    error: 'Không tải được sản phẩm. Kiểm tra kết nối mạng rồi bấm Thử lại.',
+  },
+  contact: {
+    title: 'Liên hệ',
+    description: 'Trang liên hệ đang được xây dựng.',
+  },
+  notFound: {
+    title: 'Không tìm thấy trang',
+    description: 'Đường dẫn có thể đã sai hoặc trang đã bị xoá.',
+    backHome: 'Về trang chủ',
   },
   search: {
     label: 'Tìm kiếm sản phẩm',
@@ -50,13 +93,44 @@ const vi = {
     en: 'English',
   },
   home: {
-    hero: {
-      kicker: 'Thu Đông 2026',
-      titleLine1: 'Hàng mới',
-      titleLine2: 'Vừa lên kệ',
-      description: 'Linen, cotton hữu cơ và len pha, may tại xưởng ở TP.HCM.',
-      cta: 'Mua ngay',
-      imageAlt: 'Giá treo quần áo tông màu trung tính trong cửa hàng',
+        hero: {
+      label: 'Banner khuyến mãi',
+      slideOf: 'Banner {current} trên {total}',
+      prev: 'Banner trước',
+      next: 'Banner tiếp theo',
+      goTo: 'Xem banner {number}',
+      pause: 'Tạm dừng tự chuyển banner',
+      play: 'Tiếp tục tự chuyển banner',
+      slides: {
+        newArrivals: {
+          kicker: 'Thu Đông 2026',
+          title: 'Hàng mới về',
+          description: 'Sơ mi, chân váy denim và phụ kiện vừa lên kệ tuần này.',
+          cta: 'Xem hàng mới',
+          imageAlt: 'Sáu người mẫu mặc sơ mi pastel, áo croptop và váy denim',
+        },
+        summer: {
+          kicker: 'Bộ sưu tập Hè',
+          title: 'Nắng lên rồi',
+          description: 'Váy linen và áo hai dây cho ngày nóng.',
+          cta: 'Xem bộ sưu tập',
+          imageAlt: 'Người mẫu mặc váy linen trắng trên bãi biển',
+        },
+        sale: {
+          kicker: 'Ưu đãi tuần này',
+          title: 'Giảm đến 30%',
+          description: 'Áp dụng cho áo thun và chân váy đến hết Chủ nhật.',
+          cta: 'Mua đồ giảm giá',
+          imageAlt: 'Người mẫu cầm nhiều túi mua sắm',
+        },
+        member: {
+          kicker: 'Thành viên mới',
+          title: 'Freeship đơn đầu',
+          description: 'Tạo tài khoản để được miễn phí giao hàng cho đơn đầu tiên.',
+          cta: 'Tạo tài khoản',
+          imageAlt: 'Không gian cửa hàng quần áo với giá treo đồ',
+        },
+      },
     },
     categories: {
       title: 'Mua theo danh mục',

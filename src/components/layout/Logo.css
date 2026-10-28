@@ -1,15 +1,21 @@
+/* Logo 2 tầng xếp dọc (Flexbox cột) */
 .logo {
-  font-family: var(--font-sans);
-  font-size: var(--fs-logo);
-  font-weight: var(--fw-extrabold);
-  letter-spacing: var(--ls-tighter);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
   line-height: var(--lh-none);
-  color: var(--color-text);
   text-decoration: none;
 }
 
-.logo__dot {
-  color: var(--color-accent);
+
+/* Tầng trên: TRENDY in hoa, đậm, giãn chữ */
+.logo__top {
+  font-family: var(--font-display);
+  font-size: var(--fs-logo);
+  font-weight: var(--fw-extrabold);
+  text-transform: uppercase; /* gõ "Trendy" trong JSX, CSS tự in hoa */
+  letter-spacing: var(--ls-wide);
+  color: var(--color-heading-accent);
 }
 
 .logo__name {
@@ -20,11 +26,12 @@
   color: var(--color-heading-accent);
 }
 
-/* Chữ viết tay chồng lên mép dưới tên, giống "Boutique" trong mẫu */
+/* Tầng dưới: "Lab" chữ ký, kéo lên chồng nhẹ vào mép dưới chữ TRENDY */
 .logo__script {
+  align-self: center; /* lệch sang phải như chữ ký */
   margin-top: -0.35em;
-  font-family: var(--font-script);
-  font-size: calc(var(--fs-logo) * 0.85);
-  font-weight: var(--fw-bold);
+  font-family: var(--font-logo);
+  font-size: var(--fs-logo-script);
+  font-weight: var(--fw-regular);
   color: var(--color-text);
 }

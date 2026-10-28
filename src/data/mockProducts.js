@@ -7,6 +7,8 @@ const img = (id) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=60
 export const mockProducts = [
   {
     id: 'p001',
+    category: 'tops',
+    subcategory: 'shirts',
     name: 'Áo sơ mi linen cổ tàu',
     price: 459000,
     originalPrice: null,
@@ -16,6 +18,8 @@ export const mockProducts = [
   },
   {
     id: 'p002',
+    category: 'bottoms',
+    subcategory: 'wideLeg',
     name: 'Quần ống suông cotton',
     price: 529000,
     originalPrice: null,
@@ -25,6 +29,8 @@ export const mockProducts = [
   },
   {
     id: 'p003',
+    category: 'dresses',
+    subcategory: 'midi',
     name: 'Đầm midi lụa xếp ly',
     price: 890000,
     originalPrice: 1190000,
@@ -34,6 +40,8 @@ export const mockProducts = [
   },
   {
     id: 'p004',
+    category: 'tops',
+    subcategory: 'jackets',
     name: 'Áo khoác dạ dáng dài',
     price: 1490000,
     originalPrice: null,
@@ -43,6 +51,8 @@ export const mockProducts = [
   },
   {
     id: 'p005',
+    category: 'tops',
+    subcategory: 'tshirts',
     name: 'Áo thun cotton hữu cơ',
     price: 229000,
     originalPrice: 290000,
@@ -52,6 +62,8 @@ export const mockProducts = [
   },
   {
     id: 'p006',
+    category: 'dresses',
+    subcategory: 'miniSkirts',
     name: 'Chân váy chữ A kaki',
     price: 389000,
     originalPrice: null,
@@ -61,6 +73,8 @@ export const mockProducts = [
   },
   {
     id: 'p007',
+    category: 'tops',
+    subcategory: 'knitwear',
     name: 'Áo len cổ lọ',
     price: 649000,
     originalPrice: null,
@@ -70,6 +84,8 @@ export const mockProducts = [
   },
   {
     id: 'p008',
+    category: 'accessories',
+    subcategory: 'bags',
     name: 'Túi tote canvas',
     price: 259000,
     originalPrice: null,

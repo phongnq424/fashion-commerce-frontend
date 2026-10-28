@@ -20,6 +20,7 @@
   --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-display: 'Montserrat', var(--font-sans);
   --font-script: 'Dancing Script', cursive;
+  --font-logo: 'Mr Dafoe', cursive;
 
   /* ---------- Cỡ chữ ----------
      clamp(min, giá trị co giãn, max): chữ to dần theo màn hình mà không cần media query */
@@ -30,10 +31,11 @@
   --fs-md: 1.125rem;   /* 18px - đoạn dẫn */
   --fs-lg: 1.375rem;   /* 22px - tiêu đề nhỏ */
   --fs-xl: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);      /* tiêu đề section */
-  --fs-logo: 1.75rem;
-  --fs-script: clamp(1.5rem, 1.2rem + 1vw, 2rem);    /* chữ viết tay */
+  --fs-logo: 1.5rem;    
+  --fs-logo-script: 2.5rem;    /* chữ viết tay */
   --fs-display: clamp(3rem, 1.4rem + 5.6vw, 6rem);     /* chữ lớn nhất ở hero */
   --fs-display-sub: clamp(1.5rem, 0.9rem + 2.6vw, 2.75rem); /* dòng thứ 2 ở hero */
+  --fs-hero-title: clamp(2rem, 1.2rem + 2.6vw, 3.25rem); /* tiêu đề banner */
 
   /* ---------- Độ đậm ---------- */
   --fw-regular: 400;

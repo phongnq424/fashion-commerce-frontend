@@ -1,0 +1,131 @@
+/* =====================================================================
+   MENU CON (DROPDOWN) của menu chính
+   Kiểu chung của .site-nav__link nằm trong Header.css; file này chỉ thêm phần dropdown.
+   ===================================================================== */
+
+.site-nav__item {
+  position: relative; /* làm mốc cho danh sách con định vị theo */
+}
+
+/* Nút "ÁO ⌄": bỏ kiểu mặc định của <button> để trông giống link */
+.site-nav__toggle {
+  gap: var(--space-1);
+  padding: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.site-nav__chevron {
+  transition: transform var(--transition);
+}
+
+/* Mở -> mũi tên xoay ngược lên */
+.site-nav__item.is-open .site-nav__chevron {
+  transform: rotate(180deg);
+}
+
+/* ---------- Mục của trang đang mở: gạch chân cố định + màu thương hiệu ----------
+   (gạch chân dùng lại ::after của .site-nav__link trong Header.css, chỉ cần bật lên) */
+.site-nav__link.is-active {
+  color: var(--color-heading-accent);
+  font-weight: var(--fw-bold);
+}
+
+.site-nav__link.is-active::after {
+  transform: scaleX(1);
+}
+
+/* ---------- Danh sách con: desktop dạng hộp nổi ---------- */
+.site-nav__submenu {
+  position: absolute;
+  top: 100%;
+  left: calc(-1 * var(--space-3));
+  z-index: 50;
+  display: none;
+  min-width: 220px;
+  padding: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+.site-nav__item.is-open > .site-nav__submenu {
+  display: block;
+  animation: submenu-in 160ms ease-out;
+}
+
+@keyframes submenu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.site-nav__sublink {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+.site-nav__sublink:hover {
+  background: var(--color-tint-soft);
+  color: var(--color-heading-accent);
+}
+
+/* Mục con đang mở: nền nhạt + chữ màu + chấm nhỏ phía trước (không chỉ dựa vào màu) */
+.site-nav__sublink.is-active {
+  background: var(--color-tint-soft);
+  color: var(--color-heading-accent);
+  font-weight: var(--fw-semibold);
+}
+
+.site-nav__sublink.is-active::before {
+  content: '•';
+  margin-right: var(--space-2);
+}
+
+/* Link "Tất cả Áo": đậm hơn + đường kẻ ngăn với các mục con */
+.site-nav__sublink--all {
+  margin-bottom: var(--space-1);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  font-weight: var(--fw-semibold);
+}
+
+/* ---------- Tablet & mobile: danh sách con xổ xuống ngay bên dưới (accordion) ---------- */
+@media (max-width: 1024px) {
+  .site-nav__toggle {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .site-nav__submenu {
+    position: static;
+    min-width: 0;
+    padding: 0 0 var(--space-2) var(--space-4);
+    background: none;
+    border: none;
+    border-left: 2px solid var(--color-border-strong);
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .site-nav__item.is-open > .site-nav__submenu {
+    animation: none;
+  }
+
+  .site-nav__sublink {
+    min-height: var(--control-height);
+    display: flex;
+    align-items: center;
+  }
+}
