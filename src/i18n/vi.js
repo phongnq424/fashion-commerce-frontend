@@ -49,10 +49,10 @@ const vi = {
       shorts: 'Quần short',
     },
     dresses: {
-      midi: 'Đầm midi',
-      maxi: 'Đầm maxi',
-      miniSkirts: 'Chân váy ngắn',
-      longSkirts: 'Chân váy dài',
+      midi: 'Đầm kiểu',
+      maxi: 'Set bộ',
+      miniSkirts: 'Váy ngắn',
+      longSkirts: 'Váy dài',
     },
   },
     breadcrumb: {
@@ -101,34 +101,37 @@ const vi = {
       goTo: 'Xem banner {number}',
       pause: 'Tạm dừng tự chuyển banner',
       play: 'Tiếp tục tự chuyển banner',
-      slides: {
-        newArrivals: {
-          kicker: 'Thu Đông 2026',
-          title: 'Hàng mới về',
-          description: 'Sơ mi, chân váy denim và phụ kiện vừa lên kệ tuần này.',
-          cta: 'Xem hàng mới',
-          imageAlt: 'Sáu người mẫu mặc sơ mi pastel, áo croptop và váy denim',
+        slides: {
+        everyday: {
+          titleLine1: 'Mặc Xinh Mỗi Ngày.',
+          titleLine2: 'Tự Tin Mỗi Khoảnh Khắc.',
+          description: 'Đồ xinh cho mọi phong cách, tự tin tỏa sáng theo cách riêng.',
+          imageAlt: 'Banner-1',
+          buttons: {
+            shopNow: 'Mua sắm ngay',
+            newArrivals: 'Hàng mới về',
+          },
         },
-        summer: {
-          kicker: 'Bộ sưu tập Hè',
-          title: 'Nắng lên rồi',
-          description: 'Váy linen và áo hai dây cho ngày nóng.',
-          cta: 'Xem bộ sưu tập',
-          imageAlt: 'Người mẫu mặc váy linen trắng trên bãi biển',
+        freeship: {
+          titleLine1: 'Shopping Thả Ga.',
+          titleLine2: 'Freeship Tận Nhà!',
+          description: 'Miễn phí vận chuyển cho đơn hàng từ 299K.',
+          imageAlt: 'Banner-2',
         },
-        sale: {
-          kicker: 'Ưu đãi tuần này',
-          title: 'Giảm đến 30%',
-          description: 'Áp dụng cho áo thun và chân váy đến hết Chủ nhật.',
-          cta: 'Mua đồ giảm giá',
-          imageAlt: 'Người mẫu cầm nhiều túi mua sắm',
+        outfitIdeas: {
+          titleLine1: 'Phối Đồ Theo Gu',
+          titleLine2: 'Tự Tin Chất Riêng',
+          description: 'Outfit hợp gu, dễ phối, xinh mọi lúc.',
+          imageAlt: 'Banner-3',
         },
-        member: {
-          kicker: 'Thành viên mới',
-          title: 'Freeship đơn đầu',
-          description: 'Tạo tài khoản để được miễn phí giao hàng cho đơn đầu tiên.',
-          cta: 'Tạo tài khoản',
-          imageAlt: 'Không gian cửa hàng quần áo với giá treo đồ',
+        firstOrder: {
+          titleLine1: 'Đơn Hàng Đầu Tiên',
+          titleLine2: 'Giảm Ngay 30%',
+          description: 'Ưu đãi đặc biệt dành cho đơn hàng đầu tiên tại TrendyLab.',
+          imageAlt: 'Banner-4',
+          buttons: {
+            createAccount: 'Tạo tài khoản',
+          },
         },
       },
     },

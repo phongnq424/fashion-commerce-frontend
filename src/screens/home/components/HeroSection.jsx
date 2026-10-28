@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Button from '../../../components/common/Button';
 import Icon from '../../../components/common/Icon';
 import { useLanguage } from '../../../hooks/useLanguage';
@@ -99,6 +100,7 @@ function HeroSection() {
           const isLeaving = slideIndex === prevIndex && !isActive;
           const key = `home.hero.slides.${slide.id}`;
           const imageFailed = failedImages[slide.id];
+          const TitleTag = slideIndex === 0 ? 'h1' : 'h2';
 
           return (
             <div
@@ -106,6 +108,7 @@ function HeroSection() {
               className={[
                 'hero-slide',
                 `hero-slide--${slide.textAlign}`,
+                slide.overlay === false ? 'hero-slide--no-overlay' : '', // overlay: false -> bỏ lớp phủ
                 isActive ? 'is-active' : '',
                 isLeaving ? 'is-leaving' : '',
               ].join(' ')}
@@ -113,6 +116,8 @@ function HeroSection() {
               aria-roledescription="slide"
               aria-label={t('home.hero.slideOf', { current: slideIndex + 1, total })}
               aria-hidden={!isActive}
+              // textOffset (tuỳ chọn) trong heroSlides.js -> ghi đè khoảng cách mép cho riêng banner này
+              style={slide.textOffset ? { '--hero-text-offset': slide.textOffset } : undefined}
             >
               {imageFailed ? (
                 <div className="hero-slide__image hero-slide__image--fallback" aria-hidden="true">
@@ -132,23 +137,36 @@ function HeroSection() {
               )}
 
               <div className="hero-slide__inner container">
-                <div className="hero-slide__panel">
-                  <p className="hero-slide__kicker">{t(`${key}.kicker`)}</p>
-                  {/* Chỉ slide đầu dùng h1 (mỗi trang chỉ nên có 1 h1) */}
-                  {slideIndex === 0 ? (
-                    <h1 className="hero-slide__title">{t(`${key}.title`)}</h1>
-                  ) : (
-                    <h2 className="hero-slide__title">{t(`${key}.title`)}</h2>
-                  )}
+                <div className="hero-slide__content">
+                  {/* Tiêu đề 2 dòng. Chỉ slide đầu dùng h1 (mỗi trang chỉ nên có 1 h1) */}
+                  <TitleTag className="hero-slide__title">
+                    <span className="hero-slide__title-line">{t(`${key}.titleLine1`)}</span>
+                    <span className="hero-slide__title-line hero-slide__title-line--accent">
+                      {t(`${key}.titleLine2`)}
+                    </span>
+                  </TitleTag>
                   <p className="hero-slide__desc">{t(`${key}.description`)}</p>
-                  <Button
-                    as="a"
-                    href={slide.href}
-                    className="hero-slide__cta"
-                    tabIndex={isActive ? undefined : -1}
-                  >
-                    {t(`${key}.cta`)}
-                  </Button>
+
+                  {slide.buttons.length > 0 && (
+                    <div className="hero-slide__actions">
+                      {slide.buttons.map((button) => {
+                        // Đường dẫn bắt đầu bằng "/" -> chuyển trang bằng React Router (không tải lại)
+                        // Còn lại (vd "#new-arrivals") -> link thường, cuộn tới phần đó trên trang
+                        const isRoute = button.to.startsWith('/');
+                        return (
+                          <Button
+                            key={button.id}
+                            as={isRoute ? Link : 'a'}
+                            {...(isRoute ? { to: button.to } : { href: button.to })}
+                            variant={button.variant}
+                            tabIndex={isActive ? undefined : -1}
+                          >
+                            {t(`${key}.buttons.${button.id}`)}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

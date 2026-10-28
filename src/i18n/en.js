@@ -48,7 +48,7 @@ const en = {
     },
     dresses: {
       midi: 'Midi dresses',
-      maxi: 'Maxi dresses',
+      maxi: 'Matching Sets',
       miniSkirts: 'Mini skirts',
       longSkirts: 'Long skirts',
     },
@@ -98,7 +98,8 @@ const en = {
       description: 'Linen, organic cotton and wool blends, sewn in our Ho Chi Minh City workshop.',
       cta: 'Shop now',
       imageAlt: 'Rack of neutral-toned clothes in a store',
-    },    hero: {
+    },    
+    hero: {
       label: 'Promotions',
       slideOf: 'Banner {current} of {total}',
       prev: 'Previous banner',
@@ -106,27 +107,37 @@ const en = {
       goTo: 'Show banner {number}',
       pause: 'Pause banner rotation',
       play: 'Resume banner rotation',
-      slides: {
-        newArrivals: {
-          kicker: 'Fall Winter 2026',
-          title: 'New arrivals',
-          description: 'Shirts, denim skirts and accessories just landed this week.',
-          cta: 'Shop new arrivals',
-          imageAlt: 'Six models in pastel shirts, crop tops and denim skirts',
+            slides: {
+        everyday: {
+          titleLine1: 'Dress Pretty Every Day.',
+          titleLine2: 'Confident Every Moment.',
+          description: 'Cute outfits for every style. Shine your own way.',
+          imageAlt: 'Banner-1',
+          buttons: {
+            shopNow: 'Shop now',
+            newArrivals: 'New arrivals',
+          },
         },
-        sale: {
-          kicker: 'This week only',
-          title: 'Up to 30% off',
-          description: 'On tees and skirts until Sunday.',
-          cta: 'Shop the sale',
-          imageAlt: 'Model holding several shopping bags',
+        freeship: {
+          titleLine1: 'Shop All You Want.',
+          titleLine2: 'Free Delivery!',
+          description: 'Free shipping on orders from 299K.',
+          imageAlt: 'Banner-2',
         },
-        member: {
-          kicker: 'New members',
-          title: 'Free shipping on your first order',
-          description: 'Create an account to get free delivery on your first order.',
-          cta: 'Create account',
-          imageAlt: 'Clothing store interior with garment racks',
+        outfitIdeas: {
+          titleLine1: 'Mix Your Way',
+          titleLine2: 'Own Your Style',
+          description: 'On-trend, easy-to-style outfits that look good anytime.',
+          imageAlt: 'Banner-3',
+        },
+        firstOrder: {
+          titleLine1: 'Your First Order',
+          titleLine2: '30% Off',
+          description: 'A special welcome offer for your first order at TrendyLab.',
+          imageAlt: 'Banner-4',
+          buttons: {
+            createAccount: 'Create account',
+          },
         },
       },
     },

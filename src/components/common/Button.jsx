@@ -2,7 +2,7 @@ import './Button.css';
 
 /**
  * Nút dùng chung cho toàn site.
- * - variant: 'primary' | 'secondary' | 'ghost' | 'soft' (nền trắng, chữ màu thương hiệu)
+ * - variant: 'primary' | 'secondary' | 'outline' | 'ghost' | 'soft' (nền trắng, chữ màu thương hiệu)
  * - size: 'md' | 'sm'
  * - as: 'button' (mặc định) hoặc 'a' để làm link trông như nút
  * - fullWidth: chiếm hết chiều ngang

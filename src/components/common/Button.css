@@ -64,6 +64,16 @@
   background: var(--color-surface-muted);
 }
 
+/* Outline: chỉ có viền màu thương hiệu (nút phụ đặt cạnh nút primary) */
+.btn--outline {
+  background: transparent;
+  color: var(--color-brand);
+  border-color: var(--color-brand);
+}
+.btn--outline:hover:not(:disabled) {
+  background: var(--color-brand-soft);
+}
+
 /* Soft: nền pastel, chữ màu thương hiệu (nút phụ trên khối tint) */
 .btn--soft {
   background: var(--color-surface);
