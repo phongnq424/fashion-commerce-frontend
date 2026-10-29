@@ -13,8 +13,8 @@ const vi = {
     viewAll: 'Xem tất cả',
   },
   brand: {
-    homeLabel: 'Trang chủ sợi.',
-    tagline: 'Quần áo may từ chất liệu tự nhiên, cắt gọn để mặc được nhiều năm.',
+    homeLabel: 'Giới thiệu.',
+    tagline: 'Mang đến những xu hướng thời trang trẻ trung và hiện đại, thể hiện cá tính, phong cách riêng qua từng bộ trang phục.',
   },
   header: {
     announcement: 'Miễn phí giao hàng cho đơn từ 499.000₫ và đổi trả trong 30 ngày',
@@ -261,18 +261,42 @@ const vi = {
     warning: 'Lưu ý',
     error: 'Lỗi',
   },
-  footer: {
-    support: 'Hỗ trợ',
-    contact: 'Liên hệ',
-    sizeGuide: 'Hướng dẫn chọn size',
-    returnPolicy: 'Chính sách đổi trả',
-    faq: 'Câu hỏi thường gặp',
-    about: 'Về sợi.',
-    story: 'Câu chuyện thương hiệu',
-    stores: 'Hệ thống cửa hàng',
-    careers: 'Tuyển dụng',
+    footer: {
+    // ----- Cột thương hiệu -----
     address: '123 Nguyễn Văn Cừ, Quận 5, TP.HCM',
-    copyright: '© {year} sợi. Đồ án môn Công nghệ phần mềm.',
+    phoneLabel: 'Số điện thoại',
+    emailLabel: 'Email',
+    social: {
+      label: 'Mạng xã hội của TrendyLab',
+      facebook: 'TrendyLab trên Facebook',
+      instagram: 'TrendyLab trên Instagram',
+      tiktok: 'TrendyLab trên TikTok',
+    },
+    // ----- Về TrendyLab -----
+    aboutTitle: 'Về TrendyLab',
+    about: 'Giới thiệu',
+    story: 'Câu chuyện thương hiệu',
+    contact: 'Liên hệ',
+    careers: 'Tuyển dụng',
+    // ----- Hỗ trợ khách hàng -----
+    supportTitle: 'Hỗ trợ khách hàng',
+    howToBuy: 'Hướng dẫn mua hàng',
+    sizeGuide: 'Hướng dẫn chọn size',
+    orderTracking: 'Tra cứu đơn hàng',
+    faq: 'Câu hỏi thường gặp',
+    // ----- Khám phá (Áo, Quần, Đầm & Váy dùng lại chữ của menu: nav) -----
+    exploreTitle: 'Khám phá',
+    newArrivals: 'Sản phẩm mới',
+    collection: 'Bộ sưu tập',
+    sale: 'Khuyến mãi',
+    // ----- Chính sách -----
+    policyTitle: 'Chính sách',
+    returnPolicy: 'Chính sách đổi trả',
+    shippingPolicy: 'Chính sách giao hàng',
+    paymentPolicy: 'Chính sách thanh toán',
+    privacyPolicy: 'Chính sách bảo mật',
+    terms: 'Điều khoản sử dụng',
+    copyright: '© {year} TrendyLab.',
   },
 };
 

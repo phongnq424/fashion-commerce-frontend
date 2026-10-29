@@ -11,11 +11,19 @@ import CollectionScreen from './screens/collection/CollectionScreen';
 import NotFoundScreen from './screens/notFound/NotFoundScreen';
 import { useLanguage } from './hooks/useLanguage';
 
-// Mỗi lần đổi trang thì cuộn lên đầu (trừ khi link có #, ví dụ #new-arrivals)
+// Mỗi lần đổi trang thì cuộn lên đầu.
+// Link có # (vd "/#lookbook") -> cuộn tới phần có id tương ứng.
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
   useEffect(() => {
-    if (!hash) window.scrollTo(0, 0);
+    if (hash) {
+      const target = document.getElementById(hash.slice(1));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+    }
+    window.scrollTo(0, 0);
   }, [pathname, hash]);
   return null;
 }

@@ -1,3 +1,7 @@
+/* =====================================================================
+   FOOTER: 5 cột trên máy tính
+     cột thương hiệu rộng hơn (1.6fr) | 4 cột link chia đều (1fr)
+   ===================================================================== */
 .site-footer {
   margin-top: var(--space-9);
   background: var(--color-tint-soft);
@@ -5,29 +9,113 @@
 
 .site-footer__inner {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: var(--space-7);
+  grid-template-columns: minmax(0, 1.6fr) repeat(4, minmax(0, 1fr));
+  gap: var(--space-6);
   padding-block: var(--space-8) var(--space-7);
 }
 
+/* ---------- Cột thương hiệu ---------- */
 .site-footer__brand {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--space-3);
-  max-width: 36ch;
+  gap: var(--space-4);
+  max-width: 34ch;
 }
 
 .site-footer__tagline {
   color: var(--color-text-muted);
 }
 
-.site-footer__address {
-  font-style: normal;
+.site-footer__contact {
+  font-style: normal; /* <address> mặc định in nghiêng */
+}
+
+.site-footer__contact ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.site-footer__contact li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
   font-size: var(--fs-sm);
   color: var(--color-text-muted);
 }
 
+.site-footer__contact-icon {
+  flex-shrink: 0;
+  width: 1.25em; /* 3 icon cùng bề rộng -> chữ phía sau thẳng hàng */
+  margin-top: 0.3em; /* canh icon thẳng dòng chữ đầu tiên */
+  text-align: center;
+  color: var(--color-heading-accent);
+}
+
+.site-footer__contact .site-footer__link {
+  padding-block: 0;
+}
+
+/* Hàng icon mạng xã hội: nút tròn nền trắng, icon mang màu thương hiệu */
+.site-footer__social {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.site-footer__social-link {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+  font-size: 1.375rem; /* cỡ icon Font Awesome = cỡ chữ */
+  text-decoration: none;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.site-footer__social-link:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-soft);
+}
+
+.site-footer__social-link:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Facebook: xanh chính thức */
+.site-footer__social-link--facebook {
+  color: var(--brand-facebook);
+}
+
+/* Instagram: màu chính thức là dải gradient -> tô gradient lên chính icon */
+.site-footer__social-link--instagram i {
+  background: linear-gradient(
+    45deg,
+    var(--brand-instagram-1) 0%,
+    var(--brand-instagram-2) 25%,
+    var(--brand-instagram-3) 50%,
+    var(--brand-instagram-4) 75%,
+    var(--brand-instagram-5) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* TikTok: nốt nhạc đen (Dark Mode tự thành trắng), viền lệch xanh ngọc + đỏ như logo chính thức */
+.site-footer__social-link--tiktok {
+  color: var(--color-text);
+  text-shadow:
+    -1.5px -1.5px 0 var(--brand-tiktok-cyan),
+    1.5px 1.5px 0 var(--brand-tiktok-red);
+}
+
+/* ---------- 4 cột link ---------- */
 .site-footer__title {
   margin-bottom: var(--space-3);
   font-size: var(--fs-xs);
@@ -63,13 +151,23 @@
   color: var(--color-text-muted);
 }
 
-@media (max-width: 768px) {
+/* ---------- Responsive ---------- */
+/* Tablet: cột thương hiệu chiếm 1 hàng riêng, 4 cột link bên dưới */
+@media (max-width: 1024px) {
   .site-footer__inner {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-6);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .site-footer__brand {
     grid-column: 1 / -1;
+    max-width: 48ch;
+  }
+}
+
+/* Điện thoại: 4 cột link thành 2 x 2 */
+@media (max-width: 640px) {
+  .site-footer__inner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-4);
   }
 }

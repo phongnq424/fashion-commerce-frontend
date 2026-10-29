@@ -16,7 +16,7 @@ function LookbookSection() {
   const { to, styleKeys, strip, feature, looks } = COLLECTION;
 
   return (
-    <section className="home-section container lookbook" aria-labelledby="lookbook-title">
+    <section id="lookbook" className="home-section container lookbook" aria-labelledby="lookbook-title">
       {/* ================= PHẦN 1: Fashion Collection ================= */}
       <div className="collection-banner">
         {/* Hàng chữ trên cùng: các phong cách (Thanh lịch, Năng động...) */}

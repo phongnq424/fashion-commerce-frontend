@@ -26,6 +26,16 @@
   --periwinkle-900: #1f2665;
   --periwinkle-950: #121640;
 
+    /* Màu thương hiệu mạng xã hội (màu chính thức hiện tại, chỉ dùng cho icon ở footer) */
+  --brand-facebook: #0866ff;
+  --brand-instagram-1: #feda75; /* gradient Instagram: vàng -> cam -> hồng -> tím -> xanh */
+  --brand-instagram-2: #fa7e1e;
+  --brand-instagram-3: #d62976;
+  --brand-instagram-4: #962fbf;
+  --brand-instagram-5: #4f5bd5;
+  --brand-tiktok-cyan: #25f4ee;
+  --brand-tiktok-red: #fe2c55;
+  
   /* Nền tối cho Dark Mode */
   --night-900: #0d1024;
   --night-800: #151a36;

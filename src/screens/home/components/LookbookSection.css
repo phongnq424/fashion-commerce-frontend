@@ -235,10 +235,14 @@
    -> 3 ô vuông vừa khít chiều cao, to nhất có thể. */
 .stock-look__media {
   position: relative;
-  width: calc(
+    /* chiều CAO mỗi khung: chia đều chiều cao khối cho 3 khung */
+  --look-size: calc(
     (var(--stock-h) - 2 * var(--panel-pad) - 2 * var(--look-gap) - 3 * var(--look-label)) / 3
   );
-  aspect-ratio: 1 / 1;
+  /* độ RỘNG so với chiều cao: 1 = vuông, 1.3 = rộng hơn 30%, 1.6 = chữ nhật nằm ngang */
+  --look-ratio: 1.4;
+  height: var(--look-size);
+  width: calc(var(--look-size) * var(--look-ratio));
   overflow: hidden;
   background: var(--color-tint);
   border-radius: var(--radius-lg); /* 24px, muốn bo ít hơn dùng --radius-md (12px) */
