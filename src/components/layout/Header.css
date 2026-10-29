@@ -200,8 +200,4 @@
   }
 }
 
-@media (max-width: 420px) {
-  .site-header__account {
-    display: none;
-  }
-}
+/* Nút tài khoản luôn hiện (kể cả điện thoại) vì giờ đã có popup đăng nhập */

@@ -3,6 +3,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Notice from './components/common/Notice';
+import AuthModal from './components/AuthModal/AuthModal';
 import HomeScreen from './screens/home/HomeScreen';
 import CategoryScreen from './screens/category/CategoryScreen';
 import ContactScreen from './screens/contact/ContactScreen';
@@ -38,6 +39,9 @@ function App() {
   // useCallback giữ hàm ổn định giữa các lần render (Notice dùng nó trong useEffect)
   const closeNotice = useCallback(() => setNotice(null), []);
 
+  // Hiện 1 thông báo nhỏ ở góc màn hình. type: 'success' | 'info' | 'warning' | 'error'
+  const notify = useCallback((type, message) => setNotice({ id: Date.now(), type, message }), []);
+
   // options (tuỳ chọn, từ trang chi tiết): { size, quantity }
   const handleAddToCart = useCallback(
     (product, options = {}) => {
@@ -68,7 +72,7 @@ function App() {
       <a href="#main-content" className="skip-link">
         {t('common.skipToContent')}
       </a>
-      <Header cartCount={cartCount} onSearch={handleSearch} />
+      <Header cartCount={cartCount} onSearch={handleSearch} onNotify={notify} />
       <main id="main-content" tabIndex={-1}>
         {/* BẢNG ĐỊNH TUYẾN: đường dẫn nào -> hiện màn hình nào */}
         <Routes>
@@ -85,6 +89,8 @@ function App() {
         </Routes>
       </main>
       <Footer />
+      {/* Popup đăng nhập / đăng ký: đặt 1 lần ở đây, mở bằng openAuth() từ bất kỳ đâu */}
+      <AuthModal onNotify={notify} />
       {/* key đổi mỗi lần -> thông báo mới luôn hiện lại từ đầu và đếm giờ lại */}
       {notice && <Notice key={notice.id} type={notice.type} message={notice.message} onClose={closeNotice} />}
     </>

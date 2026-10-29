@@ -8,16 +8,19 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeProvider';
 import { LanguageProvider } from './contexts/LanguageProvider';
+import { AuthProvider } from './contexts/AuthProvider';
 import App from './App';
 
-// Bọc App trong các Provider để MỌI component bên trong dùng được useTheme / useLanguage.
+// Bọc App trong các Provider để MỌI component bên trong dùng được useTheme / useLanguage / useAuth.
 // BrowserRouter: bật điều hướng nhiều trang (đọc đường dẫn trên thanh địa chỉ).
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <ThemeProvider>
         <LanguageProvider>
-          <App />
+          <AuthProvider>
+            <App />
+          </AuthProvider>
         </LanguageProvider>
       </ThemeProvider>
     </BrowserRouter>
