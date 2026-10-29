@@ -1,0 +1,112 @@
+/* =====================================================================
+   BĂNG CHUYỀN SẢN PHẨM (1 hàng, nút ‹ › hai bên)
+   ---------------------------------------------------------------------
+   Kỹ thuật: danh sách cuộn ngang (overflow-x) + scroll-snap để mỗi lần
+   cuộn dừng đúng mép thẻ. Nút ‹ › gọi scrollBy() trong ProductCarousel.jsx.
+   ===================================================================== */
+.product-carousel {
+  --carousel-cols: 5;                 /* số thẻ thấy cùng lúc */
+  --carousel-gap: var(--space-4);
+  /* bề rộng 1 thẻ = (bề rộng khung - các khe) / số cột */
+  --carousel-card: calc((100cqw - (var(--carousel-cols) - 1) * var(--carousel-gap)) / var(--carousel-cols));
+
+  position: relative;
+  container-type: inline-size; /* cho phép dùng đơn vị cqw = 1% bề rộng khung này */
+}
+
+.product-carousel__track {
+  display: grid;
+  grid-auto-flow: column;              /* xếp tất cả thẻ trên 1 hàng ngang */
+  grid-auto-columns: var(--carousel-card);
+  gap: var(--carousel-gap);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;       /* cuộn xong tự "hít" vào mép thẻ */
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;               /* ẩn thanh cuộn (Firefox) */
+  padding-bottom: var(--space-1);      /* chừa chỗ cho viền focus của nút */
+}
+
+.product-carousel__track::-webkit-scrollbar {
+  display: none;                       /* ẩn thanh cuộn (Chrome, Safari) */
+}
+
+.product-carousel__item {
+  scroll-snap-align: start;
+}
+
+/* ---------- Nút ‹ › ----------
+   Đặt ngang GIỮA ẢNH: ảnh tỉ lệ 3:4 -> cao = bề rộng thẻ x 4/3 -> giữa ảnh = bề rộng thẻ x 2/3 */
+.product-carousel__arrow {
+  position: absolute;
+  top: calc(var(--carousel-card) * 2 / 3);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background-color var(--transition), color var(--transition),
+    opacity var(--transition), transform var(--transition);
+}
+
+/* Nút lấn ra ngoài mép một nửa để không che ảnh nhiều */
+.product-carousel__arrow--prev {
+  left: -22px;
+}
+
+.product-carousel__arrow--next {
+  right: -22px;
+}
+
+.product-carousel__arrow:hover:not(:disabled) {
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  transform: translateY(-50%) scale(1.06);
+}
+
+/* Hết sản phẩm ở phía đó: mờ đi và không bấm được */
+.product-carousel__arrow:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1200px) {
+  .product-carousel {
+    --carousel-cols: 4;
+  }
+}
+
+@media (max-width: 1024px) {
+  .product-carousel {
+    --carousel-cols: 3;
+  }
+
+  /* Màn hình hẹp: nút nằm gọn bên trong để không bị cắt ở mép màn hình */
+  .product-carousel__arrow--prev {
+    left: var(--space-2);
+  }
+
+  .product-carousel__arrow--next {
+    right: var(--space-2);
+  }
+}
+
+@media (max-width: 640px) {
+  .product-carousel {
+    /* 2 thẻ + hé 1 phần thẻ thứ 3 -> người dùng biết là vuốt ngang được */
+    --carousel-cols: 2.3;
+    --carousel-gap: var(--space-3);
+  }
+
+  /* Điện thoại dùng vuốt, ẩn nút cho gọn */
+  .product-carousel__arrow {
+    display: none;
+  }
+}

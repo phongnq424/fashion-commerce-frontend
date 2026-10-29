@@ -57,6 +57,11 @@
   --color-surface: var(--neutral-0);            /* header, thẻ, modal */
   --color-surface-muted: var(--periwinkle-50);  /* ô input, nền ảnh sản phẩm */
   --color-overlay: rgb(18 22 64 / 0.45);
+  --color-on-overlay: var(--neutral-0);         /* chữ trên lớp phủ tối */
+  --color-scrim: rgb(13 16 36 / 0.72);          /* lớp tối mờ dưới chữ trắng trên ảnh (lookbook) */
+  --color-on-light-photo: var(--neutral-900);
+  --color-on-light-photo-muted: var(--neutral-600);
+  --color-on-light-photo-accent: var(--periwinkle-700);
 
   /* Các lớp "tint" pastel dùng cho khối trang trí (banner, ô danh mục, footer) */
   --color-tint-soft: var(--periwinkle-100);
@@ -64,6 +69,13 @@
   --color-tint-strong: var(--periwinkle-300);
   --color-tint-deep: var(--periwinkle-500);     /* dải nền sau chữ trắng lớn */
   --color-on-tint-deep: var(--neutral-0);
+
+  /* Vòng tròn danh mục ở trang chủ (CategoryList) */
+  --color-category-bg: var(--periwinkle-100);
+  --color-category-bg-hover: var(--periwinkle-200);
+  --color-category-ring: transparent;          /* viền mảnh quanh vòng tròn */
+  --color-category-icon: var(--periwinkle-600);
+  --color-category-glow: transparent;          /* quầng sáng khi rê chuột */
 
   /* Chữ */
   --color-text: var(--neutral-900);
@@ -126,6 +138,13 @@
   --color-tint-strong: var(--night-600);
   --color-tint-deep: var(--periwinkle-600);
   --color-on-tint-deep: var(--neutral-0);
+
+  /* Vòng tròn danh mục: tím xanh đậm + viền sáng nhẹ, nổi trên nền đêm */
+  --color-category-bg: var(--periwinkle-900);
+  --color-category-bg-hover: var(--periwinkle-800);
+  --color-category-ring: rgb(152 166 239 / 0.28);
+  --color-category-icon: var(--periwinkle-200);
+  --color-category-glow: rgb(111 127 224 / 0.35);
 
   --color-text: var(--mist-100);
   --color-text-muted: var(--mist-300);

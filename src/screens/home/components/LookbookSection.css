@@ -1,0 +1,298 @@
+/* =====================================================================
+   BỘ SƯU TẬP: 2 khối nối tiếp nhau
+     .collection-banner  (hình 1: hàng chữ + 4 ảnh + "Fashion Collection")
+     .stock-banner       (hình 2: "BACK IN STOCK" + 3 ảnh nhỏ)
+   cqw = 1% bề rộng của .lookbook -> chữ lớn co giãn đúng theo khung, không theo màn hình
+   ===================================================================== */
+.lookbook {
+  container-type: inline-size;
+}
+
+/* =================== PHẦN 1 =================== */
+.collection-banner {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hàng chữ trên cùng: chia đều các cột, chữ có chân in hoa */
+.collection-banner__labels {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  overflow-x: auto; /* màn hình hẹp: vuốt ngang để xem hết */
+  scrollbar-width: none;
+  font-family: var(--font-display);
+  font-size: clamp(0.75rem, 0.6rem + 0.5vw, 1rem);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-text-muted);
+}
+
+.collection-banner__labels::-webkit-scrollbar {
+  display: none;
+}
+
+/* 4 ảnh xếp ngang, sát nhau */
+.collection-banner__strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  aspect-ratio: 1920 / 560;
+  overflow: hidden;
+}
+
+.collection-banner__photo {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-tint-soft);
+}
+
+/* Ô xen kẽ đậm nhạt khi chưa có ảnh -> vẫn thấy được 4 khung */
+.collection-banner__photo:nth-child(even) {
+  background: var(--color-tint);
+}
+
+.collection-banner__image,
+.stock-banner__image,
+.stock-look__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms ease;
+}
+
+.collection-banner__strip:hover .collection-banner__image {
+  transform: scale(1.04);
+}
+
+.collection-banner__strip:focus-visible,
+.stock-banner__feature:focus-visible,
+.stock-look:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+/* "Fashion Collection": cỡ chữ cực lớn, kéo ngược lên để đè lên mép dưới hàng ảnh */
+.collection-banner__title {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin-top: -5.5cqw;
+  line-height: 1;
+  color: var(--color-heading-accent);
+  pointer-events: none; /* chữ đè lên ảnh nhưng không chặn cú bấm vào ảnh */
+}
+
+.collection-banner__title-main {
+  font-family: var(--font-editorial);
+  font-size: 13cqw;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.collection-banner__title-script {
+  margin-left: 1cqw;
+  font-family: var(--font-editorial-script);
+  font-size: 11.5cqw;
+  font-weight: 400;
+}
+
+/* "WINTER 2026 ———————— @TRENDYLAB" */
+.collection-banner__meta {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 4cqw, 4rem);
+  padding: var(--space-4) var(--space-5) var(--space-6);
+  font-family: var(--font-serif);
+  font-size: clamp(0.75rem, 0.5rem + 1.6cqw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.collection-banner__rule {
+  flex: 1;
+  height: 1.5px;
+  background: currentColor;
+}
+
+/* =================== PHẦN 2 =================== */
+.stock-banner {
+  --stock-h: clamp(600px, 70cqw, 860px); /* chiều cao cả khối (máy tính) */
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  height: var(--stock-h);
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+/* Ảnh lớn bên trái + chữ đè */
+.stock-banner__feature {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  background: var(--color-tint);
+  color: var(--color-on-overlay);
+  text-decoration: none;
+}
+
+/* Lớp tối mờ dưới chữ (trên + dưới) để chữ trắng luôn đọc rõ */
+.stock-banner__feature::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, var(--color-scrim) 0%, transparent 18%),
+    linear-gradient(0deg, var(--color-scrim) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.stock-banner__feature:hover .stock-banner__image {
+  transform: scale(1.03);
+}
+
+.stock-banner__eyebrow,
+.stock-banner__content {
+  position: relative;
+  z-index: 1;
+}
+
+.stock-banner__eyebrow {
+  position: absolute;
+  top: clamp(1.25rem, 4cqw, 3rem);
+  left: clamp(1.25rem, 4cqw, 3.5rem);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+.stock-banner__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: clamp(1.25rem, 4cqw, 3.5rem);
+}
+
+/* "BACK IN / STOCK": chữ có chân, dòng 2 nghiêng */
+.stock-banner__title {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-serif);
+  font-size: clamp(2.75rem, 9cqw, 7rem);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.stock-banner__title-accent {
+  font-style: italic;
+}
+
+.stock-banner__desc {
+  max-width: 24ch;
+  font-size: clamp(0.9375rem, 0.7rem + 1cqw, 1.375rem);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+/* Cột bên phải: nền pastel, 3 ảnh nhỏ VUÔNG bo góc + tên màu, đặt giữa cột */
+.stock-banner__panel {
+  --panel-pad: 2rem;     /* khoảng cách trên/dưới của cột */
+  --look-gap: var(--space-4); /* khoảng cách giữa 2 ô */
+  --look-label: 1.9rem;  /* chiều cao dòng tên màu + khoảng cách phía trên nó */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--look-gap);
+  padding: var(--panel-pad) var(--space-5);
+  background: var(--color-tint-soft);
+}
+
+.stock-look {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+/* Khung ảnh nhỏ: HÌNH VUÔNG.
+   Cạnh ô vuông = (chiều cao khối - khoảng trống trên dưới - 2 khoảng cách - 3 dòng tên màu) / 3
+   -> 3 ô vuông vừa khít chiều cao, to nhất có thể. */
+.stock-look__media {
+  position: relative;
+  width: calc(
+    (var(--stock-h) - 2 * var(--panel-pad) - 2 * var(--look-gap) - 3 * var(--look-label)) / 3
+  );
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--color-tint);
+  border-radius: var(--radius-lg); /* 24px, muốn bo ít hơn dùng --radius-md (12px) */
+}
+
+.stock-look:hover .stock-look__image {
+  transform: scale(1.05);
+}
+
+.stock-look__label {
+  font-size: var(--fs-body);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+.stock-look:hover .stock-look__label {
+  color: var(--color-heading-accent);
+}
+
+/* =================== Responsive =================== */
+@media (max-width: 768px) {
+  /* 4 ảnh -> lưới 2 x 2 cho khỏi quá thấp */
+  .collection-banner__strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    aspect-ratio: 1 / 1;
+  }
+
+  .collection-banner__title {
+    margin-top: -7cqw;
+  }
+
+  /* Phần 2: ảnh lớn ở trên, 3 ảnh nhỏ thành 1 hàng ngang bên dưới */
+  .stock-banner {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .stock-banner__feature {
+    aspect-ratio: 4 / 5;
+  }
+
+  .stock-banner__panel {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+
+  .stock-look__media {
+    width: 100%; /* mobile: ô vuông rộng bằng 1/3 hàng */
+    border-radius: var(--radius-md);
+  }
+
+  .stock-look__label {
+    font-size: var(--fs-xs);
+  }
+}

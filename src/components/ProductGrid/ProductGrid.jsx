@@ -4,15 +4,27 @@ import Icon from '../common/Icon';
 import { useLanguage } from '../../hooks/useLanguage';
 import './ProductGrid.css';
 
-const SKELETON_COUNT = 8;
-
 /**
  * Lưới sản phẩm có đủ 4 trạng thái: đang tải / lỗi / rỗng / có dữ liệu.
  * - status: 'loading' | 'error' | 'success'
  * - errorMessage, emptyMessage: chuỗi đã dịch do trang cha truyền vào
+ * - columns: số cột trên máy tính (4 hoặc 5). Màn hình nhỏ tự giảm cột.
+ * - skeletonCount: số ô "đang tải" (nên bằng số sản phẩm sẽ hiện)
+ * - cardBadges: nhãn hiện trên thẻ, truyền thẳng cho ProductCard (prop badges)
  */
-function ProductGrid({ products = [], status, errorMessage, emptyMessage, onRetry, onAddToCart }) {
+function ProductGrid({
+  products = [],
+  status,
+  errorMessage,
+  emptyMessage,
+  onRetry,
+  onAddToCart,
+  columns = 4,
+  skeletonCount = 8,
+  cardBadges,
+}) {
   const { t } = useLanguage();
+  const gridClass = `product-grid product-grid--cols-${columns}`;
 
   if (status === 'loading') {
     return (
@@ -20,8 +32,8 @@ function ProductGrid({ products = [], status, errorMessage, emptyMessage, onRetr
         <p className="visually-hidden" role="status">
           {t('common.loading')}
         </p>
-        <ul className="product-grid">
-          {Array.from({ length: SKELETON_COUNT }, (_, index) => (
+        <ul className={gridClass}>
+          {Array.from({ length: skeletonCount }, (_, index) => (
             <li key={index} className="product-skeleton" aria-hidden="true">
               <div className="product-skeleton__media" />
               <div className="product-skeleton__line" />
@@ -56,10 +68,10 @@ function ProductGrid({ products = [], status, errorMessage, emptyMessage, onRetr
   }
 
   return (
-    <ul className="product-grid">
+    <ul className={gridClass}>
       {products.map((product) => (
         <li key={product.id}>
-          <ProductCard product={product} onAddToCart={onAddToCart} />
+          <ProductCard product={product} onAddToCart={onAddToCart} badges={cardBadges} />
         </li>
       ))}
     </ul>

@@ -6,6 +6,8 @@ import Notice from './components/common/Notice';
 import HomeScreen from './screens/home/HomeScreen';
 import CategoryScreen from './screens/category/CategoryScreen';
 import ContactScreen from './screens/contact/ContactScreen';
+import ProductDetailScreen from './screens/product/ProductDetailScreen';
+import CollectionScreen from './screens/collection/CollectionScreen';
 import NotFoundScreen from './screens/notFound/NotFoundScreen';
 import { useLanguage } from './hooks/useLanguage';
 
@@ -28,10 +30,15 @@ function App() {
   // useCallback giữ hàm ổn định giữa các lần render (Notice dùng nó trong useEffect)
   const closeNotice = useCallback(() => setNotice(null), []);
 
+  // options (tuỳ chọn, từ trang chi tiết): { size, quantity }
   const handleAddToCart = useCallback(
-    (product) => {
-      setCartCount((count) => count + 1);
-      setNotice({ id: Date.now(), type: 'success', message: t('product.added', { name: product.name }) });
+    (product, options = {}) => {
+      const quantity = options.quantity ?? 1;
+      setCartCount((count) => count + quantity);
+      const message = options.size
+        ? t('productDetail.added', { quantity, name: product.name, size: options.size })
+        : t('product.added', { name: product.name });
+      setNotice({ id: Date.now(), type: 'success', message });
     },
     [t],
   );
@@ -63,6 +70,8 @@ function App() {
             path="/category/:categoryId/:subId"
             element={<CategoryScreen onAddToCart={handleAddToCart} />}
           />
+          <Route path="/product/:productId" element={<ProductDetailScreen onAddToCart={handleAddToCart} />} />
+          <Route path="/collections/:collectionId" element={<CollectionScreen onAddToCart={handleAddToCart} />} />
           <Route path="/contact" element={<ContactScreen />} />
           <Route path="*" element={<NotFoundScreen />} />
         </Routes>

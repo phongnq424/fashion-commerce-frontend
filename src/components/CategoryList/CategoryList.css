@@ -1,81 +1,115 @@
-/* Lưới 4 ô vuông danh mục, mỗi ô một sắc độ pastel khác nhau (giống mẫu) */
+/* =====================================================================
+   DANH MỤC NỔI BẬT: icon nét mảnh trong vòng tròn pastel + tên + "Mua ngay →"
+   ===================================================================== */
+
+/* 6 cột trên máy tính, tự xuống 3 cột (tablet/mobile) */
 .category-list {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--space-6) var(--space-4);
 }
 
-.category-tile {
-  position: relative;
-  display: grid;
-  place-items: center;
-  aspect-ratio: 1; /* ô vuông */
-  padding: var(--space-4);
-  overflow: hidden;
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--transition), box-shadow var(--transition);
-}
-
-.category-tile:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-soft);
-}
-
-/* Mỗi ô một sắc độ nền */
-.category-tile--tops        { background: var(--color-tint-strong); }
-.category-tile--bottoms     { background: var(--color-tint); }
-.category-tile--dresses     { background: var(--color-accent); } /* đậm nhất, đủ tương phản cho chữ nhỏ */
-.category-tile--accessories { background: var(--color-tint-soft); }
-
-.category-tile__flower {
-  position: absolute;
-  top: var(--space-3);
-  left: var(--space-3);
-  color: var(--color-surface);
-}
-
-/* Nhãn nằm trong hình "blob" */
-.category-tile__badge {
-  display: grid;
-  place-items: center;
-  width: 68%;
-  aspect-ratio: 1;
-  padding: var(--space-2);
-  font-family: var(--font-display);
-  font-size: clamp(0.875rem, 0.6rem + 0.8vw, 1.25rem);
-  font-weight: var(--fw-extrabold);
-  line-height: var(--lh-heading);
-  text-transform: uppercase;
+.category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
   text-align: center;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+/* Vòng tròn chứa icon */
+.category-item__circle {
+  display: grid;
+  place-items: center;
+  width: clamp(88px, 9vw, 128px);
+  aspect-ratio: 1;
+  margin-bottom: var(--space-2);
+  background: var(--color-category-bg);
+  color: var(--color-category-icon);
+  border-radius: 50%;
+  /* Viền mảnh vẽ bằng box-shadow -> không làm vòng tròn to ra */
+  box-shadow: inset 0 0 0 1px var(--color-category-ring);
+  transition: background-color var(--transition), box-shadow 300ms ease, transform 300ms ease;
+}
+
+.category-item__circle svg {
+  width: 54%;
+  height: 54%;
   transition: transform 300ms ease;
 }
 
-.category-tile:hover .category-tile__badge {
-  transform: rotate(-4deg) scale(1.04);
+/* Tên danh mục */
+.category-item__name {
+  font-family: var(--font-display);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
 }
 
-.category-tile__badge--shape-1 { border-radius: var(--radius-blob-1); }
-.category-tile__badge--shape-2 { border-radius: var(--radius-blob-2); }
-.category-tile__badge--shape-3 { border-radius: var(--radius-blob-3); }
+/* "Mua ngay →" */
+.category-item__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  transition: color var(--transition);
+}
 
-/* Kiểu "blob": blob trắng, chữ màu thương hiệu */
-.category-tile--blob .category-tile__badge {
-  background: var(--color-surface);
+.category-item__arrow {
+  transition: transform var(--transition);
+}
+
+/* ---------- Hover: vòng tròn đậm màu hơn, icon phóng nhẹ, mũi tên trượt sang phải ---------- */
+.category-item:hover .category-item__circle {
+  background: var(--color-category-bg-hover);
+  box-shadow:
+    inset 0 0 0 1px var(--color-category-ring),
+    0 10px 28px -6px var(--color-category-glow);
+  transform: translateY(-4px);
+}
+
+.category-item:hover .category-item__circle svg {
+  transform: scale(1.08);
+}
+
+.category-item:hover .category-item__cta {
   color: var(--color-heading-accent);
-  box-shadow: var(--shadow-sm);
 }
 
-/* Kiểu "ring": nền đậm, viền trắng nét đứt, chữ trắng (như ô "BEST SELLER") */
-.category-tile--ring .category-tile__badge {
-  border: 3px dashed var(--color-on-accent);
-  color: var(--color-on-accent);
+.category-item:hover .category-item__arrow {
+  transform: translateX(4px);
 }
 
+/* Focus bàn phím: viền quanh vòng tròn thay vì quanh cả khối */
+.category-item:focus-visible {
+  outline: none;
+}
+
+.category-item:focus-visible .category-item__circle {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+/* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .category-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-3);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .category-list {
+    gap: var(--space-5) var(--space-2);
+  }
+
+  .category-item__name {
+    font-size: var(--fs-sm);
+  }
+
+  .category-item__cta {
+    font-size: var(--fs-xs);
   }
 }

@@ -7,50 +7,6 @@
 }
 
 /* =====================================================================
-   LỢI ÍCH MUA HÀNG: 3 cột căn giữa trên nền tint
-   ===================================================================== */
-.benefits {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-4);
-}
-
-.benefits__item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-6) var(--space-5);
-  background: var(--color-tint-soft);
-  border-radius: var(--radius-md);
-  text-align: center;
-}
-
-.benefits__icon {
-  display: grid;
-  place-items: center;
-  width: 56px;
-  height: 56px;
-  background: var(--color-surface);
-  color: var(--color-heading-accent);
-  border-radius: var(--radius-blob-3);
-  box-shadow: var(--shadow-sm);
-}
-
-.benefits__title {
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-bold);
-  text-transform: uppercase;
-  letter-spacing: var(--ls-wide);
-}
-
-.benefits__text {
-  margin-top: var(--space-1);
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
-}
-
-/* =====================================================================
    ĐĂNG KÝ NHẬN TIN: khối gradient pastel, nội dung căn giữa
    ===================================================================== */
 .newsletter {
@@ -123,22 +79,6 @@
 /* =====================================================================
    RESPONSIVE
    ===================================================================== */
-@media (max-width: 900px) {
-  .benefits {
-    grid-template-columns: 1fr;
-  }
-
-  .benefits__item {
-    flex-direction: row;
-    text-align: left;
-    padding: var(--space-4);
-  }
-
-  .benefits__icon {
-    flex-shrink: 0;
-  }
-}
-
 @media (max-width: 640px) {
   .home-section {
     margin-top: var(--space-8);

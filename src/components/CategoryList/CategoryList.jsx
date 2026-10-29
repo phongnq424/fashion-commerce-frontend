@@ -1,15 +1,22 @@
+import { Link } from 'react-router-dom';
 import Icon from '../common/Icon';
 import { useLanguage } from '../../hooks/useLanguage';
 import './CategoryList.css';
 
-// Danh mục là nhãn GIAO DIỆN cố định -> dùng key dịch.
-// variant quyết định kiểu ô: 'blob' (blob trắng, chữ màu) | 'ring' (nền đậm, viền trắng, chữ trắng)
-// (Nếu sau này danh mục lấy từ Backend, hiển thị đúng tên Backend trả về.)
-const CATEGORIES = [
-  { id: 'tops', labelKey: 'home.categories.tops', variant: 'blob', shape: 1 },
-  { id: 'bottoms', labelKey: 'home.categories.bottoms', variant: 'blob', shape: 2 },
-  { id: 'dresses', labelKey: 'home.categories.dresses', variant: 'ring', shape: 3 },
-  { id: 'accessories', labelKey: 'home.categories.accessories', variant: 'blob', shape: 1 },
+// =====================================================================
+// DANH MỤC NỔI BẬT TRÊN TRANG CHỦ
+// - icon:     tên icon trong components/common/Icon.jsx (tshirt, shirt, jacket, pants, dress, skirt)
+// - labelKey: dùng LẠI chữ của menu (nav / navSub trong vi.js, en.js) -> menu đổi tên thì ô này đổi theo
+// - to:       trang danh mục tương ứng (cùng đường dẫn với menu)
+// Muốn đổi / thêm / bớt ô: sửa mảng này.
+// =====================================================================
+const FEATURED_CATEGORIES = [
+  { id: 'tshirts', icon: 'tshirt', labelKey: 'navSub.tops.tshirts', to: '/category/tops/tshirts' },
+  { id: 'shirts', icon: 'shirt', labelKey: 'navSub.tops.shirts', to: '/category/tops/shirts' },
+  { id: 'jackets', icon: 'jacket', labelKey: 'navSub.tops.jackets', to: '/category/tops/jackets' },
+  { id: 'jeans', icon: 'pants', labelKey: 'navSub.bottoms.jeans', to: '/category/bottoms/jeans' },
+  { id: 'dresses', icon: 'dress', labelKey: 'navSub.dresses.midi', to: '/category/dresses/midi' },
+  { id: 'skirts', icon: 'skirt', labelKey: 'navSub.dresses.miniSkirts', to: '/category/dresses/miniSkirts' },
 ];
 
 function CategoryList() {
@@ -17,17 +24,15 @@ function CategoryList() {
 
   return (
     <ul className="category-list">
-      {CATEGORIES.map((category) => (
+      {FEATURED_CATEGORIES.map((category) => (
         <li key={category.id}>
-          <a
-            href={`#${category.id}`}
-            className={`category-tile category-tile--${category.variant} category-tile--${category.id}`}
-          >
-            <Icon name="flower" size={20} filled className="category-tile__flower" />
-            <span className={`category-tile__badge category-tile__badge--shape-${category.shape}`}>
-              {t(category.labelKey)}
+          {/* Cả ô là 1 link: bấm vào vòng tròn, tên hay "Mua ngay" đều được */}
+          <Link to={category.to} className="category-item">
+            <span className="category-item__circle">
+              <Icon name={category.icon} size={52} strokeWidth={1.2} />
             </span>
-          </a>
+            <span className="category-item__name">{t(category.labelKey)}</span>
+          </Link>
         </li>
       ))}
     </ul>

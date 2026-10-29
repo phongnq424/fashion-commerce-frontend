@@ -21,14 +21,18 @@
   --font-display: 'Montserrat', var(--font-sans);
   --font-script: 'Dancing Script', cursive;
   --font-logo: 'Mr Dafoe', cursive;
-  --font-serif: 'Playfair Display', Georgia, serif; /* tiêu đề banner */
+  --font-serif: 'Playfair Display', Georgia, serif; /* chữ có chân: "BACK IN STOCK", "WINTER 2026" */
+  --font-editorial: 'Italiana', var(--font-serif);       /* chữ mảnh cực lớn "Fashion" (chỉ hỗ trợ chữ Latin không dấu) */
+  --font-editorial-script: 'Pinyon Script', var(--font-script); /* chữ viết tay "Collection" */
 
   /* ---------- Cỡ chữ ----------
      clamp(min, giá trị co giãn, max): chữ to dần theo màn hình mà không cần media query */
   --fs-2xs: 0.625rem;  /* 10px - số trên huy hiệu giỏ hàng */
   --fs-xs: 0.75rem;    /* 12px - chú thích, nhãn nhỏ */
   --fs-sm: 0.875rem;   /* 14px - nút, menu, chữ phụ */
-  --fs-base: 1rem;     /* 16px - nội dung chính */
+  --fs-body: 0.875rem;  /* 15px - chữ nội dung chuẩn của trang (body, tên sản phẩm, giá) */
+  --fs-base: 1rem;     /* 16px - chữ nhấn nhẹ */
+  --fs-section-title: 1.25rem; /* 20px - tiêu đề mục: Hàng mới về, Sản phẩm bán chạy... */
   --fs-md: 1.125rem;   /* 18px - đoạn dẫn */
   --fs-lg: 1.375rem;   /* 22px - tiêu đề nhỏ */
   --fs-xl: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);      /* tiêu đề section */

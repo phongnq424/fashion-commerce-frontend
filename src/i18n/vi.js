@@ -137,17 +137,56 @@ const vi = {
     },
     categories: {
       title: 'Mua theo danh mục',
-      description: 'Chọn nhanh kiểu đồ bạn đang tìm.',
-      tops: 'Áo',
-      bottoms: 'Quần',
-      dresses: 'Váy & đầm',
-      accessories: 'Phụ kiện',
+      shopNow: 'Mua ngay',
     },
     newArrivals: {
       title: 'Hàng mới về',
-      description: 'Những mẫu vừa về kho tuần này.',
       error: 'Không tải được sản phẩm. Kiểm tra kết nối mạng rồi bấm Thử lại.',
       empty: 'Chưa có sản phẩm mới. Quay lại vào tuần sau.',
+    },
+    bestSellers: {
+      title: 'Sản phẩm bán chạy',
+      error: 'Không tải được sản phẩm bán chạy. Kiểm tra kết nối mạng rồi bấm Thử lại.',
+      empty: 'Chưa có sản phẩm bán chạy.',
+    },
+    recommendations: {
+      title: 'Gợi ý cho bạn',
+      error: 'Không tải được gợi ý. Kiểm tra kết nối mạng rồi bấm Thử lại.',
+      empty: 'Chưa có gợi ý nào cho bạn.',
+    },
+        lookbook: {
+      // "Fashion" dùng font Italiana: chỉ có chữ Latin KHÔNG DẤU -> giữ tiếng Anh cho đẹp
+      title: 'Fashion',
+      titleScript: 'Collection',
+      // Hàng chữ trên cùng (hình 1): 6 phong cách, ngang hàng nhau
+      styles: {
+        elegant: 'Thanh lịch',
+        dynamic: 'Năng động',
+        youthful: 'Trẻ trung',
+        edgy: 'Cá tính',
+        feminine: 'Nữ tính',
+        minimal: 'Tối giản',
+      },
+      stripLabel: 'Xem bộ sưu tập hoodie nỉ bông',
+      season: 'Winter 2026',
+      handle: '@TrendyLab',
+      eyebrow: 'TrendyLab Studio',
+      featureLine1: 'Back in',
+      featureLine2: 'stock',
+      featureText: 'Mẫu hoodie khoá kéo bạn yêu thích đã có hàng trở lại!',
+      // Chữ dưới 3 ô vuông
+      looks: {
+        look1: 'Nâu',   // ← chữ ô vuông 1
+        look2: 'Đen',    // ← ô vuông 2
+        look3: 'Xanh đậm',         // ← ô vuông 3
+      },
+      looksLabel: 'Các màu hoodie',
+    },
+    promo: {
+      eyebrow: 'Ưu đãi đặc biệt',
+      title: 'Giảm đến 50%',
+      description: 'Làm mới tủ đồ với đợt sale theo mùa, số lượng có hạn.',
+      cta: 'Mua hàng giảm giá',
     },
     benefits: {
       title: 'Mua sắm tại sợi.',
@@ -157,6 +196,8 @@ const vi = {
       returnsText: 'Đổi size hoặc trả hàng còn nguyên tem.',
       paymentTitle: 'Thanh toán an toàn',
       paymentText: 'COD, thẻ ngân hàng hoặc ví điện tử.',
+      supportTitle: 'Hỗ trợ 24/7',
+      supportText: 'Luôn sẵn sàng giải đáp mọi thắc mắc.',
     },
     newsletter: {
       title: 'Nhận tin bộ sưu tập mới',
@@ -175,6 +216,7 @@ const vi = {
     addToCartLabel: 'Thêm {name} vào giỏ hàng',
     added: 'Đã thêm “{name}” vào giỏ hàng.',
     soldOut: 'Hết hàng',
+    badgeBestSeller: 'Bán chạy',
     badgeNew: 'Mới',
     badgeSale: '-{percent}%',
     salePrice: 'Giá khuyến mãi',
@@ -183,6 +225,35 @@ const vi = {
     addToWishlist: 'Thêm {name} vào yêu thích',
     removeFromWishlist: 'Bỏ {name} khỏi yêu thích',
     imageMissing: 'Chưa có ảnh sản phẩm',
+  },
+  collection: {
+    sale: {
+      title: 'Đang giảm giá',
+      error: 'Không tải được sản phẩm giảm giá. Kiểm tra kết nối mạng rồi bấm Thử lại.',
+      empty: 'Hiện chưa có sản phẩm nào đang giảm giá.',
+    },
+  },
+  carousel: {
+    prev: 'Xem các sản phẩm trước',
+    next: 'Xem các sản phẩm tiếp theo',
+  },
+  productDetail: {
+    error: 'Không tải được sản phẩm. Kiểm tra kết nối mạng rồi bấm Thử lại.',
+    inStock: 'Còn hàng',
+    outOfStock: 'Hết hàng',
+    soldCount: 'Đã bán {count}',
+    save: 'Tiết kiệm {percent}%',
+    size: 'Kích cỡ',
+    sizeRequired: 'Vui lòng chọn kích cỡ trước khi thêm vào giỏ.',
+    quantity: 'Số lượng',
+    decrease: 'Giảm số lượng',
+    increase: 'Tăng số lượng',
+    added: 'Đã thêm {quantity} × “{name}” (size {size}) vào giỏ hàng.',
+    perkShipping: 'Miễn phí giao hàng cho đơn từ 499.000₫',
+    perkReturns: 'Đổi trả miễn phí trong 30 ngày',
+    perkPayment: 'Thanh toán khi nhận hàng (COD) hoặc chuyển khoản',
+    description: 'Mô tả sản phẩm',
+    material: 'Chất liệu',
   },
   notice: {
     success: 'Thành công',
