@@ -277,7 +277,7 @@ const en = {
     otpResendIn: 'Resend in {time}',
     otpResend: 'Resend code',
     otpResent: 'A new code is on its way. Check your messages.',
-    otpChangeInfo: 'Change sign-up details',
+    otpChangeInfo: 'Back to Sign Up',
     forgotTitle: 'Forgot password',
     forgotSubtitle: 'Enter the email you signed up with and we’ll send you a reset link.',
     fullName: 'Full name',

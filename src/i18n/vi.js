@@ -274,7 +274,7 @@ const vi = {
     otpResendIn: 'Gửi lại sau {time}',
     otpResend: 'Gửi lại mã',
     otpResent: 'Đã gửi mã mới. Kiểm tra tin nhắn của bạn.',
-    otpChangeInfo: 'Đổi thông tin đăng ký',
+    otpChangeInfo: 'Quay lại đăng ký',
     forgotTitle: 'Quên mật khẩu',
     forgotSubtitle: 'Nhập email đã đăng ký, chúng tôi sẽ gửi link để đặt lại mật khẩu.',
     fullName: 'Họ và tên',
