@@ -200,10 +200,10 @@ const vi = {
       supportText: 'Luôn sẵn sàng giải đáp mọi thắc mắc.',
     },
     newsletter: {
-      title: 'Nhận tin bộ sưu tập mới',
-      description: 'Mỗi tháng một email: hàng mới, mẹo phối đồ và ưu đãi riêng cho người đăng ký.',
+      title: 'Đăng ký nhận ưu đãi độc quyền',
+      description: 'Cập nhật bộ sưu tập mới, xu hướng thời trang và ưu đãi hấp dẫn dành riêng cho bạn.',
       emailLabel: 'Email',
-      emailPlaceholder: 'ban@example.com',
+      emailPlaceholder: 'Nhập email của bạn',
       submit: 'Đăng ký',
       submitting: 'Đang đăng ký…',
       success: 'Đã đăng ký. Kiểm tra hộp thư để xác nhận email.',

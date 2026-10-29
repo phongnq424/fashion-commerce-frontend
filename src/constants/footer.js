@@ -7,11 +7,11 @@
 // Muốn thêm / bớt link: thêm / xoá 1 dòng trong links + thêm chữ trong vi.js, en.js.
 // =====================================================================
 
-// Thông tin liên hệ: không cần dịch -> để ở đây cho dễ sửa
+// Thông tin liên hệ:
 export const SHOP_CONTACT = {
   phone: '0901 234 567',
-  phoneHref: 'tel:+84901234567', // bấm trên điện thoại -> gọi luôn
-  email: 'hello@trendylab.vn',
+  phoneHref: 'tel:+84901234567', 
+  email: 'support@trendylab.vn',
 };
 
 // Mạng xã hội. icon: class của Font Awesome (đã nạp bằng thẻ <link> trong index.html)
