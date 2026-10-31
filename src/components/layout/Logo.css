@@ -10,7 +10,7 @@
 
 /* Tầng trên: TRENDY in hoa, đậm, giãn chữ */
 .logo__top {
-  font-family: var(--font-display);
+  font-family: var(--font-logo-top); /* Montserrat: giữ nguyên, không đổi theo font chung */
   font-size: var(--fs-logo);
   font-weight: var(--fw-extrabold);
   text-transform: uppercase; /* gõ "Trendy" trong JSX, CSS tự in hoa */
@@ -19,7 +19,7 @@
 }
 
 .logo__name {
-  font-family: var(--font-display);
+  font-family: var(--font-logo-top); /* Montserrat: giữ nguyên, không đổi theo font chung */
   font-size: var(--fs-logo);
   font-weight: var(--fw-extrabold);
   letter-spacing: var(--ls-wider);

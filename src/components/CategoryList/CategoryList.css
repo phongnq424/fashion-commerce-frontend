@@ -1,5 +1,7 @@
 /* =====================================================================
-   DANH MỤC NỔI BẬT: icon nét mảnh trong vòng tròn pastel + tên + "Mua ngay →"
+   DANH MỤC NỔI BẬT: ảnh tròn + viền màu gradient (kiểu "story") + tên bên dưới
+     .category-item__ring    vòng viền màu ngoài cùng
+     .category-item__circle  khung tròn chứa ảnh, có khe trắng ngăn với viền
    ===================================================================== */
 
 /* 6 cột trên máy tính, tự xuống 3 cột (tablet/mobile) */
@@ -7,88 +9,83 @@
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: var(--space-6) var(--space-4);
+  max-width: 900px;      /* cả hàng chỉ rộng 900px -> các vòng tròn gần nhau hơn */
+  margin-inline: auto;   /* đặt hàng ở giữa trang */
 }
 
 .category-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   text-align: center;
   color: var(--color-text);
   text-decoration: none;
 }
 
-/* Vòng tròn chứa icon */
-.category-item__circle {
-  display: grid;
-  place-items: center;
-  width: clamp(88px, 9vw, 128px);
+/* Viền ngoài: dải màu thương hiệu, dày = padding (3px) */
+.category-item__ring {
+  display: block;
+  width: clamp(92px, 9vw, 132px);
   aspect-ratio: 1;
-  margin-bottom: var(--space-2);
-  background: var(--color-category-bg);
-  color: var(--color-category-icon);
+  padding: 3px;
+  background: linear-gradient(135deg, var(--color-brand) 0%, var(--color-tint-deep) 100%);
   border-radius: 50%;
-  /* Viền mảnh vẽ bằng box-shadow -> không làm vòng tròn to ra */
-  box-shadow: inset 0 0 0 1px var(--color-category-ring);
-  transition: background-color var(--transition), box-shadow 300ms ease, transform 300ms ease;
+  transition: transform 300ms ease, box-shadow 300ms ease;
 }
 
-.category-item__circle svg {
-  width: 54%;
-  height: 54%;
-  transition: transform 300ms ease;
+/* Khung ảnh: viền cùng màu nền trang tạo khe hở giữa ảnh và viền màu */
+.category-item__circle {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-category-bg); /* nền khi chưa có ảnh */
+  color: var(--color-category-icon); /* màu icon dự phòng */
+  border: 3px solid var(--color-bg);
+  border-radius: 50%;
+}
+
+.category-item__image {
+  /* Nằm tuyệt đối trong khung -> kích thước ảnh gốc không làm vòng tròn bị méo / dài ra */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* cắt ảnh cho vừa khung tròn, không méo */
+  transition: transform 400ms ease;
 }
 
 /* Tên danh mục */
 .category-item__name {
   font-family: var(--font-display);
-  font-size: var(--fs-base);
+  font-size: var(--fs-body);
   font-weight: var(--fw-semibold);
   line-height: var(--lh-snug);
 }
 
-/* "Mua ngay →" */
-.category-item__cta {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
-  transition: color var(--transition);
-}
-
-.category-item__arrow {
-  transition: transform var(--transition);
-}
-
-/* ---------- Hover: vòng tròn đậm màu hơn, icon phóng nhẹ, mũi tên trượt sang phải ---------- */
-.category-item:hover .category-item__circle {
-  background: var(--color-category-bg-hover);
-  box-shadow:
-    inset 0 0 0 1px var(--color-category-ring),
-    0 10px 28px -6px var(--color-category-glow);
+/* ---------- Hover: vòng nhích lên + bóng mờ, ảnh phóng nhẹ, chữ đổi màu ---------- */
+.category-item:hover .category-item__ring {
   transform: translateY(-4px);
+  box-shadow: var(--shadow-soft);
 }
 
-.category-item:hover .category-item__circle svg {
+.category-item:hover .category-item__image {
   transform: scale(1.08);
 }
 
-.category-item:hover .category-item__cta {
+.category-item:hover .category-item__name {
   color: var(--color-heading-accent);
 }
 
-.category-item:hover .category-item__arrow {
-  transform: translateX(4px);
-}
-
-/* Focus bàn phím: viền quanh vòng tròn thay vì quanh cả khối */
+/* Focus bàn phím: viền quanh vòng tròn */
 .category-item:focus-visible {
   outline: none;
 }
 
-.category-item:focus-visible .category-item__circle {
+.category-item:focus-visible .category-item__ring {
   outline: 3px solid var(--color-focus);
   outline-offset: 4px;
 }
@@ -107,9 +104,5 @@
 
   .category-item__name {
     font-size: var(--fs-sm);
-  }
-
-  .category-item__cta {
-    font-size: var(--fs-xs);
   }
 }

@@ -9,16 +9,22 @@
    Chữ KHÔNG chứa màu ở đây (màu nằm ở colors.css), nên Light/Dark tự đúng.
    Đổi font cả site -> sửa --font-* (và link Google Fonts trong index.html).
 
-   3 font, mỗi font một vai trò (đều hỗ trợ dấu tiếng Việt):
-   - Montserrat     : tiêu đề, nút, menu (hình học, đậm, hợp chữ IN HOA)
-   - Be Vietnam Pro : nội dung, đoạn văn (dễ đọc ở cỡ nhỏ)
-   - Dancing Script : chữ viết tay điểm xuyết (logo, dòng phụ ở hero)
+   Font, mỗi font một vai trò:
+   - Quicksand      : FONT CHUNG cả web (nội dung, tiêu đề, menu, nút), cỡ chuẩn 14px
+   - Montserrat     : chỉ chữ TRENDY của logo
+   - Mr Dafoe       : chữ ký "Lab" của logo
+   - Italiana, Pinyon Script, Playfair Display: khối "Fashion Collection" / "Back in stock"
+   - Dancing Script : chữ viết tay điểm xuyết
    ===================================================================== */
 
 :root {
   /* ---------- Font ---------- */
-  --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Montserrat', var(--font-sans);
+  /* FONT CHUNG CỦA CẢ WEB: nội dung, tiêu đề, menu, nút, giá... -> Quicksand (có đủ chữ tiếng Việt)
+     Muốn đổi font chung: chỉ sửa dòng --font-sans (nhớ thêm font đó vào link Google Fonts trong index.html) */
+  --font-sans: 'Quicksand', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--font-sans); /* tiêu đề, nút, menu: dùng chung font với nội dung */
+  /* Các font RIÊNG, không đổi theo font chung: */
+  --font-logo-top: 'Montserrat', sans-serif; /* chữ TRENDY của logo */
   --font-script: 'Dancing Script', cursive;
   --font-logo: 'Mr Dafoe', cursive;
   --font-serif: 'Playfair Display', Georgia, serif; /* chữ có chân: "BACK IN STOCK", "WINTER 2026" */
@@ -30,7 +36,7 @@
   --fs-2xs: 0.625rem;  /* 10px - số trên huy hiệu giỏ hàng */
   --fs-xs: 0.75rem;    /* 12px - chú thích, nhãn nhỏ */
   --fs-sm: 0.875rem;   /* 14px - nút, menu, chữ phụ */
-  --fs-body: 0.875rem;  /* 15px - chữ nội dung chuẩn của trang (body, tên sản phẩm, giá) */
+  --fs-body: 0.875rem; /* 14px - chữ nội dung chuẩn của trang (body, tên sản phẩm, giá) */
   --fs-base: 1rem;     /* 16px - chữ nhấn nhẹ */
   --fs-section-title: 1.25rem; /* 20px - tiêu đề mục: Hàng mới về, Sản phẩm bán chạy... */
   --fs-md: 1.125rem;   /* 18px - đoạn dẫn */
