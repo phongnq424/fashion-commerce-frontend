@@ -17,20 +17,62 @@ export const mockProducts = [
   {
     id: 'p001',
     category: 'tops',
-    subcategory: 'tshirts',
-    name: 'ÁO KIỂU BABIE',
+    subcategory: 'jackets',
+    name: '[ NỈ ÉP MÙA THU ĐÔNG ] Áo Khoác Hoodie Zip Xuân Hè, Vải Nỉ Ép, Form Boxy Unisex Nam Nữ.',
     price: 459000,
     originalPrice: null,
-    image: 'https://cdn.hstatic.net/products/200000202027/346a9767_0b611ed8c7e941faa538496a743fa486_grande.jpg',
+    image: 'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mfjq6j9qfrpr7d.webp',
     isNew: true,
     inStock: true,
     isBestSeller: false,
     soldCount: 312,
-    sizes: ['Freesize'],
-    material: 'Len',
+    sizes: ['S', 'M', 'L'],
+    material: 'Nỉ',
     description:
-      ' Áo len nữ dài tay Babie mỏng cổ v tay dài freesize phối viền màu.',
-  },
+      'Áo Khoác Hoodie Zip Thu Đông in nổi, dập nổi. Vải nỉ ép, form boxy unisex, nam nữ đều mặc được, có túi trong.',
+    details: [
+      'Chất liệu: Nỉ ép 2 lớp. Mặt trong là cotton thun (90% cotton) trơn mịn, mềm, mát, thấm hút mồ hôi tốt hơn nỉ xốp trơn. Mặt trong không có bông nên không lo đổ bông. Mặt ngoài là nỉ trơn phủ 1 lớp nhung mịn nhẹ, sờ mướt tay, không bị xù.',
+      'Form dáng: Form BOXY to ngang và ngắn về chiều dài, hack dáng, trendy. Unisex form cánh dơi, tay rộng, phù hợp cả nam và nữ. Form mặc ngang V3, không chùm được V3.',
+    ],
+    rating: 5.0,              // điểm đánh giá -> hàng "5.0 ★★★★★"
+    reviewCount: 509,         // "509 Đánh giá"
+    soldCount: 2150,          // "Đã bán 2,1k"
+    images: [                 // ảnh lớn + hàng ảnh nhỏ (ảnh đầu = ảnh chính)
+      'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mfjq6j9qfrpr7d.webp',
+      'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mfjq3g3cp0qx44.webp',
+      'https://down-vn.img.susercontent.com/file/vn-11134207-81ztc-mt6gx1z5qwhs08@resize_w900_nl.webp'
+    ],
+    colors: [                 
+      { 
+        id: 'gray white', 
+        name: 'Xám trắng', 
+        hex: '#DBD9C9', 
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mfjq6j9qfrpr7d.webp' 
+      },
+      { id: 'Pastel pink', 
+        name: 'Hồng sữa', 
+        hex: '#F1CDC9', 
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mfjq3g3cp0qx44.webp' 
+      },
+      { id: 'Red wine', 
+        name: 'Đỏ đô', 
+        hex: '#561319', 
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-81ztc-mt6gx1z5qwhs08@resize_w900_nl.webp' 
+      },
+    ],
+    gift: {                   
+      name: 'Quà tặng - Dây buộc tóc nữ xinh xắn',
+      image: 'https://down-vn.img.susercontent.com/file/vn-11134207-81ztc-mlgq3q62g6psee.webp',
+      originalPrice: 17000,
+      options: ['Ngẫu nhiên'],
+    },
+    care: 
+      ['Lộn trái áo khi giặt máy, nên dùng nước giặt ariel giữ màu, sẽ giữ màu áo bền hơn.', 
+        'Không dùng các loại bột giặt nhiều tẩy như : ô mô, surf, a ba',
+        'Không dùng thuốc tẩy sẽ làm bay màu áo, hỏng áo',
+        'Phơi trong mái che, bóng mát, tránh nắng gắt bạc màu áo nhanh ạ.'   
+      ]
+    },
   {
     id: 'p002',
     category: 'bottoms',

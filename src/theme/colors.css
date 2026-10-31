@@ -62,6 +62,7 @@
   --amber-700: #8f5200;
   --amber-300: #ffc266;
   --amber-100: #fff1d6;
+  --amber-500: #f5a524; /* màu ngôi sao đánh giá */
   --red-600: #c0362c;
   --red-300: #ff8a7a;
   --red-100: #fde4e1;
@@ -126,6 +127,8 @@
   --color-success: var(--green-600);
   --color-success-soft: var(--green-100);
   --color-warning: var(--amber-700);
+  --color-rating: var(--amber-500);
+  --color-gift: var(--red-600);
   --color-warning-soft: var(--amber-100);
   --color-danger: var(--red-600);
   --color-danger-soft: var(--red-100);

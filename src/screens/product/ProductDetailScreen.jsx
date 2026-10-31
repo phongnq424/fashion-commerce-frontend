@@ -5,6 +5,8 @@ import Button from '../../components/common/Button';
 import Icon from '../../components/common/Icon';
 import NotFoundScreen from '../notFound/NotFoundScreen';
 import ProductDetail from './components/ProductDetail';
+import ProductReviews from './components/ProductReviews';
+import RelatedProducts from './components/RelatedProducts';
 import { useLanguage } from '../../hooks/useLanguage';
 import { findCategory } from '../../constants/navigation';
 import { getProductById } from '../../services/productService';
@@ -80,7 +82,14 @@ function ProductDetailScreen({ onAddToCart }) {
         )}
 
         {/* key = id sản phẩm: sang sản phẩm khác thì size / số lượng đã chọn tự reset */}
-        {status === 'success' && <ProductDetail key={product.id} product={product} onAddToCart={onAddToCart} />}
+        {status === 'success' && (
+          <>
+            <ProductDetail key={product.id} product={product} onAddToCart={onAddToCart} />
+            {/* Dưới phần chi tiết: đánh giá của khách, rồi tới gợi ý sản phẩm khác */}
+            <ProductReviews key={`reviews-${product.id}`} product={product} />
+            <RelatedProducts product={product} onAddToCart={onAddToCart} />
+          </>
+        )}
       </div>
     </>
   );

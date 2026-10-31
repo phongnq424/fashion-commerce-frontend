@@ -59,3 +59,13 @@ export async function getSaleProducts(limit = 50) {
   await wait(500);
   return mockProducts.filter((product) => product.originalPrice > product.price).slice(0, limit);
 }
+
+// "Có thể bạn sẽ thích" ở trang chi tiết: ưu tiên cùng danh mục, bỏ chính sản phẩm đang xem.
+// Backend: fetch(`${API}/products/${product.id}/related?limit=${limit}`)
+export async function getRelatedProducts(product, limit = 10) {
+  await wait(500);
+  const others = mockProducts.filter((item) => item.id !== product.id);
+  const sameCategory = others.filter((item) => item.category === product.category);
+  const rest = others.filter((item) => item.category !== product.category);
+  return [...sameCategory, ...rest].slice(0, limit);
+}

@@ -88,7 +88,7 @@ function ProductCard({ product, onAddToCart, badges = DEFAULT_BADGES }) {
       <div className="product-card__body">
         <h3 className="product-card__name">
           {/* Link của React Router: chuyển trang không tải lại. Vùng bấm phủ cả thẻ (xem CSS ::after) */}
-          <Link to={`/product/${id}`} className="product-card__link">
+          <Link to={`/product/${id}`} className="product-card__link" title={name}>
             {name}
           </Link>
         </h3>

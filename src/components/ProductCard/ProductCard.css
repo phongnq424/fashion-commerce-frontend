@@ -106,10 +106,15 @@
 }
 
 .product-card__name {
-  font-size: var(--fs-body); /* 15px */
+  font-size: var(--fs-body); /* 14px */
   font-weight: var(--fw-medium);
   letter-spacing: var(--ls-normal);
   line-height: var(--lh-snug);
+  /* Tên dài -> chỉ hiện 1 dòng, phần thừa thành "..." để các thẻ luôn thẳng hàng.
+     Rê chuột vào tên sẽ thấy tên đầy đủ (title), trình đọc màn hình vẫn đọc đủ tên. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .product-card__link {

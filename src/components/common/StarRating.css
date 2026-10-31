@@ -1,0 +1,33 @@
+.star-rating {
+  display: inline-flex;
+  gap: 2px;
+  vertical-align: middle;
+}
+
+.star-rating__star {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Sao rỗng: viền màu sao, ruột trong suốt */
+.star-rating__empty {
+  display: block;
+  fill: none;
+  stroke: var(--color-rating);
+  stroke-width: 1.5;
+}
+
+/* Phần tô màu, cắt theo % điểm */
+.star-rating__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  overflow: hidden;
+}
+
+.star-rating__fill svg {
+  display: block;
+  fill: var(--color-rating);
+  stroke: var(--color-rating);
+  stroke-width: 1.5;
+}

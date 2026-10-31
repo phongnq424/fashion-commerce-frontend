@@ -42,14 +42,17 @@ function App() {
   // Hiện 1 thông báo nhỏ ở góc màn hình. type: 'success' | 'info' | 'warning' | 'error'
   const notify = useCallback((type, message) => setNotice({ id: Date.now(), type, message }), []);
 
-  // options (tuỳ chọn, từ trang chi tiết): { size, quantity }
+  // options (tuỳ chọn, từ trang chi tiết): { size, color, quantity, gift, buyNow }
+  //   buyNow = true: bấm "Mua ngay". Khi có trang thanh toán -> chuyển trang tới đó (navigate('/checkout'))
   const handleAddToCart = useCallback(
     (product, options = {}) => {
       const quantity = options.quantity ?? 1;
       setCartCount((count) => count + quantity);
-      const message = options.size
-        ? t('productDetail.added', { quantity, name: product.name, size: options.size })
-        : t('product.added', { name: product.name });
+      const params = { quantity, name: product.name, size: options.size, color: options.color };
+      let message = t('product.added', { name: product.name });
+      if (options.buyNow) message = t('productDetail.buyNowNotice', params);
+      else if (options.size && options.color) message = t('productDetail.addedWithColor', params);
+      else if (options.size) message = t('productDetail.added', params);
       setNotice({ id: Date.now(), type: 'success', message });
     },
     [t],
