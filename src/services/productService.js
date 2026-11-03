@@ -1,23 +1,60 @@
-import { mockProducts } from '../data/mockProducts';
+import { findCategoryForRoute, mapCategoryResponse } from '../mappers/categoryMapper';
+import { mapProductSummaryPage } from '../mappers/productMapper';
+import { apiClient } from './apiClient';
 
-// Lớp "service": nơi DUY NHẤT biết dữ liệu đến từ đâu.
-// Hiện tại trả dữ liệu giả sau 600ms để mô phỏng độ trễ mạng.
-// Khi nối Backend, thay thân hàm bằng:
-//   const res = await fetch(`${import.meta.env.VITE_API_URL}/products?sort=newest&limit=8`);
-//   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-//   return res.json();
-export async function getNewArrivals() {
-  await new Promise((resolve) => setTimeout(resolve, 600));
-  return mockProducts;
+const NEW_ARRIVALS_LIMIT = 8;
+const CATEGORY_PRODUCTS_LIMIT = 20;
+
+let categoriesRequest;
+
+function buildProductsPath(params) {
+  const query = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      query.set(key, String(value));
+    }
+  });
+
+  return `/products?${query.toString()}`;
 }
 
-// Lấy sản phẩm theo danh mục. subcategory có thể bỏ trống (= cả danh mục).
-// Khi nối Backend, thay bằng:
-//   fetch(`${API}/products?category=${category}&subcategory=${subcategory ?? ''}`)
-export async function getProductsByCategory(category, subcategory) {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return mockProducts.filter(
-    (product) =>
-      product.category === category && (!subcategory || product.subcategory === subcategory),
-  );
+async function getProductPage(params) {
+  const response = await apiClient.get(buildProductsPath(params));
+  return mapProductSummaryPage(response);
+}
+
+export async function getNewArrivals() {
+  const page = await getProductPage({ sort: 'NEWEST', limit: NEW_ARRIVALS_LIMIT });
+  return page.items;
+}
+
+export async function getCategories() {
+  if (!categoriesRequest) {
+    categoriesRequest = apiClient
+      .get('/catalog/categories')
+      .then((categories) => categories.map(mapCategoryResponse))
+      .catch((error) => {
+        categoriesRequest = undefined;
+        throw error;
+      });
+  }
+
+  return categoriesRequest;
+}
+
+export async function getProductsByCategory(categoryRouteId, subcategoryRouteId) {
+  const categories = await getCategories();
+  const category = findCategoryForRoute(categories, categoryRouteId, subcategoryRouteId);
+
+  // Backend hiện có thể chưa seed category con tương ứng với route frontend.
+  if (!category) return [];
+
+  const page = await getProductPage({
+    categoryId: category.id,
+    sort: 'NEWEST',
+    limit: CATEGORY_PRODUCTS_LIMIT,
+  });
+
+  return page.items;
 }

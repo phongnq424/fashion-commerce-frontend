@@ -3,6 +3,7 @@ import ProductGrid from '../../../components/ProductGrid/ProductGrid';
 import SectionHeading from '../../../components/common/SectionHeading';
 import { useLanguage } from '../../../hooks/useLanguage';
 import { getNewArrivals } from '../../../services/productService';
+import { ApiError } from '../../../services/apiClient';
 
 function NewArrivalsSection({ onAddToCart }) {
   const { t } = useLanguage();
@@ -11,12 +12,19 @@ function NewArrivalsSection({ onAddToCart }) {
 
   const loadProducts = useCallback(async () => {
     setStatus('loading');
+
     try {
-      const data = await getNewArrivals();
-      setProducts(data);
+      const products = await getNewArrivals();
+
+      setProducts(products);
       setStatus('success');
     } catch (error) {
-      console.error(error);
+      if (error instanceof ApiError) {
+        console.error(error.status, error.code, error.message);
+      } else {
+        console.error(error);
+      }
+
       setStatus('error');
     }
   }, []);
