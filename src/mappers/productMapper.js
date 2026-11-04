@@ -20,6 +20,26 @@ function getOption(product, type) {
   return product.options?.find((option) => option.type === type);
 }
 
+function getImageUrl(url, storageKey) {
+  if (typeof url === 'string' && url.trim()) return url;
+  if (typeof storageKey === 'string' && /^https?:\/\//i.test(storageKey)) return storageKey;
+  return null;
+}
+
+function mapProductImages(images) {
+  if (!Array.isArray(images)) return [];
+
+  return [...images]
+    .sort((first, second) => {
+      if (first.primary !== second.primary) return first.primary ? -1 : 1;
+      return first.sortOrder - second.sortOrder;
+    })
+    .map((image) => ({
+      ...image,
+      url: getImageUrl(image.url, image.storageKey),
+    }));
+}
+
 export function mapProductSummaryResponse(product) {
   if (!product || typeof product !== 'object' || !product.id || !product.name) {
     throw new TypeError('Product summary response không đúng API contract');
@@ -42,8 +62,7 @@ export function mapProductSummaryResponse(product) {
     originalPrice: product.compareAtPriceMinor ?? null,
 
     imageKey: product.primaryImageKey ?? null,
-    // Contract chỉ trả storage key, chưa có public URL nên ProductCard dùng placeholder.
-    image: null,
+    image: getImageUrl(product.primaryImageUrl, product.primaryImageKey),
 
     variantCount: product.variantCount,
     availableQuantity: product.availableQuantity,
@@ -65,6 +84,8 @@ export function mapProductDetailResponse(product, { categoryRouteId = null } = {
   );
   const sizeOption = getOption(product, 'SIZE');
   const colorOption = getOption(product, 'COLOR');
+  const imageRecords = mapProductImages(product.images);
+  const images = imageRecords.map((image) => image.url).filter(Boolean);
 
   return {
     source: 'api',
@@ -98,9 +119,9 @@ export function mapProductDetailResponse(product, { categoryRouteId = null } = {
         hex: value.hexColor ?? 'transparent',
       })) ?? [],
 
-    image: null,
-    images: [],
-    imageRecords: Array.isArray(product.images) ? product.images : [],
+    image: images[0] ?? null,
+    images,
+    imageRecords,
     publishedAt: product.publishedAt,
     isNew: isRecentlyPublished(product.publishedAt),
     isBestSeller: false,
