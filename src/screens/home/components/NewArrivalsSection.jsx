@@ -5,6 +5,10 @@ import { useLanguage } from '../../../hooks/useLanguage';
 import { getNewArrivals } from '../../../services/productService';
 import { ApiError } from '../../../services/apiClient';
 
+// 1 hàng x 5 cột = 5 sản phẩm (muốn 2 hàng thì đổi ROWS = 2)
+const COLUMNS = 5;
+const ROWS = 1;
+
 function NewArrivalsSection({ onAddToCart }) {
   const { t } = useLanguage();
   const [products, setProducts] = useState([]);
@@ -36,16 +40,19 @@ function NewArrivalsSection({ onAddToCart }) {
 
   return (
     <section id="new-arrivals" className="home-section container" aria-labelledby="new-arrivals-title">
+      {/* align="split": tiêu đề bên trái, "Xem tất cả →" bên phải */}
       <SectionHeading
         id="new-arrivals-title"
+        align="split"
         title={t('home.newArrivals.title')}
-        description={t('home.newArrivals.description')}
         actionLabel={t('common.viewAll')}
-        actionHref="#products"
+        actionHref="/collections/new-arrivals"
       />
       <ProductGrid
         products={products}
         status={status}
+        columns={COLUMNS}
+        skeletonCount={COLUMNS * ROWS}
         errorMessage={t('home.newArrivals.error')}
         emptyMessage={t('home.newArrivals.empty')}
         onRetry={loadProducts}

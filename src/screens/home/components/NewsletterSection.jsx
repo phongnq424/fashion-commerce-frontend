@@ -30,6 +30,7 @@ function NewsletterSection() {
 
   return (
     <section className="home-section container" aria-labelledby="newsletter-title">
+      {/* Bố cục 2 cột: chữ bên trái | form bên phải (điện thoại: xếp dọc) */}
       <div className="newsletter">
         <div className="newsletter__text">
           <h2 id="newsletter-title" className="newsletter__title">
@@ -38,34 +39,39 @@ function NewsletterSection() {
           <p className="newsletter__desc">{t('home.newsletter.description')}</p>
         </div>
 
-        {status === 'success' ? (
-          <p className="newsletter__success" role="status">
-            <Icon name="check" />
-            {t('home.newsletter.success')}
-          </p>
-        ) : (
-          // noValidate: tắt kiểm tra mặc định của trình duyệt để dùng thông báo lỗi đa ngôn ngữ của mình
-          <form className="newsletter__form" onSubmit={handleSubmit} noValidate>
-            <Input
-              type="email"
-              name="email"
-              label={t('home.newsletter.emailLabel')}
-              placeholder={t('home.newsletter.emailPlaceholder')}
-              autoComplete="email"
-              value={email}
-              onChange={(event) => {
-                setEmail(event.target.value);
-                if (errorKey) setErrorKey('');
-              }}
-              error={errorKey ? t(errorKey) : ''}
-              disabled={status === 'submitting'}
-              className="newsletter__field"
-            />
-            <Button type="submit" disabled={status === 'submitting'} className="newsletter__submit">
-              {status === 'submitting' ? t('home.newsletter.submitting') : t('home.newsletter.submit')}
-            </Button>
-          </form>
-        )}
+        <div className="newsletter__action">
+          {status === 'success' ? (
+            <p className="newsletter__success" role="status">
+              <Icon name="check" />
+              {t('home.newsletter.success')}
+            </p>
+          ) : (
+            // noValidate: tắt kiểm tra mặc định của trình duyệt để dùng thông báo lỗi đa ngôn ngữ của mình
+            <form className="newsletter__form" onSubmit={handleSubmit} noValidate>
+              {/* hideLabel: label "Email" ẩn khỏi mắt nhưng trình đọc màn hình vẫn đọc */}
+              <Input
+                type="email"
+                name="email"
+                label={t('home.newsletter.emailLabel')}
+                hideLabel
+                placeholder={t('home.newsletter.emailPlaceholder')}
+                autoComplete="email"
+                value={email}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                  if (errorKey) setErrorKey('');
+                }}
+                error={errorKey ? t(errorKey) : ''}
+                disabled={status === 'submitting'}
+                className="newsletter__field"
+              />
+              <Button type="submit" disabled={status === 'submitting'} className="newsletter__submit">
+                {status === 'submitting' ? t('home.newsletter.submitting') : t('home.newsletter.submit')}
+                <Icon name="arrowRight" size={16} />
+              </Button>
+            </form>
+          )}
+        </div>
       </div>
     </section>
   );

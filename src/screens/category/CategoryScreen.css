@@ -59,3 +59,8 @@
   border-color: var(--color-brand);
   font-weight: var(--fw-bold);
 }
+
+/* Trang "Xem tất cả" (CollectionScreen) không có hàng chip lọc -> chừa khoảng cách dưới tiêu đề */
+.collection-page__header {
+  margin-bottom: var(--space-6);
+}

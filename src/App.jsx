@@ -3,17 +3,28 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Notice from './components/common/Notice';
+import AuthModal from './components/AuthModal/AuthModal';
 import HomeScreen from './screens/home/HomeScreen';
 import CategoryScreen from './screens/category/CategoryScreen';
 import ContactScreen from './screens/contact/ContactScreen';
+import ProductDetailScreen from './screens/product/ProductDetailScreen';
+import CollectionScreen from './screens/collection/CollectionScreen';
 import NotFoundScreen from './screens/notFound/NotFoundScreen';
 import { useLanguage } from './hooks/useLanguage';
 
-// Mỗi lần đổi trang thì cuộn lên đầu (trừ khi link có #, ví dụ #new-arrivals)
+// Mỗi lần đổi trang thì cuộn lên đầu.
+// Link có # (vd "/#lookbook") -> cuộn tới phần có id tương ứng.
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
   useEffect(() => {
-    if (!hash) window.scrollTo(0, 0);
+    if (hash) {
+      const target = document.getElementById(hash.slice(1));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+    }
+    window.scrollTo(0, 0);
   }, [pathname, hash]);
   return null;
 }
@@ -28,10 +39,21 @@ function App() {
   // useCallback giữ hàm ổn định giữa các lần render (Notice dùng nó trong useEffect)
   const closeNotice = useCallback(() => setNotice(null), []);
 
+  // Hiện 1 thông báo nhỏ ở góc màn hình. type: 'success' | 'info' | 'warning' | 'error'
+  const notify = useCallback((type, message) => setNotice({ id: Date.now(), type, message }), []);
+
+  // options (tuỳ chọn, từ trang chi tiết): { size, color, quantity, gift, buyNow }
+  //   buyNow = true: bấm "Mua ngay". Khi có trang thanh toán -> chuyển trang tới đó (navigate('/checkout'))
   const handleAddToCart = useCallback(
-    (product) => {
-      setCartCount((count) => count + 1);
-      setNotice({ id: Date.now(), type: 'success', message: t('product.added', { name: product.name }) });
+    (product, options = {}) => {
+      const quantity = options.quantity ?? 1;
+      setCartCount((count) => count + quantity);
+      const params = { quantity, name: product.name, size: options.size, color: options.color };
+      let message = t('product.added', { name: product.name });
+      if (options.buyNow) message = t('productDetail.buyNowNotice', params);
+      else if (options.size && options.color) message = t('productDetail.addedWithColor', params);
+      else if (options.size) message = t('productDetail.added', params);
+      setNotice({ id: Date.now(), type: 'success', message });
     },
     [t],
   );
@@ -53,7 +75,7 @@ function App() {
       <a href="#main-content" className="skip-link">
         {t('common.skipToContent')}
       </a>
-      <Header cartCount={cartCount} onSearch={handleSearch} />
+      <Header cartCount={cartCount} onSearch={handleSearch} onNotify={notify} />
       <main id="main-content" tabIndex={-1}>
         {/* BẢNG ĐỊNH TUYẾN: đường dẫn nào -> hiện màn hình nào */}
         <Routes>
@@ -63,11 +85,15 @@ function App() {
             path="/category/:categoryId/:subId"
             element={<CategoryScreen onAddToCart={handleAddToCart} />}
           />
+          <Route path="/product/:productId" element={<ProductDetailScreen onAddToCart={handleAddToCart} />} />
+          <Route path="/collections/:collectionId" element={<CollectionScreen onAddToCart={handleAddToCart} />} />
           <Route path="/contact" element={<ContactScreen />} />
           <Route path="*" element={<NotFoundScreen />} />
         </Routes>
       </main>
       <Footer />
+      {/* Popup đăng nhập / đăng ký: đặt 1 lần ở đây, mở bằng openAuth() từ bất kỳ đâu */}
+      <AuthModal onNotify={notify} />
       {/* key đổi mỗi lần -> thông báo mới luôn hiện lại từ đầu và đếm giờ lại */}
       {notice && <Notice key={notice.id} type={notice.type} message={notice.message} onClose={closeNotice} />}
     </>

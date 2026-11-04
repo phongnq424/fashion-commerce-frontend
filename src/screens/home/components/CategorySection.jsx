@@ -1,5 +1,4 @@
 import CategoryList from '../../../components/CategoryList/CategoryList';
-import SectionHeading from '../../../components/common/SectionHeading';
 import { useLanguage } from '../../../hooks/useLanguage';
 
 function CategorySection() {
@@ -7,11 +6,10 @@ function CategorySection() {
 
   return (
     <section className="home-section container" aria-labelledby="categories-title">
-      <SectionHeading
-        id="categories-title"
-        title={t('home.categories.title')}
-        description={t('home.categories.description')}
-      />
+      {/* Tiêu đề ẩn khỏi mắt nhưng trình đọc màn hình vẫn đọc được */}
+      <h2 id="categories-title" className="visually-hidden">
+        {t('home.categories.title')}
+      </h2>
       <CategoryList />
     </section>
   );

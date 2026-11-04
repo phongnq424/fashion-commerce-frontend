@@ -1,0 +1,259 @@
+/* =====================================================================
+   BANNER KHUYẾN MÃI + DẢI LỢI ÍCH
+   ===================================================================== */
+.promo__banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: clamp(320px, 28vw, 400px);
+  overflow: hidden;
+  background: var(--color-tint-soft);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0; /* bo 2 góc trên, dải lợi ích nối liền bên dưới */
+}
+
+/* ---------- 1 ảnh bên phải ---------- */
+.promo__media {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 62%;
+  overflow: hidden;
+  background: var(--color-tint);
+  /* Mép trái ảnh mờ dần vào nền pastel (mask chỉ dùng độ trong suốt, không phải màu) */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 35%);
+  mask-image: linear-gradient(90deg, transparent 0%, black 35%);
+}
+
+.promo__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- Chữ bên trái ---------- */
+.promo__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  max-width: 30rem;
+  padding: var(--space-7) clamp(1.5rem, 5vw, 5rem);
+}
+
+.promo__eyebrow {
+  font-family: var(--font-display);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+  color: var(--color-heading-accent);
+}
+
+.promo__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.3rem + 2.4vw, 3rem);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-tight);
+  color: var(--color-text);
+}
+
+.promo__desc {
+  max-width: 32ch;
+  font-size: var(--fs-body);
+  color: var(--color-text-muted);
+}
+
+/* Nút bo tròn dạng viên thuốc, chữ thường như ảnh mẫu */
+.promo__cta {
+  margin-top: var(--space-3);
+  padding-inline: var(--space-6);
+  border-radius: var(--radius-pill);
+  text-transform: none;
+  letter-spacing: var(--ls-normal);
+}
+
+.promo__cta svg {
+  transition: transform var(--transition);
+}
+
+.promo__cta:hover svg {
+  transform: translateX(4px);
+}
+
+/* ---------- Kiểu 'full': ảnh phủ kín, chữ đè lên chỗ trống của ảnh ----------
+   Vị trí chữ chỉnh trong homeBanners.js (textLeft, textTop, textWidth) */
+.promo__banner--full {
+  display: block;
+  min-height: 0;
+  aspect-ratio: var(--promo-ratio, 16 / 7); /* cao theo đúng tỉ lệ ảnh */
+}
+
+.promo__banner--full .promo__media {
+  inset: 0;
+  width: 100%;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.promo__banner--full .promo__content {
+  position: absolute;
+  top: var(--promo-text-top);
+  left: var(--promo-text-left);
+  width: var(--promo-text-width);
+  max-width: none;
+  padding: 0;
+  gap: clamp(0.25rem, 1vw, 0.75rem);
+}
+
+/* Ảnh nền sáng ở cả Light lẫn Dark Mode -> chữ luôn màu tối */
+.promo__banner--full .promo__eyebrow {
+  color: var(--color-on-light-photo-accent);
+}
+
+.promo__banner--full .promo__title {
+  font-size: clamp(1.5rem, 0.6rem + 3vw, 3.25rem);
+  font-weight: var(--fw-extrabold);
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: var(--color-on-light-photo);
+}
+
+.promo__banner--full .promo__desc {
+  font-size: clamp(0.75rem, 0.6rem + 0.4vw, 0.875rem);
+  color: var(--color-on-light-photo-muted);
+}
+
+/* Nút vuông, nền tối như ảnh mẫu "SEE MORE+" */
+.promo__banner--full .promo__cta {
+  margin-top: clamp(0.25rem, 1vw, 0.75rem);
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-wide);
+}
+
+/* ---------- Dải 4 lợi ích ---------- */
+.promo__benefits {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding-block: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.promo-benefit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding-inline: var(--space-4);
+}
+
+/* Đường kẻ dọc ngăn cách giữa các ô */
+.promo-benefit + .promo-benefit {
+  border-left: 1px solid var(--color-border);
+}
+
+.promo-benefit__icon {
+  flex-shrink: 0;
+  color: var(--color-heading-accent);
+}
+
+.promo-benefit__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+}
+
+.promo-benefit__text {
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .promo__benefits {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: var(--space-5);
+  }
+
+  .promo-benefit {
+    justify-content: flex-start;
+  }
+
+  /* 2 cột: bỏ kẻ dọc ở đầu mỗi hàng */
+  .promo-benefit:nth-child(odd) {
+    border-left: none;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Điện thoại: chữ lên trên, ảnh xuống dưới */
+  .promo__banner {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .promo__media {
+    position: relative;
+    width: 100%;
+    height: 220px;
+  }
+
+  .promo__media {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  /* Kiểu 'full' trên điện thoại: ảnh giữ đúng tỉ lệ ở trên, chữ xuống dưới (không đè) */
+  .promo__banner--full {
+    display: flex;
+    aspect-ratio: auto;
+  }
+
+  .promo__banner--full .promo__media {
+    position: relative;
+    inset: auto;
+    height: auto;
+    aspect-ratio: var(--promo-ratio, 16 / 7);
+  }
+
+  .promo__banner--full .promo__content {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: auto;
+    padding: var(--space-5);
+  }
+
+  .promo__banner--full .promo__eyebrow {
+    color: var(--color-heading-accent);
+  }
+
+  .promo__banner--full .promo__title {
+    color: var(--color-text);
+  }
+
+  .promo__banner--full .promo__desc {
+    color: var(--color-text-muted);
+  }
+
+  .promo__content {
+    max-width: none;
+    padding: var(--space-6) var(--space-5);
+  }
+}
+
+@media (max-width: 480px) {
+  .promo__benefits {
+    grid-template-columns: 1fr;
+  }
+
+  .promo-benefit,
+  .promo-benefit:nth-child(odd) {
+    border-left: none;
+  }
+}

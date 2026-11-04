@@ -1,9 +1,21 @@
-import { findCategoryForRoute, mapCategoryResponse } from '../mappers/categoryMapper';
-import { mapProductSummaryPage } from '../mappers/productMapper';
-import { apiClient } from './apiClient';
+import {
+  findCategoryForRoute,
+  getCategoryRouteId,
+  mapCategoryResponse,
+} from '../mappers/categoryMapper';
+import { mapProductDetailResponse, mapProductSummaryPage } from '../mappers/productMapper';
+import { ApiError, apiClient } from './apiClient';
+import {
+  getMockBestSellers,
+  getMockProductById,
+  getMockRecommendations,
+  getMockRelatedProducts,
+  getMockSaleProducts,
+} from './mockProductService';
 
-const NEW_ARRIVALS_LIMIT = 8;
+const DEFAULT_NEW_ARRIVALS_LIMIT = 8;
 const CATEGORY_PRODUCTS_LIMIT = 20;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 let categoriesRequest;
 
@@ -24,10 +36,13 @@ async function getProductPage(params) {
   return mapProductSummaryPage(response);
 }
 
-export async function getNewArrivals() {
-  const page = await getProductPage({ sort: 'NEWEST', limit: NEW_ARRIVALS_LIMIT });
+export async function getNewArrivals(limit = DEFAULT_NEW_ARRIVALS_LIMIT) {
+  const page = await getProductPage({ sort: 'NEWEST', limit });
   return page.items;
 }
+
+// Public product contract chưa có sold count, nên mục bán chạy tạm lấy mock.
+export const getBestSellers = getMockBestSellers;
 
 export async function getCategories() {
   if (!categoriesRequest) {
@@ -57,4 +72,40 @@ export async function getProductsByCategory(categoryRouteId, subcategoryRouteId)
   });
 
   return page.items;
+}
+
+export async function getProductById(productId) {
+  // Section mock dùng id p001..., còn sản phẩm Backend dùng UUID.
+  if (!UUID_PATTERN.test(productId)) return getMockProductById(productId);
+
+  try {
+    const [product, categories] = await Promise.all([
+      apiClient.get(`/products/${encodeURIComponent(productId)}`),
+      getCategories(),
+    ]);
+    const category = categories.find((item) => item.id === product.categoryId);
+
+    return mapProductDetailResponse(product, {
+      categoryRouteId: getCategoryRouteId(category),
+    });
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) return null;
+    throw error;
+  }
+}
+
+// Backend chưa có recommendations và query lọc sale, nên hai luồng này tạm lấy mock.
+export const getRecommendations = getMockRecommendations;
+export const getSaleProducts = getMockSaleProducts;
+
+export async function getRelatedProducts(product, limit = 10) {
+  if (product.source === 'mock') return getMockRelatedProducts(product, limit);
+
+  const page = await getProductPage({
+    categoryId: product.categoryId,
+    sort: 'NEWEST',
+    limit: limit + 1,
+  });
+
+  return page.items.filter((item) => item.id !== product.id).slice(0, limit);
 }

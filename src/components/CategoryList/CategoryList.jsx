@@ -1,33 +1,102 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Icon from '../common/Icon';
 import { useLanguage } from '../../hooks/useLanguage';
 import './CategoryList.css';
 
-// Danh mục là nhãn GIAO DIỆN cố định -> dùng key dịch.
-// variant quyết định kiểu ô: 'blob' (blob trắng, chữ màu) | 'ring' (nền đậm, viền trắng, chữ trắng)
-// (Nếu sau này danh mục lấy từ Backend, hiển thị đúng tên Backend trả về.)
-const CATEGORIES = [
-  { id: 'tops', labelKey: 'home.categories.tops', variant: 'blob', shape: 1 },
-  { id: 'bottoms', labelKey: 'home.categories.bottoms', variant: 'blob', shape: 2 },
-  { id: 'dresses', labelKey: 'home.categories.dresses', variant: 'ring', shape: 3 },
-  { id: 'accessories', labelKey: 'home.categories.accessories', variant: 'blob', shape: 1 },
+// =====================================================================
+// DANH MỤC NỔI BẬT TRÊN TRANG CHỦ: ảnh tròn có viền màu + tên bên dưới
+// - image:    ảnh trong thư mục public/categories/ -> ghi '/categories/ten-anh.jpg'
+//             (ảnh vuông là đẹp nhất, vd 400 x 400). Chưa có ảnh / ảnh lỗi -> tự hiện icon.
+// - position: phần ảnh ưu tiên giữ lại khi cắt tròn, vd 'center 20%' giữ phần mặt / vai
+// - icon:     icon dự phòng khi chưa có ảnh (tên icon trong components/common/Icon.jsx)
+// - labelKey: dùng LẠI chữ của menu (navSub trong vi.js, en.js) -> menu đổi tên thì ô này đổi theo
+// - to:       trang danh mục tương ứng
+// Muốn đổi / thêm / bớt ô: sửa mảng này.
+// =====================================================================
+const FEATURED_CATEGORIES = [
+  {
+    id: 'tshirts',
+    image: '/categories/ao-thun.jpg',
+    position: 'center 25%',
+    icon: 'tshirt',
+    labelKey: 'navSub.tops.tshirts',
+    to: '/category/tops/tshirts',
+  },
+  {
+    id: 'shirts',
+    image: '/categories/ao-so-mi.jpg',
+    position: 'center 25%',
+    icon: 'shirt',
+    labelKey: 'navSub.tops.shirts',
+    to: '/category/tops/shirts',
+  },
+  {
+    id: 'jackets',
+    image: '/categories/ao-khoac.jpg',
+    position: 'center 25%',
+    icon: 'jacket',
+    labelKey: 'navSub.tops.jackets',
+    to: '/category/tops/jackets',
+  },
+  {
+    id: 'jeans',
+    image: '/categories/quan-jeans.jpg',
+    position: 'center',
+    icon: 'pants',
+    labelKey: 'navSub.bottoms.jeans',
+    to: '/category/bottoms/jeans',
+  },
+  {
+    id: 'dresses',
+    image: '/categories/dam.jpg',
+    position: 'center 25%',
+    icon: 'dress',
+    labelKey: 'navSub.dresses.midi',
+    to: '/category/dresses/midi',
+  },
+  {
+    id: 'skirts',
+    image: '/categories/vay.jpg',
+    position: 'center',
+    icon: 'skirt',
+    labelKey: 'navSub.dresses.miniSkirts',
+    to: '/category/dresses/miniSkirts',
+  },
 ];
+
+// Ảnh trong vòng tròn. Lỗi ảnh -> thay bằng icon (khung không bị trống / vỡ hình)
+function CategoryThumb({ image, position, icon }) {
+  const [failed, setFailed] = useState(false);
+  if (!image || failed) return <Icon name={icon} size={48} strokeWidth={1.2} />;
+  return (
+    <img
+      src={image}
+      alt="" // tên danh mục đã có chữ bên dưới -> ảnh chỉ trang trí
+      className="category-item__image"
+      style={{ objectPosition: position }}
+      loading="lazy"
+      onError={() => setFailed(true)}
+    />
+  );
+}
 
 function CategoryList() {
   const { t } = useLanguage();
 
   return (
     <ul className="category-list">
-      {CATEGORIES.map((category) => (
+      {FEATURED_CATEGORIES.map((category) => (
         <li key={category.id}>
-          <a
-            href={`#${category.id}`}
-            className={`category-tile category-tile--${category.variant} category-tile--${category.id}`}
-          >
-            <Icon name="flower" size={20} filled className="category-tile__flower" />
-            <span className={`category-tile__badge category-tile__badge--shape-${category.shape}`}>
-              {t(category.labelKey)}
+          {/* Cả ô là 1 link: bấm vào ảnh hay tên đều được */}
+          <Link to={category.to} className="category-item">
+            <span className="category-item__ring">
+              <span className="category-item__circle">
+                <CategoryThumb image={category.image} position={category.position} icon={category.icon} />
+              </span>
             </span>
-          </a>
+            <span className="category-item__name">{t(category.labelKey)}</span>
+          </Link>
         </li>
       ))}
     </ul>

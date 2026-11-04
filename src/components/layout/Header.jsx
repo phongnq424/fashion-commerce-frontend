@@ -5,6 +5,7 @@ import Icon from '../common/Icon';
 import SearchBar from '../SearchBar/SearchBar';
 import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
+import AccountButton from './AccountButton';
 import { useLanguage } from '../../hooks/useLanguage';
 import './Header.css';
 
@@ -13,8 +14,9 @@ import './Header.css';
  *   LOGO   MENU ...   [ ô tìm kiếm ]   VI/EN ☾ 👤 🛍
  * - cartCount: số sản phẩm trong giỏ (hiện ở huy hiệu)
  * - onSearch: hàm xử lý khi người dùng tìm kiếm
+ * - onNotify(type, message): hiện thông báo (vd "Bạn đã đăng xuất")
  */
-function Header({ cartCount = 0, onSearch }) {
+function Header({ cartCount = 0, onSearch, onNotify }) {
   const { t } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -66,9 +68,8 @@ function Header({ cartCount = 0, onSearch }) {
             <LanguageSwitcher />
           </div>
           <ThemeSwitcher />
-          <a href="#account" className="icon-btn site-header__account" aria-label={t('header.account')}>
-            <Icon name="user" />
-          </a>
+          {/* Chưa đăng nhập: mở popup đăng nhập | Đã đăng nhập: menu tài khoản */}
+          <AccountButton onNotify={onNotify} />
           <a href="#cart" className="icon-btn" aria-label={t('header.cart', { count: cartCount })}>
             <Icon name="bag" />
             {cartCount > 0 && (

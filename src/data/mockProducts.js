@@ -1,31 +1,94 @@
 // DỮ LIỆU GIẢ, mô phỏng dữ liệu trả về từ Backend (fashion-commerce-backend).
-// Tên sản phẩm là DỮ LIỆU ĐỘNG -> KHÔNG đưa vào từ điển i18n, không tự dịch.
+// Tên, mô tả, chất liệu là DỮ LIỆU ĐỘNG -> KHÔNG đưa vào từ điển i18n, không tự dịch.
 // Khi có API thật, chỉ cần sửa src/services/productService.js, component giữ nguyên.
+//
+// Các trường:
+//   isNew      true  -> hiện trong "Hàng mới về"
+//   isBestSeller true -> được gắn nhãn "Bán chạy" / "Best seller" (chỉ hiện ở mục Gợi ý cho bạn)
+//   soldCount  số lượng đã bán -> "Sản phẩm bán chạy" lấy 10 sản phẩm có số này cao nhất
+//   inStock    false -> nút "Hết hàng", không thêm vào giỏ được
+//   sizes      các size có bán (trang chi tiết cho chọn)
+//
 // Ảnh lấy từ Unsplash; nếu ảnh lỗi, ProductCard tự hiện khung thay thế.
+// Muốn dùng ảnh của bạn: bỏ ảnh vào public/products/ rồi ghi image: '/products/ten-anh.jpg'
 const img = (id) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=600&h=800&q=75`;
 
 export const mockProducts = [
   {
     id: 'p001',
     category: 'tops',
-    subcategory: 'shirts',
-    name: 'Áo sơ mi linen cổ tàu',
+    subcategory: 'jackets',
+    name: '[ NỈ ÉP MÙA THU ĐÔNG ] Áo Khoác Hoodie Zip Xuân Hè, Vải Nỉ Ép, Form Boxy Unisex Nam Nữ.',
     price: 459000,
     originalPrice: null,
-    image: img('photo-1596755094514-f87e34085b2c'),
+    image: 'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mfjq6j9qfrpr7d.webp',
     isNew: true,
     inStock: true,
-  },
+    isBestSeller: false,
+    soldCount: 312,
+    sizes: ['S', 'M', 'L'],
+    material: 'Nỉ',
+    description:
+      'Áo Khoác Hoodie Zip Thu Đông in nổi, dập nổi. Vải nỉ ép, form boxy unisex, nam nữ đều mặc được, có túi trong.',
+    details: [
+      'Chất liệu: Nỉ ép 2 lớp. Mặt trong là cotton thun (90% cotton) trơn mịn, mềm, mát, thấm hút mồ hôi tốt hơn nỉ xốp trơn. Mặt trong không có bông nên không lo đổ bông. Mặt ngoài là nỉ trơn phủ 1 lớp nhung mịn nhẹ, sờ mướt tay, không bị xù.',
+      'Form dáng: Form BOXY to ngang và ngắn về chiều dài, hack dáng, trendy. Unisex form cánh dơi, tay rộng, phù hợp cả nam và nữ. Form mặc ngang V3, không chùm được V3.',
+    ],
+    rating: 5.0,              // điểm đánh giá -> hàng "5.0 ★★★★★"
+    reviewCount: 509,         // "509 Đánh giá"
+    soldCount: 2150,          // "Đã bán 2,1k"
+    images: [                 // ảnh lớn + hàng ảnh nhỏ (ảnh đầu = ảnh chính)
+      'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mfjq6j9qfrpr7d.webp',
+      'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mfjq3g3cp0qx44.webp',
+      'https://down-vn.img.susercontent.com/file/vn-11134207-81ztc-mt6gx1z5qwhs08@resize_w900_nl.webp'
+    ],
+    colors: [                 
+      { 
+        id: 'gray white', 
+        name: 'Xám trắng', 
+        hex: '#DBD9C9', 
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mfjq6j9qfrpr7d.webp' 
+      },
+      { id: 'Pastel pink', 
+        name: 'Hồng sữa', 
+        hex: '#F1CDC9', 
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mfjq3g3cp0qx44.webp' 
+      },
+      { id: 'Red wine', 
+        name: 'Đỏ đô', 
+        hex: '#561319', 
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-81ztc-mt6gx1z5qwhs08@resize_w900_nl.webp' 
+      },
+    ],
+    gift: {                   
+      name: 'Quà tặng - Dây buộc tóc nữ xinh xắn',
+      image: 'https://down-vn.img.susercontent.com/file/vn-11134207-81ztc-mlgq3q62g6psee.webp',
+      originalPrice: 17000,
+      options: ['Ngẫu nhiên'],
+    },
+    care: 
+      ['Lộn trái áo khi giặt máy, nên dùng nước giặt ariel giữ màu, sẽ giữ màu áo bền hơn.', 
+        'Không dùng các loại bột giặt nhiều tẩy như : ô mô, surf, a ba',
+        'Không dùng thuốc tẩy sẽ làm bay màu áo, hỏng áo',
+        'Phơi trong mái che, bóng mát, tránh nắng gắt bạc màu áo nhanh ạ.'   
+      ]
+    },
   {
     id: 'p002',
     category: 'bottoms',
     subcategory: 'wideLeg',
-    name: 'Quần ống suông cotton',
+    name: 'Áo Thun Local Brand Cotton 100% 230gsm Chính Hãng',
     price: 529000,
     originalPrice: null,
-    image: img('photo-1594633312681-425c7b97ccd1'),
-    isNew: false,
+    image: 'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-losa7sarjtor7a.webp',
+    isNew: true,
     inStock: true,
+    isBestSeller: false,
+    soldCount: 268,
+    sizes: ['S', 'M', 'L'],
+    material: '95% cotton, 5% spandex',
+    description:
+      'Quần ống suông lưng cao, chất cotton co giãn nhẹ, che khuyết điểm tốt. Lưng thun phía sau giúp mặc cả ngày vẫn thoải mái.',
   },
   {
     id: 'p003',
@@ -35,8 +98,14 @@ export const mockProducts = [
     price: 890000,
     originalPrice: 1190000,
     image: img('photo-1595777457583-95e059d581b8'),
-    isNew: false,
+    isNew: true,
     inStock: true,
+    isBestSeller: true,
+    soldCount: 540,
+    sizes: ['S', 'M', 'L'],
+    material: 'Lụa satin',
+    description:
+      'Đầm midi xếp ly mềm rủ, chuyển động bay bổng theo từng bước đi. Phù hợp tiệc tối, hẹn hò hoặc dự sự kiện.',
   },
   {
     id: 'p004',
@@ -48,6 +117,12 @@ export const mockProducts = [
     image: img('photo-1591047139829-d91aecb6caea'),
     isNew: true,
     inStock: true,
+    isBestSeller: false,
+    soldCount: 198,
+    sizes: ['M', 'L', 'XL'],
+    material: '70% len, 30% polyester',
+    description:
+      'Áo khoác dạ dáng dài qua gối, vai đứng gọn gàng. Giữ ấm tốt mà vẫn thanh lịch cho những ngày se lạnh.',
   },
   {
     id: 'p005',
@@ -57,8 +132,14 @@ export const mockProducts = [
     price: 229000,
     originalPrice: 290000,
     image: img('photo-1521572163474-6864f9cf17ab'),
-    isNew: false,
+    isNew: true,
     inStock: true,
+    isBestSeller: true,
+    soldCount: 820,
+    sizes: ['S', 'M', 'L', 'XL'],
+    material: '100% cotton hữu cơ',
+    description:
+      'Áo thun basic từ cotton hữu cơ mềm mịn, thấm hút mồ hôi tốt. Món đồ nền tảng dễ phối cho mọi tủ đồ.',
   },
   {
     id: 'p006',
@@ -70,6 +151,12 @@ export const mockProducts = [
     image: img('photo-1583496661160-fb5886a0aaaa'),
     isNew: false,
     inStock: false,
+    isBestSeller: false,
+    soldCount: 455,
+    sizes: ['S', 'M', 'L'],
+    material: 'Kaki cotton',
+    description:
+      'Chân váy chữ A ngắn trên gối, chất kaki đứng form. Dễ phối với áo thun, sơ mi hay áo len.',
   },
   {
     id: 'p007',
@@ -81,6 +168,12 @@ export const mockProducts = [
     image: img('photo-1434389677669-e08b4cac3105'),
     isNew: true,
     inStock: true,
+    isBestSeller: false,
+    soldCount: 377,
+    sizes: ['S', 'M', 'L'],
+    material: '60% len merino, 40% acrylic',
+    description:
+      'Áo len cổ lọ dệt mịn, ôm vừa người, không gây ngứa. Mặc riêng hoặc làm lớp trong cho áo khoác đều đẹp.',
   },
   {
     id: 'p008',
@@ -92,5 +185,124 @@ export const mockProducts = [
     image: null, // cố tình để trống để xem khung "chưa có ảnh"
     isNew: false,
     inStock: true,
+    isBestSeller: false,
+    soldCount: 140,
+    sizes: ['Free size'],
+    material: 'Canvas dày',
+    description: 'Túi tote canvas dày dặn, đựng vừa laptop 14 inch. Có túi nhỏ bên trong để chìa khoá, điện thoại.',
+  },
+  {
+    id: 'p009',
+    category: 'bottoms',
+    subcategory: 'jeans',
+    name: 'Quần jeans ống đứng',
+    price: 599000,
+    originalPrice: 750000,
+    image: img('photo-1541099649105-f69ad21f3246'),
+    isNew: true,
+    inStock: true,
+    isBestSeller: true,
+    soldCount: 690,
+    sizes: ['26', '27', '28', '29', '30'],
+    material: '98% cotton denim, 2% spandex',
+    description:
+      'Quần jeans ống đứng lưng cao, màu xanh wash nhẹ. Form tôn dáng, kéo dài chân, dễ mặc quanh năm.',
+  },
+  {
+    id: 'p010',
+    category: 'dresses',
+    subcategory: 'maxi',
+    name: 'Đầm maxi hoa nhí',
+    price: 790000,
+    originalPrice: null,
+    image: img('photo-1496747611176-843222e1e57c'),
+    isNew: true,
+    inStock: true,
+    isBestSeller: false,
+    soldCount: 402,
+    sizes: ['S', 'M', 'L'],
+    material: 'Voan lụa',
+    description:
+      'Đầm maxi họa tiết hoa nhí, chất voan nhẹ có lớp lót. Rất hợp đi biển, du lịch hay dạo phố cuối tuần.',
+  },
+  {
+    id: 'p011',
+    category: 'tops',
+    subcategory: 'jackets',
+    name: 'Áo khoác da biker',
+    price: 1290000,
+    originalPrice: 1590000,
+    image: img('photo-1551028719-00167b16eac5'),
+    isNew: true,
+    inStock: true,
+    isBestSeller: false,
+    soldCount: 233,
+    sizes: ['S', 'M', 'L'],
+    material: 'Da PU cao cấp',
+    description: 'Áo khoác da dáng biker cá tính, khoá kéo lệch kim loại. Điểm nhấn mạnh mẽ cho mọi bộ trang phục.',
+  },
+  {
+    id: 'p012',
+    category: 'tops',
+    subcategory: 'tshirts',
+    name: 'Áo thun trơn form rộng',
+    price: 199000,
+    originalPrice: null,
+    image: img('photo-1503342217505-b0a15ec3261c'),
+    isNew: false,
+    inStock: true,
+    isBestSeller: true,
+    soldCount: 760,
+    sizes: ['M', 'L', 'XL'],
+    material: '100% cotton',
+    description: 'Áo thun form rộng vai rơi, vải dày vừa phải không bai nhão. Mặc thoải mái, dễ phối kiểu streetwear.',
+  },
+  {
+    id: 'p013',
+    category: 'bottoms',
+    subcategory: 'jeans',
+    name: 'Quần jeans ống loe',
+    price: 649000,
+    originalPrice: null,
+    image: img('photo-1542272604-787c3835535d'),
+    isNew: false,
+    inStock: false,
+    isBestSeller: true,
+    soldCount: 510,
+    sizes: ['26', '27', '28', '29'],
+    material: '99% cotton denim, 1% spandex',
+    description: 'Quần jeans ống loe phong cách retro, lưng cao tôn dáng. Kết hợp giày cao gót để chân trông dài hơn.',
+  },
+  {
+    id: 'p014',
+    category: 'dresses',
+    subcategory: 'midi',
+    name: 'Đầm suông cổ vuông',
+    price: 690000,
+    originalPrice: 860000,
+    image: img('photo-1515886657613-9f3515b0c78f'),
+    isNew: false,
+    inStock: true,
+    isBestSeller: true,
+    soldCount: 588,
+    sizes: ['S', 'M', 'L'],
+    material: 'Linen pha',
+    description: 'Đầm suông cổ vuông thanh lịch, dài qua gối. Che bụng tốt, mặc đi làm hay đi chơi đều phù hợp.',
+  },
+  {
+    id: 'p015',
+    category: 'tops',
+    subcategory: 'shirts',
+    name: 'Áo sơ mi lụa tay phồng',
+    price: 489000,
+    originalPrice: null,
+    image: img('photo-1485968579580-b6d095142e6e'),
+    isNew: true,
+    inStock: true,
+    isBestSeller: false,
+    soldCount: 344,
+    sizes: ['S', 'M', 'L'],
+    material: 'Lụa tơ tằm nhân tạo',
+    description: 'Áo sơ mi lụa tay phồng nữ tính, mặt vải bóng nhẹ. Sơ vin cùng chân váy hoặc quần tây đều sang.',
   },
 ];

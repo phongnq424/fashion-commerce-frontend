@@ -7,12 +7,26 @@ function isRecentlyPublished(publishedAt, now = Date.now()) {
   return Number.isFinite(publishedTime) && age >= 0 && age <= NEW_PRODUCT_WINDOW_MS;
 }
 
+function mapCareInstructions(careInstructions) {
+  if (!careInstructions) return [];
+
+  return careInstructions
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function getOption(product, type) {
+  return product.options?.find((option) => option.type === type);
+}
+
 export function mapProductSummaryResponse(product) {
   if (!product || typeof product !== 'object' || !product.id || !product.name) {
     throw new TypeError('Product summary response không đúng API contract');
   }
 
   return {
+    source: 'api',
     id: product.id,
     slug: product.slug,
     shopId: product.shopId,
@@ -36,6 +50,60 @@ export function mapProductSummaryResponse(product) {
     inStock: product.availableQuantity > 0,
     publishedAt: product.publishedAt,
     isNew: isRecentlyPublished(product.publishedAt),
+  };
+}
+
+export function mapProductDetailResponse(product, { categoryRouteId = null } = {}) {
+  if (!product || typeof product !== 'object' || !product.id || !product.name) {
+    throw new TypeError('Product detail response không đúng API contract');
+  }
+
+  const variants = Array.isArray(product.variants) ? product.variants : [];
+  const priceVariant = variants.reduce(
+    (lowest, variant) => (!lowest || variant.priceMinor < lowest.priceMinor ? variant : lowest),
+    null,
+  );
+  const sizeOption = getOption(product, 'SIZE');
+  const colorOption = getOption(product, 'COLOR');
+
+  return {
+    source: 'api',
+    id: product.id,
+    slug: product.slug,
+    shopId: product.shopId,
+    categoryId: product.categoryId,
+    brandId: product.brandId ?? null,
+    category: categoryRouteId,
+    subcategory: null,
+    name: product.name,
+    description: product.description,
+    material: product.material ?? null,
+    fitType: product.fitType ?? null,
+    targetGender: product.targetGender,
+    care: mapCareInstructions(product.careInstructions),
+    sizeChart: product.sizeChart ?? null,
+
+    price: priceVariant?.priceMinor ?? 0,
+    originalPrice: priceVariant?.compareAtPriceMinor ?? null,
+    availableQuantity: variants.reduce((total, variant) => total + variant.availableQuantity, 0),
+    inStock: variants.some((variant) => variant.availableQuantity > 0),
+    variants,
+
+    sizes: sizeOption?.values?.map((value) => value.label) ?? [],
+    colors:
+      colorOption?.values?.map((value) => ({
+        id: value.id,
+        code: value.code,
+        name: value.label,
+        hex: value.hexColor ?? 'transparent',
+      })) ?? [],
+
+    image: null,
+    images: [],
+    imageRecords: Array.isArray(product.images) ? product.images : [],
+    publishedAt: product.publishedAt,
+    isNew: isRecentlyPublished(product.publishedAt),
+    isBestSeller: false,
   };
 }
 

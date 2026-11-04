@@ -22,6 +22,58 @@ const PATHS = {
   chevronRight: <path d="m9 5 7 7-7 7" />,
   pause: <path d="M9 6v12M15 6v12" />,
   play: <path d="M8 5.5v13l10-6.5-10-6.5Z" />,
+  phone: <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z" />,
+  star: <path d="M12 2.5l2.95 6.17 6.8.82-5 4.7 1.3 6.73L12 17.6l-6.05 3.32 1.3-6.73-5-4.7 6.8-.82L12 2.5z" />,
+  gift: <><rect x="3.5" y="8" width="17" height="4" rx="1" /><path d="M5 12v8h14v-8M12 8v12M12 8S10.5 3.5 8 4.5 9 8 12 8Zm0 0s1.5-4.5 4-3.5S15 8 12 8Z" /></>,
+  ruler: <><path d="M3 15 15 3l6 6L9 21Z" /><path d="m7 11 2 2M10 8l2 2M13 5l2 2M5 14l1.5 1.5M11 11.5l1 1" /></>,
+  eye: <><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></>,
+  eyeOff: <><path d="M3 3l18 18" /><path d="M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6A17 17 0 0 0 2 12s3.6 7 10 7a9.7 9.7 0 0 0 5.4-1.6" /><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" /></>,
+  logout: <><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" /><path d="M10 17l5-5-5-5M15 12H4" /></>,
+  package: <><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5v-9Z" /><path d="m3 7.5 9 4.5 9-4.5M12 12v9" /></>,
+  swap: <path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7" />,
+  headset: (
+    <>
+      <path d="M4 14v-2a8 8 0 0 1 16 0v2" />
+      <path d="M4 14h3v5H5a1 1 0 0 1-1-1v-4ZM20 14h-3v5h2a1 1 0 0 0 1-1v-4Z" />
+      <path d="M19 19c0 1.4-2.2 2-5 2" />
+    </>
+  ),
+  // ----- Icon danh mục thời trang (nét mảnh, dùng với strokeWidth nhỏ) -----
+  tshirt: <path d="M8.5 3.5 4 5.5 2.5 10l3 1L7 9.5V20.5h10V9.5l1.5 1.5 3-1L20 5.5l-4.5-2C15 5 13.7 6 12 6s-3-1-3.5-2.5Z" />,
+  shirt: (
+    <>
+      <path d="M8.5 3.5 4 5.5 2.5 10l3 1L7 9.5V20.5h10V9.5l1.5 1.5 3-1L20 5.5l-4.5-2" />
+      <path d="M8.5 3.5 12 7l3.5-3.5M12 7v13.5M10 3.5h4" />
+      <path d="M12.8 10.5h.01M12.8 14h.01M12.8 17.5h.01" />
+    </>
+  ),
+  jacket: (
+    <>
+      <path d="M8.5 3 4.5 5 3 20.5h7.5L12 11l1.5 9.5H21L19.5 5l-4-2" />
+      <path d="M8.5 3 12 11l3.5-8M9.5 3h5" />
+      <path d="M6 15h2.5M15.5 15H18" />
+    </>
+  ),
+  pants: (
+    <>
+      <path d="M7 3h10l1.5 17.5H14L12 9.5 10 20.5H5.5L7 3Z" />
+      <path d="M7 6h10M12 6v3.5" />
+    </>
+  ),
+  dress: (
+    <>
+      <path d="M9.5 3v3.5L8 10M14.5 3v3.5L16 10" />
+      <path d="M8 10h8l3.5 10.5h-15L8 10Z" />
+      <path d="M8.8 6.5h6.4" />
+    </>
+  ),
+  skirt: (
+    <>
+      <path d="M7 4h10v3H7z" />
+      <path d="M7 7 4 19.5h16L17 7" />
+      <path d="M10 7 9 19.5M14 7l1 12.5" />
+    </>
+  ),
   // Bông hoa 5 cánh trang trí (giống họa tiết hoa trong mẫu)
   flower: (
     <>
@@ -31,7 +83,8 @@ const PATHS = {
   ),
 };
 
-function Icon({ name, size = 20, filled = false, className = '' }) {
+// strokeWidth: độ dày nét vẽ (mặc định 1.8; icon danh mục dùng nét mảnh hơn)
+function Icon({ name, size = 20, filled = false, strokeWidth = 1.8, className = '' }) {
   return (
     <svg
       className={className}
@@ -40,7 +93,7 @@ function Icon({ name, size = 20, filled = false, className = '' }) {
       viewBox="0 0 24 24"
       fill={filled ? 'currentColor' : 'none'}
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
