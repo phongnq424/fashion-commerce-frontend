@@ -1,32 +1,14 @@
-import { useState } from 'react';
-import { useAuth } from '../../hooks/useAuth';
 import { useLanguage } from '../../hooks/useLanguage';
 
 /**
- * Nút "Tiếp tục với Google" theo hướng dẫn thương hiệu của Google
- * (nền trắng, viền xám, logo chữ G 4 màu). Hiện tại gọi hàm giả lập trong authService.js,
- * cách nối Google thật có ghi chú trong services/authService.js -> signInWithGoogle.
- * - onSuccess(user), onError(error)
+ * Giữ sẵn giao diện đăng nhập Google trong khi backend chưa có endpoint OAuth.
+ * Nút không giả lập đăng nhập; bấm vào sẽ báo tính năng đang được phát triển.
  */
-function GoogleButton({ onSuccess, onError, disabled }) {
+function GoogleButton({ onUnavailable, disabled }) {
   const { t } = useLanguage();
-  const { loginWithGoogle } = useAuth();
-  const [loading, setLoading] = useState(false);
-
-  const handleClick = async () => {
-    setLoading(true);
-    try {
-      onSuccess?.(await loginWithGoogle());
-    } catch (error) {
-      onError?.(error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
-    <button type="button" className="google-btn" onClick={handleClick} disabled={disabled || loading}>
-      {/* Logo Google chính thức, màu lấy từ token --brand-google-* trong colors.css */}
+    <button type="button" className="google-btn" onClick={onUnavailable} disabled={disabled}>
       <svg className="google-btn__logo" width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
         <path
           className="google-btn__red"
@@ -45,7 +27,7 @@ function GoogleButton({ onSuccess, onError, disabled }) {
           d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
         />
       </svg>
-      <span>{loading ? t('auth.googleLoading') : t('auth.google')}</span>
+      <span>{t('auth.google')}</span>
     </button>
   );
 }

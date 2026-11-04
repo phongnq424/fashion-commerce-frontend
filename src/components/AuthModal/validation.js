@@ -2,8 +2,8 @@
 // giao diện dùng t(key) để hiện câu đúng ngôn ngữ. Không lỗi -> chuỗi rỗng ''.
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-// Số di động Việt Nam: 0xxxxxxxxx hoặc +84xxxxxxxxx (cho phép khoảng trắng, dấu chấm)
-const PHONE_PATTERN = /^(0|\+84)\d{9}$/;
+// Số di động Việt Nam: 0xxxxxxxxx, 84xxxxxxxxx hoặc +84xxxxxxxxx.
+const PHONE_PATTERN = /^(0|\+?84)\d{9}$/;
 
 export function validateEmail(value) {
   if (!value.trim()) return 'auth.errors.emailRequired';
@@ -52,12 +52,21 @@ export function getPasswordStrength(value) {
 export function serverErrorKey(error) {
   const map = {
     INVALID_CREDENTIALS: 'auth.errors.invalidCredentials',
+    AUTH_UNAUTHORIZED: 'auth.errors.invalidCredentials',
     EMAIL_TAKEN: 'auth.errors.emailTaken',
-    GOOGLE_FAILED: 'auth.errors.googleFailed',
+    AUTH_EMAIL_EXISTS: 'auth.errors.emailTaken',
+    AUTH_PHONE_EXISTS: 'auth.errors.phoneTaken',
     OTP_INVALID: 'auth.errors.otpInvalid',
     OTP_EXPIRED: 'auth.errors.otpExpired',
     OTP_TOO_MANY_ATTEMPTS: 'auth.errors.otpTooMany',
     OTP_RESEND_TOO_SOON: 'auth.errors.otpResendTooSoon',
+    AUTH_OTP_INVALID_OR_EXPIRED: 'auth.errors.otpInvalidOrExpired',
+    AUTH_OTP_RESEND_TOO_SOON: 'auth.errors.otpResendTooSoon',
+    AUTH_OTP_DAILY_LIMIT: 'auth.errors.otpDailyLimit',
+    AUTH_OTP_DELIVERY_FAILED: 'auth.errors.otpDeliveryFailed',
+    AUTH_EMAIL_NOT_CONFIGURED: 'auth.errors.otpDeliveryFailed',
+    REQUEST_INVALID: 'auth.errors.requestInvalid',
   };
-  return map[error?.code] ?? 'auth.errors.network';
+  if (error?.code === 'NETWORK_ERROR') return 'auth.errors.network';
+  return map[error?.code] ?? 'auth.errors.server';
 }

@@ -51,8 +51,12 @@ function AccountButton({ onNotify }) {
 
   const handleLogout = async () => {
     setMenuOpen(false);
-    await logout();
-    onNotify?.('info', t('auth.loggedOut'));
+    try {
+      await logout();
+      onNotify?.('info', t('auth.loggedOut'));
+    } catch {
+      onNotify?.('warning', t('auth.logoutFailed'));
+    }
   };
 
   return (

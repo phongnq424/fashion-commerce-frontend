@@ -1,24 +1,7 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AuthContext } from './AuthContext';
-import { STORAGE_KEYS } from '../constants/storageKeys';
 import * as authService from '../services/authService';
-
-function readStoredUser() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEYS.user));
-  } catch {
-    return null;
-  }
-}
-
-function storeUser(user) {
-  try {
-    if (user) localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(user));
-    else localStorage.removeItem(STORAGE_KEYS.user);
-  } catch {
-    /* bỏ qua nếu trình duyệt chặn localStorage */
-  }
-}
+import { AUTH_SESSION_CHANGED_EVENT, readAuthSession } from '../services/authSession';
 
 /**
  * Quản lý tài khoản cho toàn site:
@@ -26,54 +9,82 @@ function storeUser(user) {
  *   authView             popup đang mở màn nào: null (đóng) | 'login' | 'register' | 'forgot'
  *   openAuth(view)       mở popup (mặc định màn đăng nhập)
  *   closeAuth()          đóng popup
- *   login / register (gửi OTP) / verifyRegistration (nhập OTP) / resendOtp / loginWithGoogle / logout
+ *   login / register (gửi OTP) / verifyRegistration (nhập OTP) / resendOtp / logout
  */
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(readStoredUser);
+  const [user, setUser] = useState(() => readAuthSession()?.user ?? null);
+  const [isAuthLoading, setIsAuthLoading] = useState(() => Boolean(readAuthSession()));
   const [authView, setAuthView] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+
+    authService
+      .restoreSession()
+      .then((restoredUser) => {
+        if (active) setUser(restoredUser);
+      })
+      .catch((error) => {
+        if (active && error.code !== 'NETWORK_ERROR') setUser(null);
+      })
+      .finally(() => {
+        if (active) setIsAuthLoading(false);
+      });
+
+    const handleSessionChange = () => {
+      if (!readAuthSession()) setUser(null);
+    };
+    window.addEventListener(AUTH_SESSION_CHANGED_EVENT, handleSessionChange);
+
+    return () => {
+      active = false;
+      window.removeEventListener(AUTH_SESSION_CHANGED_EVENT, handleSessionChange);
+    };
+  }, []);
 
   const openAuth = useCallback((view = 'login') => setAuthView(view), []);
   const closeAuth = useCallback(() => setAuthView(null), []);
 
-  // remember = false -> chỉ đăng nhập trong lần mở trang này, tải lại trang là thoát
+  // remember = false -> phiên chỉ tồn tại trong tab hiện tại; đóng tab là đăng xuất.
   // identifier: email hoặc số điện thoại
   const login = useCallback(async ({ identifier, password, remember }) => {
-    const loggedIn = await authService.login({ identifier, password });
+    const loggedIn = await authService.login({ identifier, password, remember });
     setUser(loggedIn);
-    storeUser(remember ? loggedIn : null);
     return loggedIn;
   }, []);
 
-  // Đăng ký bước 1: gửi thông tin -> Backend gửi OTP. CHƯA đăng nhập ở bước này.
-  // Trả về { pendingId, otpSentTo, expiresIn, resendAfter } để hiện màn nhập mã.
-  const register = useCallback((data) => authService.register(data), []);
-
-  // Đăng ký bước 2: nhập đúng mã OTP -> tài khoản được tạo -> đăng nhập luôn
-  const verifyRegistration = useCallback(async ({ pendingId, code }) => {
-    const created = await authService.verifyOtp({ pendingId, code });
-    setUser(created);
-    storeUser(created);
-    return created;
+  // Bước 1 chỉ gửi email để backend phát OTP; thông tin đăng ký vẫn giữ trong state của modal.
+  const register = useCallback(async (data) => {
+    const challenge = await authService.requestRegistrationOtp(data.email);
+    return { ...challenge, registration: data, otpSentTo: data.email };
   }, []);
 
-  const resendOtp = useCallback((pendingId) => authService.resendOtp({ pendingId }), []);
-
-  const loginWithGoogle = useCallback(async () => {
-    const googleUser = await authService.signInWithGoogle();
-    setUser(googleUser);
-    storeUser(googleUser);
-    return googleUser;
+  // Bước 2 gửi toàn bộ RegisterRequest kèm OTP, sau đó đăng nhập để lấy token.
+  const verifyRegistration = useCallback(async ({ registration, code }) => {
+    await authService.register({ ...registration, otp: code });
+    const loggedIn = await authService.login({
+      identifier: registration.email,
+      password: registration.password,
+      remember: true,
+    });
+    setUser(loggedIn);
+    return loggedIn;
   }, []);
+
+  const resendOtp = useCallback((email) => authService.requestRegistrationOtp(email), []);
 
   const logout = useCallback(async () => {
-    await authService.logout();
-    setUser(null);
-    storeUser(null);
+    try {
+      await authService.logout();
+    } finally {
+      setUser(null);
+    }
   }, []);
 
   const value = useMemo(
     () => ({
       user,
+      isAuthLoading,
       authView,
       openAuth,
       closeAuth,
@@ -81,10 +92,9 @@ export function AuthProvider({ children }) {
       register,
       verifyRegistration,
       resendOtp,
-      loginWithGoogle,
       logout,
     }),
-    [user, authView, openAuth, closeAuth, login, register, verifyRegistration, resendOtp, loginWithGoogle, logout],
+    [user, isAuthLoading, authView, openAuth, closeAuth, login, register, verifyRegistration, resendOtp, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

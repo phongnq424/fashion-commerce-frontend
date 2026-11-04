@@ -32,7 +32,7 @@ function buildProductsPath(params) {
 }
 
 async function getProductPage(params) {
-  const response = await apiClient.get(buildProductsPath(params));
+  const response = await apiClient.get(buildProductsPath(params), { auth: false });
   return mapProductSummaryPage(response);
 }
 
@@ -47,7 +47,7 @@ export const getBestSellers = getMockBestSellers;
 export async function getCategories() {
   if (!categoriesRequest) {
     categoriesRequest = apiClient
-      .get('/catalog/categories')
+      .get('/catalog/categories', { auth: false })
       .then((categories) => categories.map(mapCategoryResponse))
       .catch((error) => {
         categoriesRequest = undefined;
@@ -80,7 +80,7 @@ export async function getProductById(productId) {
 
   try {
     const [product, categories] = await Promise.all([
-      apiClient.get(`/products/${encodeURIComponent(productId)}`),
+      apiClient.get(`/products/${encodeURIComponent(productId)}`, { auth: false }),
       getCategories(),
     ]);
     const category = categories.find((item) => item.id === product.categoryId);

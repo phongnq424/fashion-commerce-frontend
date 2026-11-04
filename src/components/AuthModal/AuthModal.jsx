@@ -112,7 +112,6 @@ function AuthModal({ onNotify }) {
         {isOpen && view === 'login' && <LoginForm onSuccess={handleSuccess} onSwitch={openAuth} />}
         {isOpen && view === 'register' && (
           <RegisterForm
-            onSuccess={handleSuccess}
             onOtpSent={handleOtpSent}
             onSwitch={openAuth}
             onNavigate={closeAuth}

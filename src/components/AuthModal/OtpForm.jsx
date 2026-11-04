@@ -10,7 +10,7 @@ const OTP_LENGTH = 6;
 
 /**
  * Màn nhập mã OTP (bước 2 của đăng ký).
- * - pending: { pendingId, otpSentTo, expiresIn, resendAfter } do register() trả về
+ * - pending: challenge OTP + dữ liệu đăng ký đang giữ trong bộ nhớ của modal
  * - onSuccess(user, 'register')   - onBack(): quay lại form đăng ký để sửa thông tin
  *
  * 6 ô, mỗi ô 1 số. Hỗ trợ: tự nhảy ô khi gõ, Backspace lùi ô, phím ← →,
@@ -21,8 +21,6 @@ function OtpForm({ pending, onSuccess, onBack }) {
   const { verifyRegistration, resendOtp } = useAuth();
   const [digits, setDigits] = useState(() => Array(OTP_LENGTH).fill(''));
   const [errorKey, setErrorKey] = useState('');
-  const [attemptsLeft, setAttemptsLeft] = useState(null);
-  const [locked, setLocked] = useState(false); // nhập sai quá nhiều lần
   const [submitting, setSubmitting] = useState(false);
   const [resending, setResending] = useState(false);
   const [resent, setResent] = useState(false);
@@ -51,12 +49,10 @@ function OtpForm({ pending, onSuccess, onBack }) {
     setSubmitting(true);
     setErrorKey('');
     try {
-      const user = await verifyRegistration({ pendingId: pending.pendingId, code });
+      const user = await verifyRegistration({ registration: pending.registration, code });
       onSuccess(user, 'register');
     } catch (error) {
       setErrorKey(serverErrorKey(error));
-      setAttemptsLeft(error.attemptsLeft ?? null);
-      if (error.code === 'OTP_TOO_MANY_ATTEMPTS') setLocked(true);
       // Sai mã -> xoá các ô để nhập lại từ đầu
       setDigits(Array(OTP_LENGTH).fill(''));
       focusBox(0);
@@ -115,11 +111,9 @@ function OtpForm({ pending, onSuccess, onBack }) {
     setResending(true);
     setErrorKey('');
     try {
-      const info = await resendOtp(pending.pendingId);
+      const info = await resendOtp(pending.registration.email);
       setSecondsLeft(info.resendAfter);
       setDigits(Array(OTP_LENGTH).fill(''));
-      setAttemptsLeft(null);
-      setLocked(false);
       setResent(true);
       focusBox(0);
     } catch (error) {
@@ -129,7 +123,7 @@ function OtpForm({ pending, onSuccess, onBack }) {
     }
   };
 
-  const errorMessage = errorKey ? t(errorKey, { attempts: attemptsLeft ?? 0 }) : '';
+  const errorMessage = errorKey ? t(errorKey) : '';
   const mm = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
   const ss = String(secondsLeft % 60).padStart(2, '0');
 
@@ -143,8 +137,8 @@ function OtpForm({ pending, onSuccess, onBack }) {
       noValidate
     >
       <p className="otp-sent">
-        <Icon name="phone" size={18} />
-        <span>{t('auth.otpSentTo', { phone: pending.otpSentTo })}</span>
+        <Icon name="mail" size={18} />
+        <span>{t('auth.otpSentTo', { email: pending.otpSentTo })}</span>
       </p>
 
       <FormAlert message={errorMessage} />
@@ -178,13 +172,13 @@ function OtpForm({ pending, onSuccess, onBack }) {
               onKeyDown={handleKeyDown(index)}
               onPaste={handlePaste(index)}
               onFocus={(event) => event.target.select()}
-              disabled={submitting || locked}
+              disabled={submitting}
             />
           ))}
         </div>
       </fieldset>
 
-      <Button type="submit" fullWidth disabled={submitting || locked}>
+      <Button type="submit" fullWidth disabled={submitting}>
         {submitting ? t('auth.otpVerifying') : t('auth.otpSubmit')}
       </Button>
 

@@ -19,12 +19,12 @@ const STRENGTH_KEYS = ['', 'weak', 'medium', 'strong'];
 
 /**
  * Form đăng ký: họ tên, email, số điện thoại, mật khẩu (+ độ mạnh), nhập lại mật khẩu,
- * đồng ý điều khoản (bắt buộc), nhận tin (tuỳ chọn), Google.
+ * đồng ý điều khoản (bắt buộc) và đăng ký nhận tin (tuỳ chọn).
  * - onOtpSent(pending, values): đã gửi OTP -> chuyển sang màn nhập mã
- * - onSuccess(user, 'google')   - onSwitch('login')
+ * - onSwitch('login')
  * - initialValues: dữ liệu đã nhập trước đó (khi bấm "Đổi thông tin" từ màn OTP quay lại)
  */
-function RegisterForm({ onSuccess, onOtpSent, onSwitch, onNavigate, initialValues }) {
+function RegisterForm({ onOtpSent, onSwitch, onNavigate, initialValues }) {
   const { t } = useLanguage();
   const { register } = useAuth();
   const [values, setValues] = useState({
@@ -65,7 +65,7 @@ function RegisterForm({ onSuccess, onOtpSent, onSwitch, onNavigate, initialValue
 
     setSubmitting(true);
     try {
-      // Bước 1: gửi thông tin -> Backend gửi mã OTP qua SMS (chưa tạo tài khoản)
+      // Bước 1: backend gửi OTP tới email; tài khoản chỉ được tạo sau khi nhập đúng mã.
       const pending = await register({
         name: values.name.trim(),
         email: values.email.trim(),
@@ -186,6 +186,7 @@ function RegisterForm({ onSuccess, onOtpSent, onSwitch, onNavigate, initialValue
           <input type="checkbox" checked={values.newsletter} onChange={update('newsletter')} />
           <span>{t('auth.newsletterOptIn')}</span>
         </label>
+
       </div>
 
       <Button type="submit" fullWidth disabled={submitting}>
@@ -198,8 +199,7 @@ function RegisterForm({ onSuccess, onOtpSent, onSwitch, onNavigate, initialValue
 
       <GoogleButton
         disabled={submitting}
-        onSuccess={(user) => onSuccess(user, 'google')}
-        onError={(error) => setServerError(serverErrorKey(error))}
+        onUnavailable={() => setServerError('auth.errors.googleUnavailable')}
       />
 
       <p className="auth-switch">

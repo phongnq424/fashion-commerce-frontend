@@ -9,8 +9,8 @@ import { useLanguage } from '../../hooks/useLanguage';
 import { serverErrorKey, validateIdentifier } from './validation';
 
 /**
- * Form đăng nhập: email HOẶC số điện thoại, mật khẩu, ghi nhớ, quên mật khẩu, Google.
- * - onSuccess(user, 'login' | 'google')   - onSwitch('register' | 'forgot')
+ * Form đăng nhập: email HOẶC số điện thoại, mật khẩu, ghi nhớ và quên mật khẩu.
+ * - onSuccess(user, 'login')   - onSwitch('register' | 'forgot')
  */
 function LoginForm({ onSuccess, onSwitch }) {
   const { t } = useLanguage();
@@ -94,8 +94,7 @@ function LoginForm({ onSuccess, onSwitch }) {
 
       <GoogleButton
         disabled={submitting}
-        onSuccess={(user) => onSuccess(user, 'google')}
-        onError={(error) => setServerError(serverErrorKey(error))}
+        onUnavailable={() => setServerError('auth.errors.googleUnavailable')}
       />
 
       <p className="auth-switch">
