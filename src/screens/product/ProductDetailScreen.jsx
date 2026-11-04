@@ -5,6 +5,7 @@ import Button from '../../components/common/Button';
 import Icon from '../../components/common/Icon';
 import NotFoundScreen from '../notFound/NotFoundScreen';
 import ProductDetail from './components/ProductDetail';
+import ProductDetailSkeleton from './components/ProductDetailSkeleton';
 import ProductReviews from './components/ProductReviews';
 import RelatedProducts from './components/RelatedProducts';
 import { useLanguage } from '../../hooks/useLanguage';
@@ -56,19 +57,7 @@ function ProductDetailScreen({ onAddToCart }) {
       <Breadcrumb items={breadcrumbItems} />
 
       <div className="product-page container">
-        {status === 'loading' && (
-          <div className="product-page__skeleton" aria-busy="true">
-            <p className="visually-hidden" role="status">
-              {t('common.loading')}
-            </p>
-            <div className="product-page__skeleton-media" />
-            <div className="product-page__skeleton-info">
-              <div className="product-page__skeleton-line product-page__skeleton-line--title" />
-              <div className="product-page__skeleton-line" />
-              <div className="product-page__skeleton-line product-page__skeleton-line--short" />
-            </div>
-          </div>
-        )}
+        {status === 'loading' && <ProductDetailSkeleton loadingLabel={t('common.loading')} />}
 
         {status === 'error' && (
           <div className="product-page__error" role="alert">
