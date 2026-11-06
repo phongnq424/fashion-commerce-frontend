@@ -6,17 +6,18 @@ import SearchBar from '../SearchBar/SearchBar';
 import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import AccountButton from './AccountButton';
+import CartButton from './CartButton';
 import { useLanguage } from '../../hooks/useLanguage';
 import './Header.css';
 
 /**
  * Header dùng chung cho mọi trang. Bố cục 1 hàng:
  *   LOGO   MENU ...   [ ô tìm kiếm ]   VI/EN ☾ 👤 🛍
- * - cartCount: số sản phẩm trong giỏ (hiện ở huy hiệu)
  * - onSearch: hàm xử lý khi người dùng tìm kiếm
  * - onNotify(type, message): hiện thông báo (vd "Bạn đã đăng xuất")
+ * - onCheckout / onCartError: dùng cho popup giỏ hàng (nút "Thanh toán", lỗi khi xoá sản phẩm)
  */
-function Header({ cartCount = 0, onSearch, onNotify }) {
+function Header({ onSearch, onNotify, onCheckout, onCartError }) {
   const { t } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -70,14 +71,8 @@ function Header({ cartCount = 0, onSearch, onNotify }) {
           <ThemeSwitcher />
           {/* Chưa đăng nhập: mở popup đăng nhập | Đã đăng nhập: menu tài khoản */}
           <AccountButton onNotify={onNotify} />
-          <a href="#cart" className="icon-btn" aria-label={t('header.cart', { count: cartCount })}>
-            <Icon name="bag" />
-            {cartCount > 0 && (
-              <span className="site-header__badge" aria-hidden="true">
-                {cartCount > 99 ? '99+' : cartCount}
-              </span>
-            )}
-          </a>
+          {/* Bấm -> trang giỏ hàng | Rê chuột -> popup giỏ hàng nhỏ */}
+          <CartButton onCheckout={onCheckout} onError={onCartError} />
         </div>
       </div>
     </header>

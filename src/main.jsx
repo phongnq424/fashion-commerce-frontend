@@ -9,6 +9,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeProvider';
 import { LanguageProvider } from './contexts/LanguageProvider';
 import { AuthProvider } from './contexts/AuthProvider';
+import { CartProvider } from './contexts/CartProvider';
 import App from './App';
 
 // Bọc App trong các Provider để MỌI component bên trong dùng được useTheme / useLanguage / useAuth.
@@ -19,7 +20,10 @@ createRoot(document.getElementById('root')).render(
       <ThemeProvider>
         <LanguageProvider>
           <AuthProvider>
-            <App />
+            {/* Giỏ hàng cần biết đã đăng nhập chưa -> nằm TRONG AuthProvider */}
+            <CartProvider>
+              <App />
+            </CartProvider>
           </AuthProvider>
         </LanguageProvider>
       </ThemeProvider>

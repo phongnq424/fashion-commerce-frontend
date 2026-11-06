@@ -380,6 +380,39 @@ a.rating-bar__item:hover .rating-bar__number {
   border-radius: 50%;
 }
 
+/* Màu không có mã màu: chấm sọc chéo trung tính (tên màu vẫn hiện bằng chữ bên cạnh) */
+.choice__swatch--unknown {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--color-surface-muted) 0 3px,
+    var(--color-border-strong) 3px 4px
+  );
+}
+
+/* Màu không có mã màu nhưng có ảnh riêng: hiện ảnh nhỏ của màu đó */
+.choice__thumb {
+  width: 26px;
+  height: 26px;
+  margin-left: calc(var(--space-2) * -1);
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+/* Hết hàng ở tổ hợp này: gạch ngang, không bấm được */
+.choice--unavailable .choice__box {
+  border-style: dashed;
+  text-decoration: line-through;
+}
+
+.choice--unavailable .choice__input {
+  cursor: not-allowed;
+}
+
+.product-detail__stock {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
 .product-detail__error {
   display: flex;
   align-items: center;
