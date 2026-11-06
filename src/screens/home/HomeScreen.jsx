@@ -1,5 +1,6 @@
 import HeroSection from './components/HeroSection';
 import CategorySection from './components/CategorySection';
+import FlashSaleSection from './components/FlashSaleSection';
 import NewArrivalsSection from './components/NewArrivalsSection';
 import LookbookSection from './components/LookbookSection';
 import BestSellersSection from './components/BestSellersSection';
@@ -14,6 +15,8 @@ function HomeScreen({ onAddToCart }) {
   return (
     <>
       <HeroSection />
+      {/* Flash Sale dính sát ngay dưới banner (không có khoảng cách) -> cấu hình: data/flashSale.js */}
+      <FlashSaleSection />
       <CategorySection />
       {/* 1 hàng */}
       <NewArrivalsSection onAddToCart={onAddToCart} />

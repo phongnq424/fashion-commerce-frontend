@@ -223,15 +223,22 @@
     justify-content: center;
   }
 
-  /* Lớp phủ mờ từ DƯỚI lên */
+  /* Lớp phủ mờ từ DƯỚI lên -> TẠM TẮT (không dùng nữa). Muốn bật lại: bỏ comment khối này
+     và xoá khối "display: none" ngay bên dưới.
   .hero-slide--bottom-center::before {
-    /* background: linear-gradient(
+    background: linear-gradient(
       0deg,
       color-mix(in srgb, var(--color-bg) 88%, transparent) 0%,
       color-mix(in srgb, var(--color-bg) 60%, transparent) 30%,
       transparent 60%
-    ); */
-     display: none;
+    );
+  }
+  */
+
+  /* Tắt hẳn lớp phủ của banner chữ-dưới-giữa (banner-3). Thiếu dòng này thì banner
+     sẽ nhận lớp phủ mặc định của .hero-slide::before (mờ từ TRÁI sang) */
+  .hero-slide--bottom-center::before {
+    display: none;
   }
 }
 

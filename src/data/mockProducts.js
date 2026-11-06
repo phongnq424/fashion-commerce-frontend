@@ -148,7 +148,7 @@ export const mockProducts = [
     category: 'dresses',
     subcategory: 'midi',
     name: 'Đầm midi lụa xếp ly',
-    price: 890000,
+    price: 559000,
     originalPrice: 1190000,
     image: img('photo-1595777457583-95e059d581b8'),
     isNew: true,

@@ -1,0 +1,595 @@
+/* =====================================================================
+   FLASH SALE (trang chủ)
+   Tông đỏ-cam ấm, cố ý KHÁC tông xanh tím của site -> khối này nổi bật nhất trang.
+   Các màu riêng của khối là biến --fs-* ngay dưới, đổi ở đây là đổi cả khối.
+   ===================================================================== */
+
+.flash-sale {
+  --fs-hot-1: #d61f26; /* đầu dải tiêu đề */
+  --fs-hot-2: #f0432a;
+  --fs-hot-3: #ff7a1a; /* cuối dải tiêu đề */
+  --fs-yellow: #ffe14d; /* chữ "SALE", tia sét */
+  --fs-surface: #fff4ef; /* nền khối */
+  --fs-border: #ffd9cc;
+  --fs-card: #ffffff;
+  --fs-card-border: #ffe3d9;
+  --fs-price: #d42318;
+  --fs-track: #ffe0d4;
+  --fs-clock-bg: #1b1f33;
+  --fs-glow: rgb(214 31 38 / 0.35);
+  --fs-gap: 1.25rem; /* khoảng cách giữa các ô sản phẩm (mẫu ~6px -> nới ra 20px) */
+
+  /* Nằm ngay dưới banner -> dính sát, không chừa khoảng trống.
+     Nếu chuyển Flash Sale xuống chỗ khác trên trang chủ: đổi thành var(--space-8) */
+  margin-top: 0;
+}
+
+[data-theme='dark'] .flash-sale {
+  --fs-hot-1: #a8141b;
+  --fs-hot-2: #c9321f;
+  --fs-hot-3: #d9600f;
+  --fs-surface: color-mix(in srgb, #ff4d2e 7%, var(--color-surface));
+  --fs-border: rgb(255 120 90 / 0.22);
+  --fs-card: var(--color-surface);
+  --fs-card-border: rgb(255 120 90 / 0.16);
+  --fs-price: #ff8a7a;
+  --fs-track: rgb(255 120 90 / 0.18);
+  --fs-clock-bg: #0d1024;
+  --fs-glow: rgb(0 0 0 / 0.5);
+}
+
+.flash-sale__panel {
+  /* Tràn hết màn hình: không viền, không bo góc. Muốn quay lại dạng thẻ bo góc:
+     thêm class "container" cho <section> trong FlashSaleSection.jsx và bật lại 3 dòng dưới */
+  overflow: hidden;
+  background: var(--fs-surface);
+  /* border: 1px solid var(--fs-border); */
+  /* border-radius: 20px; */
+  /* box-shadow: 0 24px 48px -28px var(--fs-glow); */
+}
+
+/* ---------- Thanh tiêu đề ---------- */
+.flash-sale__head {
+  position: relative;
+  padding-block: var(--space-4);
+  overflow: hidden;
+  background: linear-gradient(100deg, var(--fs-hot-1) 0%, var(--fs-hot-2) 48%, var(--fs-hot-3) 100%);
+  color: #ffffff;
+}
+
+/* Sọc chéo mờ + vệt sáng: cảm giác "đang chạy", không làm rối chữ */
+.flash-sale__head::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 85% -40%, rgb(255 255 255 / 0.28), transparent 45%),
+    repeating-linear-gradient(-55deg, rgb(255 255 255 / 0.06) 0 14px, transparent 14px 28px);
+  pointer-events: none;
+}
+
+.flash-sale__head-inner {
+  position: relative; /* nổi trên lớp sọc chéo */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
+}
+
+.flash-sale__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.05rem + 1.4vw, 2.125rem);
+  font-weight: 900;
+  font-style: italic;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 0 rgb(0 0 0 / 0.14);
+}
+
+.flash-sale__title em {
+  color: var(--fs-yellow);
+}
+
+.flash-sale__bolt {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  background: var(--fs-yellow);
+  color: var(--fs-hot-1);
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgb(255 225 77 / 0.7);
+  animation: fs-pulse 1.8s ease-out infinite;
+}
+
+@keyframes fs-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgb(255 225 77 / 0.65);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 14px rgb(255 225 77 / 0);
+  }
+}
+
+/* Đồng hồ đếm ngược */
+.flash-sale__timer {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.flash-sale__timer-label {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-wide);
+}
+
+.flash-sale__clock {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.flash-sale__digit {
+  min-width: 2.1em;
+  padding: 0.35em 0.4em;
+  background: var(--fs-clock-bg);
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: var(--fs-base);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-align: center;
+  box-shadow: inset 0 -2px 0 rgb(255 255 255 / 0.08);
+}
+
+.flash-sale__colon {
+  font-weight: 900;
+  animation: fs-blink 1s steps(2, start) infinite;
+}
+
+@keyframes fs-blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+.flash-sale__perks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.flash-sale__perk {
+  padding: 0.3rem 0.75rem;
+  background: rgb(255 255 255 / 0.16);
+  border: 1px solid rgb(255 255 255 / 0.4);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
+}
+
+.flash-sale__more:focus-visible,
+.fs-card__link:focus-visible,
+.flash-sale__arrow:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* ---------- Hàng sản phẩm ---------- */
+.flash-sale__rail {
+  position: relative;
+  padding-top: var(--space-5);
+}
+
+.flash-sale__track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 4 * var(--fs-gap)) / 5); /* 5 ô vừa khít 1 hàng */
+  gap: var(--fs-gap);
+  margin: 0;
+  padding: 4px 2px var(--space-2); /* chừa chỗ cho bóng khi rê chuột */
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  list-style: none;
+}
+
+.flash-sale__track::-webkit-scrollbar {
+  display: none;
+}
+
+.flash-sale__slot {
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.flash-sale__arrow {
+  position: absolute;
+  top: 40%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  background: var(--fs-card);
+  color: var(--color-text);
+  border: 1px solid var(--fs-card-border);
+  border-radius: 50%;
+  box-shadow: 0 8px 20px -8px rgb(0 0 0 / 0.35);
+  cursor: pointer;
+  transition: transform var(--transition), color var(--transition);
+}
+
+.flash-sale__arrow:hover {
+  color: var(--fs-price);
+  transform: scale(1.06);
+}
+
+.flash-sale__arrow--prev {
+  left: -14px; /* nhô ra ngoài mép hàng sản phẩm, không che ảnh */
+}
+
+.flash-sale__arrow--next {
+  right: -14px;
+}
+
+/* ---------- Thẻ sản phẩm ---------- */
+.fs-card {
+  height: 100%;
+  overflow: hidden;
+  background: var(--fs-card);
+  border: 1px solid var(--fs-card-border);
+  border-radius: 14px;
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.fs-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 30px -18px var(--fs-glow);
+}
+
+.fs-card__link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+  border-radius: inherit;
+}
+
+.fs-card__media {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--color-surface-muted);
+}
+
+.fs-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 400ms ease;
+}
+
+.fs-card:hover .fs-card__image {
+  transform: scale(1.05);
+}
+
+.fs-card__placeholder {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: var(--color-text-muted);
+}
+
+/* Nhãn "-47%" ở góc ảnh */
+.fs-card__badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.35rem 0.65rem 0.35rem 0.55rem;
+  background: linear-gradient(135deg, var(--fs-hot-1), var(--fs-hot-3));
+  color: #ffffff;
+  border-radius: 0 0 12px 0;
+  font-size: var(--fs-sm);
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 10px -4px rgb(0 0 0 / 0.35);
+}
+
+.fs-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-3) var(--space-4);
+}
+
+.fs-card__name {
+  display: -webkit-box;
+  min-height: 2.8em; /* luôn chiếm 2 dòng -> giá các thẻ thẳng hàng */
+  margin: 0;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  line-height: 1.4;
+}
+
+.fs-card__swatches {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+}
+
+.fs-card__swatch {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+  background: repeating-linear-gradient(45deg, var(--color-surface-muted) 0 3px, var(--color-border-strong) 3px 4px);
+}
+
+.fs-card__more {
+  margin-left: 2px;
+  font-weight: var(--fw-semibold);
+}
+
+.fs-card__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px var(--space-2);
+  margin: auto 0 0; /* đẩy giá + thanh "Đã bán" xuống đáy thẻ */
+}
+
+.fs-card__price strong {
+  color: var(--fs-price);
+  font-size: var(--fs-md);
+  font-weight: 800;
+}
+
+.fs-card__price s {
+  color: var(--color-text-muted);
+  font-size: var(--fs-xs);
+}
+
+/* Thanh "Đã bán" */
+.fs-card__progress {
+  display: grid;
+  gap: 6px;
+}
+
+.fs-card__progress-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  color: var(--color-text-muted);
+}
+
+.fs-card__progress-label svg {
+  color: var(--fs-hot-3);
+}
+
+.fs-card__bar {
+  display: block;
+  height: 6px;
+  overflow: hidden;
+  background: var(--fs-track);
+  border-radius: var(--radius-pill);
+}
+
+.fs-card__bar-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--fs-hot-3), var(--fs-hot-1));
+  border-radius: inherit;
+}
+
+/* Sắp cháy hàng: chữ đỏ + thanh có sọc chạy */
+.fs-card__progress.is-hot .fs-card__progress-label {
+  color: var(--fs-price);
+}
+
+.fs-card__progress.is-hot .fs-card__progress-label svg {
+  color: var(--fs-price);
+}
+
+.fs-card__progress.is-hot .fs-card__bar-fill {
+  background:
+    repeating-linear-gradient(-45deg, rgb(255 255 255 / 0.28) 0 6px, transparent 6px 12px),
+    linear-gradient(90deg, var(--fs-hot-3), var(--fs-hot-1));
+  background-size: 17px 17px, 100% 100%;
+  animation: fs-stripes 900ms linear infinite;
+}
+
+@keyframes fs-stripes {
+  to {
+    background-position: 17px 0, 0 0;
+  }
+}
+
+/* Hết hàng / hết giờ */
+.fs-card--off {
+  filter: grayscale(0.7);
+  opacity: 0.75;
+}
+
+.flash-sale--ended .flash-sale__head {
+  filter: saturate(0.4);
+}
+
+/* ---------- Nút cuối ---------- */
+.flash-sale__foot {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--space-5) var(--space-6);
+}
+
+.flash-sale__more {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.8rem 2.25rem;
+  background: linear-gradient(100deg, var(--fs-hot-1), var(--fs-hot-3));
+  color: #ffffff;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-wide);
+  box-shadow: 0 10px 22px -12px var(--fs-glow);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.flash-sale__more:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 26px -12px var(--fs-glow);
+}
+
+/* ---------- Lỗi / đang tải ---------- */
+.flash-sale__state {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  padding: var(--space-7) var(--space-5) 0;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.flash-sale__retry {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.5rem 1.1rem;
+  background: var(--fs-card);
+  color: var(--fs-price);
+  border: 1.5px solid currentColor;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+}
+
+.fs-card--skeleton {
+  pointer-events: none;
+}
+
+.fs-card--skeleton .fs-card__media,
+.fs-skel {
+  background: var(--fs-track);
+  animation: fs-skeleton 1.2s ease-in-out infinite alternate;
+}
+
+.fs-skel {
+  display: block;
+  height: 12px;
+  border-radius: 6px;
+}
+
+.fs-skel--short {
+  width: 55%;
+}
+
+.fs-skel--bar {
+  height: 6px;
+  margin-top: var(--space-2);
+}
+
+@keyframes fs-skeleton {
+  to {
+    opacity: 0.45;
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1024px) {
+  .flash-sale__track {
+    grid-auto-columns: calc((100% - 3 * var(--fs-gap)) / 3.4); /* hé ô thứ 4 -> khách biết còn trượt được */
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 640px) {
+  .flash-sale {
+    --fs-gap: 0.75rem;
+  }
+
+  .flash-sale__head-inner {
+    gap: var(--space-3);
+  }
+
+  .flash-sale__bolt {
+    width: 34px;
+    height: 34px;
+  }
+
+  .flash-sale__perks {
+    width: 100%;
+  }
+
+  .flash-sale__rail {
+    padding-top: var(--space-4);
+  }
+
+  .flash-sale__track {
+    grid-auto-columns: calc((100% - var(--fs-gap)) / 2.2);
+  }
+
+  .fs-card__price strong {
+    font-size: var(--fs-base);
+  }
+
+  .flash-sale__foot {
+    padding-block: var(--space-4) var(--space-5);
+  }
+}
+
+/* Màn hình cảm ứng: vuốt ngang, không cần nút ‹ › */
+@media (hover: none) {
+  .flash-sale__arrow {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flash-sale__bolt,
+  .flash-sale__colon,
+  .fs-card__progress.is-hot .fs-card__bar-fill,
+  .fs-card--skeleton .fs-card__media,
+  .fs-skel {
+    animation: none;
+  }
+
+  .fs-card,
+  .fs-card__image,
+  .flash-sale__more {
+    transition: none;
+  }
+
+  .fs-card:hover,
+  .fs-card:hover .fs-card__image,
+  .flash-sale__more:hover {
+    transform: none;
+  }
+}
