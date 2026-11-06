@@ -119,15 +119,15 @@ const en = {
           },
         },
         freeship: {
-          titleLine1: 'Shop All You Want.',
-          titleLine2: 'Free Delivery!',
-          description: 'Free shipping on orders from 299K.',
+          titleLine1: '',
+          titleLine2: '',
+          description: '',
           imageAlt: 'Banner-2',
         },
         outfitIdeas: {
-          titleLine1: 'Mix Your Way',
-          titleLine2: 'Own Your Style',
-          description: 'On-trend, easy-to-style outfits that look good anytime.',
+          titleLine1: '',
+          titleLine2: '',
+          description: '',
           imageAlt: 'Banner-3',
         },
         firstOrder: {

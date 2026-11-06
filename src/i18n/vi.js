@@ -113,15 +113,15 @@ const vi = {
           },
         },
         freeship: {
-          titleLine1: 'Shopping Thả Ga.',
-          titleLine2: 'Freeship Tận Nhà!',
-          description: 'Miễn phí vận chuyển cho đơn hàng từ 299K.',
-          imageAlt: 'Banner-2',
+          titleLine1: '',
+          titleLine2: '',
+          description: '',
+          imageAlt: 'Banner-6',
         },
         outfitIdeas: {
-          titleLine1: 'Phối Đồ Theo Gu',
-          titleLine2: 'Tự Tin Chất Riêng',
-          description: 'Outfit hợp gu, dễ phối, xinh mọi lúc.',
+          titleLine1: '',
+          titleLine2: '',
+          description: '',
           imageAlt: 'Banner-3',
         },
         firstOrder: {

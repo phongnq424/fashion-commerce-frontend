@@ -75,21 +75,74 @@ export const mockProducts = [
     },
   {
     id: 'p002',
-    category: 'bottoms',
-    subcategory: 'wideLeg',
-    name: 'Áo Thun Local Brand Cotton 100% 230gsm Chính Hãng',
-    price: 529000,
+    category: 'tops',
+    subcategory: 'jackets',
+    name: 'Áo Thun Nữ Local Brand/The most famous.',
+    price: 459000,
     originalPrice: null,
-    image: 'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-losa7sarjtor7a.webp',
+    image: 'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lq64vuldm4on74.webp',
     isNew: true,
     inStock: true,
     isBestSeller: false,
-    soldCount: 268,
-    sizes: ['S', 'M', 'L'],
-    material: '95% cotton, 5% spandex',
+    soldCount: 312,
+    sizes: ['S', 'M', 'L', 'XL'],
+    material: 'Nỉ',
     description:
-      'Quần ống suông lưng cao, chất cotton co giãn nhẹ, che khuyết điểm tốt. Lưng thun phía sau giúp mặc cả ngày vẫn thoải mái.',
-  },
+      'Áo Thun Nam Nữ Local Brand/The most famous',
+    details: [
+      'Mẫu: Trơn',
+      'Phong cách: Thể thao, Cơ bản, Hàn Quốc, Đường phố.',
+    ],
+    rating: 5.0,              // điểm đánh giá -> hàng "5.0 ★★★★★"
+    reviewCount: 509,         // "509 Đánh giá"
+    soldCount: 2150,          // "Đã bán 2,1k"
+    images: [                 // ảnh lớn + hàng ảnh nhỏ (ảnh đầu = ảnh chính)
+      'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lq64vuldm4on74.webp',
+      'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lq64vulcvfw7c9@resize_w900_nl.webp',
+      'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lwbrnc8pvtujd2.webp',
+      'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lq64vuld6o5uc6.webp',
+      'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lq64vulcsmrbfb.webp',
+      'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lu0dkbrh1vkv06@resize_w900_nl.webp'
+    ],
+    colors: [                 
+      { 
+        id: 'Black', 
+        name: 'Đen', 
+        hex: '#0B0402', 
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lq64vuldm4on74.webp' 
+      },
+      { id: 'Charcoal green', 
+        name: 'Xanh than', 
+        hex: '#0D1B36', 
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lq64vulcvfw7c9@resize_w900_nl.webp' 
+      },
+      { id: 'Red wine', 
+        name: 'Đỏ đô', 
+        hex: '#561319', 
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lwbrnc8pvtujd2.webp' 
+      },
+      { id: 'White', 
+        name: 'Trắng', 
+        hex: '#FFFFFF', 
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lq64vuld6o5uc6.webp' 
+      },
+      { id: 'Charcoal gray', 
+        name: 'Xám chì', 
+        hex: '#303236', 
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lq64vulcsmrbfb.webp' 
+      },
+      { id: 'pink',
+        name: 'Hồng',
+        hex: '#FEB7C6',
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lu0dkbrh1vkv06@resize_w900_nl.webp'
+      }
+    ],
+    care: 
+      ['Nên hòa tan xà bông giặt với nước và bỏ áo vào ngâm, tránh đổ trực tiếp lên áo sẽ làm áo bị loang màu.', 
+        'Khi giặt và phơi bạn nên lộn trái sản phẩm sẽ giúp giữ màu sản phẩm được bền hơn, nên sử dụng túi giặt.',
+        'Không giặt chung đồ màu với đồ trắng và ngược lại. ',
+      ]
+    },
   {
     id: 'p003',
     category: 'dresses',

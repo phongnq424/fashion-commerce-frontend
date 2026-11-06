@@ -225,12 +225,13 @@
 
   /* Lớp phủ mờ từ DƯỚI lên */
   .hero-slide--bottom-center::before {
-    background: linear-gradient(
+    /* background: linear-gradient(
       0deg,
       color-mix(in srgb, var(--color-bg) 88%, transparent) 0%,
       color-mix(in srgb, var(--color-bg) 60%, transparent) 30%,
       transparent 60%
-    );
+    ); */
+     display: none;
   }
 }
 
