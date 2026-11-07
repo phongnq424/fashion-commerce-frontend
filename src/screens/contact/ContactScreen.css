@@ -1,0 +1,181 @@
+/* =====================================================================
+   TRANG LIÊN HỆ (/contact)
+   Desktop: [ Thông tin + form | Bản đồ ]   Mobile: xếp dọc, bản đồ ở dưới
+   ===================================================================== */
+
+.contact-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6);
+  padding-block: var(--space-6) var(--space-8);
+}
+
+@media (min-width: 1024px) {
+  .contact-page {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-7);
+    align-items: stretch;
+  }
+}
+
+.contact-page__title,
+.contact-page__subtitle {
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-heading);
+  color: var(--color-text);
+}
+
+.contact-page__subtitle {
+  margin-top: var(--space-7);
+}
+
+.contact-page__desc {
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+  line-height: var(--lh-base);
+}
+
+/* ---------- 4 ô thông tin (2 cột) ---------- */
+.contact-info {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+  margin-top: var(--space-5);
+  font-style: normal; /* bỏ chữ nghiêng mặc định của <address> */
+}
+
+@media (min-width: 640px) {
+  .contact-info {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-5);
+  }
+}
+
+.contact-info__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+/* Icon trong vòng tròn viền màu thương hiệu (như mẫu) */
+.contact-info__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1.5px solid var(--color-brand);
+  border-radius: 50%;
+  color: var(--color-brand);
+  font-size: 1.125rem;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+.contact-info__item:hover .contact-info__icon {
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+}
+
+.contact-info__title {
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-base);
+  margin-bottom: 2px;
+}
+
+.contact-info__text {
+  display: block;
+  color: var(--color-text);
+  line-height: var(--lh-base);
+  overflow-wrap: anywhere; /* email dài không tràn ô */
+}
+
+.contact-info__link {
+  text-decoration: none;
+}
+
+.contact-info__link:hover {
+  color: var(--color-brand);
+  text-decoration: underline;
+}
+
+/* ---------- Form ---------- */
+.contact-form {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.contact-form__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .contact-form__row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Ô nội dung nhiều dòng: nhãn nổi ở trên cùng thay vì giữa ô */
+.contact-form__message .field__input {
+  min-height: 140px;
+  padding-top: 26px;
+  padding-bottom: var(--space-3);
+  resize: vertical;
+  font: inherit;
+  line-height: var(--lh-base);
+}
+
+.contact-form__actions {
+  margin-top: var(--space-2);
+}
+
+.contact-form__result {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-weight: var(--fw-medium);
+}
+
+.contact-form__result svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.contact-form__result--success {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.contact-form__result--error {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+/* ---------- Bản đồ ---------- */
+.contact-page__map {
+  min-height: 360px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-muted);
+}
+
+.contact-page__map iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  border: 0;
+}
+
+@media (min-width: 1024px) {
+  .contact-page__map {
+    min-height: 560px;
+  }
+}
