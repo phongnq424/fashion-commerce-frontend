@@ -1,0 +1,504 @@
+/* =====================================================================
+   TRANG DANH MỤC SẢN PHẨM (/products, /category/...)
+   Banner cố định | Breadcrumb | Tiêu đề + Sắp xếp | [Bộ lọc trái | Lưới sản phẩm]
+   ===================================================================== */
+
+/* ---------- Banner (tràn hết chiều ngang) ---------- */
+.catalog-banner__link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.catalog-banner__link:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: -3px;
+}
+
+.catalog-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 180px; /* màn hình hẹp: không để banner mỏng dẹt */
+  max-height: 420px; /* chỉ áp cho banner CHƯA có ảnh. Có ảnh -> đổi maxHeight trong catalogConfig.js */
+  overflow: hidden;
+  background: var(--color-tint-soft);
+}
+
+.catalog-banner__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Có ảnh: chiều cao đi theo đúng tỉ lệ ảnh -> không bị cắt (màn hình hẹp không ép cao thêm) */
+.catalog-banner--image {
+  min-height: 0;
+}
+
+/* Chưa có ảnh: nền gradient + mảng tròn trang trí theo tông thương hiệu */
+.catalog-banner--placeholder {
+  background:
+    radial-gradient(circle at 82% 30%, var(--color-hero-blob) 0 12%, transparent 12.2%),
+    radial-gradient(circle at 92% 85%, var(--color-hero-blob) 0 7%, transparent 7.2%),
+    radial-gradient(circle at 70% 120%, var(--color-hero-blob) 0 18%, transparent 18.2%),
+    linear-gradient(110deg, var(--color-hero-glow) 0%, var(--color-hero-mid) 45%, var(--color-hero-edge) 100%);
+}
+
+.catalog-banner__text {
+  position: relative;
+  display: grid;
+  gap: var(--space-2);
+  padding-block: var(--space-5);
+  color: var(--color-on-hero);
+}
+
+/* Có ảnh + bật chữ: thêm lớp mờ bên trái để chữ đọc rõ */
+.catalog-banner--image .catalog-banner__text::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: min(100%, 640px);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--color-bg) 82%, transparent), transparent);
+  z-index: -1;
+}
+
+.catalog-banner__eyebrow {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-brand);
+}
+
+.catalog-banner__title {
+  max-width: 14ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 1.1rem + 2.6vw, 3.25rem);
+  font-weight: var(--fw-extrabold);
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.catalog-banner__subtitle {
+  max-width: 46ch;
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+/* ---------- Khung trang ---------- */
+.catalog {
+  padding-block: var(--space-6) var(--space-9);
+}
+
+.catalog__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.catalog__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+}
+
+.catalog__title {
+  margin: 0;
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-extrabold);
+  text-transform: uppercase;
+  color: var(--color-heading-accent);
+}
+
+.catalog__tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ---------- Nút Sắp xếp (màu thương hiệu) ---------- */
+.sort-menu {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 42px;
+  padding: 0 var(--space-4);
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  transition: background-color var(--transition);
+}
+
+.sort-menu:hover {
+  background: var(--color-brand-hover);
+}
+
+.sort-menu:focus-within {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.sort-menu__label {
+  font-weight: var(--fw-bold);
+}
+
+.sort-menu__value {
+  font-weight: var(--fw-medium);
+  white-space: nowrap;
+}
+
+/* <select> thật phủ trong suốt lên nút -> bấm vào đâu cũng mở danh sách */
+.sort-menu__select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.sort-menu__select option {
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+/* Nút "Bộ lọc": chỉ hiện trên tablet / mobile */
+.catalog__filter-toggle {
+  display: none;
+  align-items: center;
+  gap: var(--space-2);
+  height: 42px;
+  padding: 0 var(--space-4);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+}
+
+.catalog__filter-badge {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-2xs);
+}
+
+.catalog__layout {
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+/* ---------- Cột bộ lọc ---------- */
+.catalog-filters {
+  position: sticky;
+  top: 132px; /* nằm dưới header dính */
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 150px);
+}
+
+.catalog-filters__scroll {
+  display: grid;
+  gap: var(--space-6);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: var(--space-2);
+}
+
+.catalog-filters__mobile-head,
+.catalog-filters__mobile-foot {
+  display: none;
+}
+
+.catalog-filters__group {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.catalog-filters__title {
+  margin: 0 0 var(--space-2);
+  padding: 0;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
+  color: var(--color-text);
+}
+
+/* Ô tick mức giá / bộ sưu tập */
+.catalog-check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 32px;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+
+.catalog-check input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  flex-shrink: 0;
+  accent-color: var(--color-brand);
+  cursor: pointer;
+}
+
+.catalog-check:hover span {
+  color: var(--color-brand);
+}
+
+.catalog-filters__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: var(--space-2);
+  padding: 0;
+  background: none;
+  color: var(--color-brand);
+  border: none;
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* ---------- Cột sản phẩm ---------- */
+.catalog__main {
+  min-width: 0;
+}
+
+.catalog__notice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+}
+
+.catalog__chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.catalog__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.35rem 0.55rem 0.35rem 0.8rem;
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+
+.catalog__chip:hover {
+  border-color: var(--color-brand);
+}
+
+.catalog__chip-clear {
+  padding: 0.35rem 0.5rem;
+  background: none;
+  color: var(--color-text-muted);
+  border: none;
+  font: inherit;
+  font-size: var(--fs-xs);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.catalog__chip:focus-visible,
+.catalog__chip-clear:focus-visible,
+.catalog-filters__clear:focus-visible,
+.catalog__filter-toggle:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.catalog__empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  padding: var(--space-8) var(--space-4);
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.catalog__more {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-7);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+.catalog__backdrop {
+  display: none;
+}
+
+/* ---------- Tablet / mobile: bộ lọc thành ngăn kéo ---------- */
+@media (max-width: 960px) {
+  .catalog__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog__filter-toggle {
+    display: inline-flex;
+  }
+
+  .catalog-filters {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 120;
+    width: min(340px, 88vw);
+    max-height: none;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-lg);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 240ms ease, visibility 240ms;
+  }
+
+  .catalog-filters.is-open {
+    transform: none;
+    visibility: visible;
+  }
+
+  .catalog-filters__mobile-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .catalog-filters__mobile-title {
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-wide);
+  }
+
+  .catalog-filters__close {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: transparent;
+    color: var(--color-text);
+    border: none;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+  }
+
+  .catalog-filters__scroll {
+    flex: 1;
+    padding: var(--space-4);
+  }
+
+  .catalog-filters__clear {
+    display: none; /* đã có nút ở đáy ngăn kéo */
+  }
+
+  .catalog-filters__mobile-foot {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4) var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .catalog__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    display: block;
+    padding: 0;
+    background: var(--color-overlay);
+    border: none;
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 640px) {
+  .catalog {
+    padding-block: var(--space-4) var(--space-8);
+  }
+
+  .catalog__head {
+    align-items: stretch;
+  }
+
+  .catalog__tools {
+    width: 100%;
+  }
+
+  .catalog__filter-toggle,
+  .sort-menu {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .sort-menu__label {
+    display: none; /* hẹp quá -> chỉ hiện "Mặc định ⌄" */
+  }
+
+  .catalog-banner--placeholder {
+    min-height: 160px;
+  }
+
+  .catalog-banner__subtitle {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog-filters {
+    transition: none;
+  }
+
+  .catalog-filters__scroll {
+    scroll-behavior: auto;
+  }
+}

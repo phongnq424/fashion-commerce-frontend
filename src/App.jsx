@@ -5,7 +5,7 @@ import Footer from './components/layout/Footer';
 import Notice from './components/common/Notice';
 import AuthModal from './components/AuthModal/AuthModal';
 import HomeScreen from './screens/home/HomeScreen';
-import CategoryScreen from './screens/category/CategoryScreen';
+import CatalogScreen from './screens/catalog/CatalogScreen';
 import ContactScreen from './screens/contact/ContactScreen';
 import ProductDetailScreen from './screens/product/ProductDetailScreen';
 import CollectionScreen from './screens/collection/CollectionScreen';
@@ -18,8 +18,11 @@ import { useAuth } from './hooks/useAuth';
 // Mỗi lần đổi trang thì cuộn lên đầu.
 // Link có # (vd "/#lookbook") -> cuộn tới phần có id tương ứng.
 function ScrollToTop() {
-  const { pathname, hash } = useLocation();
+  const { pathname, hash, state } = useLocation();
+  const keepScroll = Boolean(state?.catalogNav);
   useEffect(() => {
+    // Đổi danh mục ngay trong trang Danh mục sản phẩm -> trang đó tự cuộn về tiêu đề, không nhảy lên đầu
+    if (keepScroll) return;
     if (hash) {
       const target = document.getElementById(hash.slice(1));
       if (target) {
@@ -28,7 +31,7 @@ function ScrollToTop() {
       }
     }
     window.scrollTo(0, 0);
-  }, [pathname, hash]);
+  }, [pathname, hash, keepScroll]);
   return null;
 }
 
@@ -137,11 +140,10 @@ function App() {
         {/* BẢNG ĐỊNH TUYẾN: đường dẫn nào -> hiện màn hình nào */}
         <Routes>
           <Route path="/" element={<HomeScreen onAddToCart={handleAddToCart} />} />
-          <Route path="/category/:categoryId" element={<CategoryScreen onAddToCart={handleAddToCart} />} />
-          <Route
-            path="/category/:categoryId/:subId"
-            element={<CategoryScreen onAddToCart={handleAddToCart} />}
-          />
+          {/* Trang Danh mục sản phẩm: cùng 1 màn hình, cùng 1 banner cố định (screens/catalog) */}
+          <Route path="/products" element={<CatalogScreen onAddToCart={handleAddToCart} />} />
+          <Route path="/category/:categoryId" element={<CatalogScreen onAddToCart={handleAddToCart} />} />
+          <Route path="/category/:categoryId/:subId" element={<CatalogScreen onAddToCart={handleAddToCart} />} />
           <Route path="/product/:productId" element={<ProductDetailScreen onAddToCart={handleAddToCart} />} />
           <Route path="/collections/:collectionId" element={<CollectionScreen onAddToCart={handleAddToCart} />} />
           <Route

@@ -39,8 +39,6 @@ export const mockProducts = [
     soldCount: 2150,          // "Đã bán 2,1k"
     images: [                 // ảnh lớn + hàng ảnh nhỏ (ảnh đầu = ảnh chính)
       'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mfjq6j9qfrpr7d.webp',
-      'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mfjq3g3cp0qx44.webp',
-      'https://down-vn.img.susercontent.com/file/vn-11134207-81ztc-mt6gx1z5qwhs08@resize_w900_nl.webp'
     ],
     colors: [                 
       { 
@@ -76,7 +74,7 @@ export const mockProducts = [
   {
     id: 'p002',
     category: 'tops',
-    subcategory: 'jackets',
+    subcategory: 'tshirts',
     name: 'Áo Thun Nữ Local Brand/The most famous.',
     price: 459000,
     originalPrice: null,
@@ -98,11 +96,6 @@ export const mockProducts = [
     soldCount: 2150,          // "Đã bán 2,1k"
     images: [                 // ảnh lớn + hàng ảnh nhỏ (ảnh đầu = ảnh chính)
       'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lq64vuldm4on74.webp',
-      'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lq64vulcvfw7c9@resize_w900_nl.webp',
-      'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lwbrnc8pvtujd2.webp',
-      'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lq64vuld6o5uc6.webp',
-      'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lq64vulcsmrbfb.webp',
-      'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lu0dkbrh1vkv06@resize_w900_nl.webp'
     ],
     colors: [                 
       { 
@@ -145,89 +138,295 @@ export const mockProducts = [
     },
   {
     id: 'p003',
-    category: 'dresses',
-    subcategory: 'midi',
-    name: 'Đầm midi lụa xếp ly',
-    price: 559000,
-    originalPrice: 1190000,
-    image: img('photo-1595777457583-95e059d581b8'),
-    isNew: true,
-    inStock: true,
-    isBestSeller: true,
-    soldCount: 540,
-    sizes: ['S', 'M', 'L'],
-    material: 'Lụa satin',
-    description:
-      'Đầm midi xếp ly mềm rủ, chuyển động bay bổng theo từng bước đi. Phù hợp tiệc tối, hẹn hò hoặc dự sự kiện.',
-  },
-  {
-    id: 'p004',
     category: 'tops',
-    subcategory: 'jackets',
-    name: 'Áo khoác dạ dáng dài',
-    price: 1490000,
-    originalPrice: null,
-    image: img('photo-1591047139829-d91aecb6caea'),
+    subcategory: 'tshirts',
+    name: '[NEW] Áo thun tay dài Glint.',
+    price: 159000,
+    originalPrice: 298000,
+    image: 'https://bizweb.dktcdn.net/100/668/650/products/20ca999d93e94ecb809e1c3e4afd7ccb-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793931458107',
     isNew: true,
     inStock: true,
     isBestSeller: false,
-    soldCount: 198,
+    soldCount: 312,
     sizes: ['M', 'L', 'XL'],
-    material: '70% len, 30% polyester',
+    material: '100% Cotton',
     description:
-      'Áo khoác dạ dáng dài qua gối, vai đứng gọn gàng. Giữ ấm tốt mà vẫn thanh lịch cho những ngày se lạnh.',
-  },
+      'Áo thun boxy được hoàn thiện với đường may gọn gàng, sắc nét, tỉ mỉ ở từng chi tiết. Chất liệu 250gsm cotton 100% mềm mại, thoáng mát giúp mang lạicảm giác thoải mái suốt ngày dài. Hình in sử dụng mực chất lượng cao, hạn chế bong tróc và giữ màu bền đẹp theo thời gian. Hình ảnh hiển thị rõ nét, an toàn cho da và thân thiện với môi trường. Dáng boxy thời thượng, dễ phối đồ và phù hợp cho cả phong cách thường ngày lẫn những set đồ cá tính.',
+    details: [
+      'Định lượng: 250 gsm',
+      'Dáng: boxy',
+      'Color: Đen, Trắng, Nâu Penny, Xanh Navy, Xám than',
+    ],
+    rating: 5.0,              // điểm đánh giá
+    reviewCount: 509,         // "Đánh giá"
+    soldCount: 2150,          // "Đã bán"
+    images: [                 // ảnh lớn + hàng ảnh nhỏ (ảnh đầu = ảnh chính)
+      'https://bizweb.dktcdn.net/100/668/650/products/20ca999d93e94ecb809e1c3e4afd7ccb-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793931458107',
+      'https://bizweb.dktcdn.net/100/668/650/products/08b9a545811c4973b01429ca8041a616-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793931458107',
+    ],
+    colors: [                 
+      { 
+        id: 'Black', 
+        name: 'Đen', 
+        hex: '#0B0402', 
+        image: 'https://bizweb.dktcdn.net/100/668/650/products/318bc45d450349cb9d84e11db37b39dc-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793931458107' 
+      },
+      { id: 'Dark gray', 
+        name: 'Xám than', 
+        hex: '#C4C2C0', 
+        image: 'https://bizweb.dktcdn.net/100/668/650/products/4aa01829b270469791d8c06d0d2a3944-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793931458107' 
+      },
+      { id: 'Nâu Penny', 
+        name: 'Nâu Penny', 
+        hex: '#4D3A31', 
+        image: 'https://bizweb.dktcdn.net/100/668/650/products/9a7af6e5ef34473c9249aad9b3422894-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793928488247' 
+      },
+      { id: 'White', 
+        name: 'Trắng', 
+        hex: '#FFFFFF', 
+        image: 'https://bizweb.dktcdn.net/100/668/650/products/1e3920608e444b4ab066f657aad900f9-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793928489620' 
+      },
+      { id: 'Xanh Navy', 
+        name: 'Xanh Navy', 
+        hex: '#10193F', 
+        image: 'https://bizweb.dktcdn.net/100/668/650/products/1c93dd44ddfa4223aaeb6fb2c32f52b7-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793928489030' 
+      },
+    ],
+    care: 
+      ['Nên hòa tan xà bông giặt với nước và bỏ áo vào ngâm, tránh đổ trực tiếp lên áo sẽ làm áo bị loang màu.', 
+        'Khi giặt và phơi bạn nên lộn trái sản phẩm sẽ giúp giữ màu sản phẩm được bền hơn, nên sử dụng túi giặt.',
+        'Không giặt chung đồ màu với đồ trắng và ngược lại. ',
+      ]
+    },
+  {
+    id: 'p004',
+    category: 'tops',
+    subcategory: 'tshirts',
+    name: '[NEW] Áo thun tay dài TRENDYLAB SPARK',
+    price: 179000,
+    originalPrice: 338000,
+    image: 'https://bizweb.dktcdn.net/100/668/650/products/5926e777286a476385ad167706d542ba-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793931459127',
+    isNew: true,
+    inStock: true,
+    isBestSeller: false,
+    soldCount: 312,
+    sizes: ['M', 'L', 'XL'],
+    material: '100% Cotton',
+    description:
+      'Áo thun boxy được hoàn thiện với đường may gọn gàng, sắc nét, tỉ mỉ ở từng chi tiết. Chất liệu 250gsm cotton 100% mềm mại, thoáng mát giúp mang lạicảm giác thoải mái suốt ngày dài. Hình in sử dụng mực chất lượng cao, hạn chế bong tróc và giữ màu bền đẹp theo thời gian. Hình ảnh hiển thị rõ nét, an toàn cho da và thân thiện với môi trường. Dáng boxy thời thượng, dễ phối đồ và phù hợp cho cả phong cách thường ngày lẫn những set đồ cá tính.',
+    details: [
+      'Định lượng: 250 gsm',
+      'Dáng: boxy',
+      'Color: Đen, Trắng, Nâu Penny, Xanh Navy, Xám than',
+    ],
+    rating: 5.0,              // điểm đánh giá
+    reviewCount: 509,         // "Đánh giá"
+    soldCount: 2150,          // "Đã bán"
+    images: [                 // ảnh lớn + hàng ảnh nhỏ (ảnh đầu = ảnh chính)
+      'https://bizweb.dktcdn.net/100/668/650/products/5926e777286a476385ad167706d542ba-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793931459127',
+      'https://bizweb.dktcdn.net/100/668/650/products/84e198d25c2042c6bd629560e286d482-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793931459127',
+      'https://bizweb.dktcdn.net/thumb/1024x1024/100/668/650/products/16b3387613a74d2a9714b2e5c1c65eb8-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793931459127',
+    ],
+    colors: [                 
+      { 
+        id: 'Black', 
+        name: 'Đen', 
+        hex: '#0B0402', 
+        image: 'https://bizweb.dktcdn.net/100/668/650/products/50b7349b3559455e872bb45cd36a28a0-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793931459127' 
+      },
+      { id: 'Dark gray', 
+        name: 'Xám than', 
+        hex: '#C4C2C0', 
+        image: 'https://bizweb.dktcdn.net/100/668/650/products/05c9f5df4e134b41bcd6b44167d61866-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793931459127' 
+      },
+      { id: 'Nâu Penny', 
+        name: 'Nâu Penny', 
+        hex: '#4D3A31', 
+        image: 'https://bizweb.dktcdn.net/100/668/650/products/c0d7dd3b712d425991aa92909d12462b-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793928505540' 
+      },
+      { id: 'White', 
+        name: 'Trắng', 
+        hex: '#FFFFFF', 
+        image: 'https://bizweb.dktcdn.net/100/668/650/products/4005ecb826684b5c9b735a74915330da-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793928506693' 
+      },
+      { id: 'Xanh Navy', 
+        name: 'Xanh Navy', 
+        hex: '#10193F', 
+        image: 'https://bizweb.dktcdn.net/100/668/650/products/eabda34e2fd149728ac6e0fc9347a7a1-tplv-aphluv4xwc-origin-jpeg-jpeg.jpg?v=1793928506140' 
+      },
+    ],
+    care: 
+      ['Nên hòa tan xà bông giặt với nước và bỏ áo vào ngâm, tránh đổ trực tiếp lên áo sẽ làm áo bị loang màu.', 
+        'Khi giặt và phơi bạn nên lộn trái sản phẩm sẽ giúp giữ màu sản phẩm được bền hơn, nên sử dụng túi giặt.',
+        'Không giặt chung đồ màu với đồ trắng và ngược lại. ',
+      ]
+    },
   {
     id: 'p005',
     category: 'tops',
     subcategory: 'tshirts',
-    name: 'Áo thun cotton hữu cơ',
-    price: 229000,
-    originalPrice: 290000,
-    image: img('photo-1521572163474-6864f9cf17ab'),
+    name: 'Áo Thun Tay Dài kẻ sọc, Áo Thu Đông Raglan kẻ sọc Long Sleeve Boxy Cổ Tròn Unisex NEW',
+    price: 79990,
+    originalPrice: 139000,
+    image: 'https://down-vn.img.susercontent.com/file/sg-11134201-825b0-mtift5evfgg44f.webp',
     isNew: true,
     inStock: true,
-    isBestSeller: true,
-    soldCount: 820,
+    isBestSeller: false,
+    soldCount: 312,
     sizes: ['S', 'M', 'L', 'XL'],
-    material: '100% cotton hữu cơ',
+    material: '100% Cotton',
     description:
-      'Áo thun basic từ cotton hữu cơ mềm mịn, thấm hút mồ hôi tốt. Món đồ nền tảng dễ phối cho mọi tủ đồ.',
-  },
+      'ÁO THUN DÀI TAY KẺ SỌC CÚN XINH – LONG SLEEVE BOXY FORM RỘNG UNISEX SIÊU ĐẸP. Giới thiệu sản phẩmÁo thun dài tay kẻ sọc cún xinh (Long Sleeve) thiết kế form boxy rộng trẻ trung, unisex nam nữ mặc đều đẹp. Họa tiết cún dễ thương – phong cách Hàn Quốc, phù hợp mọi hoàn cảnh: đi học, đi chơi, chụp ảnh, dạo phố. Chất vải thun rib mềm, co giãn tốt, thoáng mát, cực kỳ thoải mái.',
+    details: [
+      'Mẫu: Kẻ sọc',
+      'Cổ áo: Cổ tròn',
+      'Chiều dài tay: Tay dài',
+    ],
+    rating: 4.1,              // điểm đánh giá
+    reviewCount: 509,         // "Đánh giá"
+    soldCount: 2150,          // "Đã bán"
+    images: [                 // ảnh lớn + hàng ảnh nhỏ (ảnh đầu = ảnh chính)
+      'https://down-vn.img.susercontent.com/file/sg-11134201-825b0-mtift5evfgg44f.webp',
+    ],
+    colors: [                 
+      { 
+        id: 'Black', 
+        name: 'Kẻ đen sao chữ', 
+        image: 'https://down-vn.img.susercontent.com/file/sg-11134201-825b0-mtift5evfgg44f.webp' 
+      },
+      { id: 'Pink', 
+        name: 'Kẻ hồng sao chữ', 
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mht0fzgpgzd050.webp' 
+      },
+      { id: 'Gray', 
+        name: 'Kẻ xám sao chữ', 
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mht0fzfv1cec76@resize_w900_nl.webp' 
+      },
+      { id: 'Blue', 
+        name: 'Kẻ xanh sao chữ', 
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mht0fzfudgqrb2@resize_w900_nl.webp' 
+      },
+    ],
+    care: 
+      ['Nên hòa tan xà bông giặt với nước và bỏ áo vào ngâm, tránh đổ trực tiếp lên áo sẽ làm áo bị loang màu.', 
+        'Khi giặt và phơi bạn nên lộn trái sản phẩm sẽ giúp giữ màu sản phẩm được bền hơn, nên sử dụng túi giặt.',
+        'Không giặt chung đồ màu với đồ trắng và ngược lại. ',
+      ]
+    },
   {
     id: 'p006',
-    category: 'dresses',
-    subcategory: 'miniSkirts',
-    name: 'Chân váy chữ A kaki',
-    price: 389000,
-    originalPrice: null,
-    image: img('photo-1583496661160-fb5886a0aaaa'),
-    isNew: false,
-    inStock: false,
-    isBestSeller: false,
-    soldCount: 455,
-    sizes: ['S', 'M', 'L'],
-    material: 'Kaki cotton',
-    description:
-      'Chân váy chữ A ngắn trên gối, chất kaki đứng form. Dễ phối với áo thun, sơ mi hay áo len.',
-  },
-  {
-    id: 'p007',
     category: 'tops',
-    subcategory: 'knitwear',
-    name: 'Áo len cổ lọ',
-    price: 649000,
-    originalPrice: null,
-    image: img('photo-1434389677669-e08b4cac3105'),
+    subcategory: 'tshirts',
+    name: 'Áo thun unisex Local Brand - Tee Beat',
+    price: 159000,
+    originalPrice: 249000,
+    image: 'https://down-vn.img.susercontent.com/file/85d5367aecdd1d1db35a75076dba6e15.webp',
     isNew: true,
     inStock: true,
     isBestSeller: false,
-    soldCount: 377,
-    sizes: ['S', 'M', 'L'],
-    material: '60% len merino, 40% acrylic',
+    soldCount: 312,
+    sizes: ['S', 'M', 'L', 'XL'],
+    material: '100% Cotton',
     description:
-      'Áo len cổ lọ dệt mịn, ôm vừa người, không gây ngứa. Mặc riêng hoặc làm lớp trong cho áo khoác đều đẹp.',
-  },
+      'Áo thun unisex Local Brand Otis Club - Tee Beat',
+    details: [
+      'Giặt ko đổ lông hay bay màu, thấm hút mồ hôi và thoải mái ko gò bó khi vận động',
+      'Form rộng tay lỡ thoải mái tạo nên sự trẻ trung năng động..',
+      ' Áo có 3 size : M L XL',
+    ],
+    rating: 4.1,              // điểm đánh giá
+    reviewCount: 509,         // "Đánh giá"
+    soldCount: 2150,          // "Đã bán"
+    images: [                 // ảnh lớn + hàng ảnh nhỏ (ảnh đầu = ảnh chính)
+      'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lp39yujl4ksuce.webp',
+    ],
+    colors: [                 
+      { 
+        id: 'Black', 
+        name: 'Đen',
+        hex: '#0B0A0C', 
+        image: 'https://down-vn.img.susercontent.com/file/6ef4c643f470dc885602660edcec7e86.webp' 
+      },
+      { id: 'Blue', 
+        name: 'Xanh', 
+        hex:'#BAE4EF',
+        image: 'https://down-vn.img.susercontent.com/file/b95b5c504df37723f6e3d8d69e8e5031.webp' 
+      },
+      { id: 'Cream', 
+        name:'Kem', 
+        hex: '#FAF3E3',
+        image: 'https://down-vn.img.susercontent.com/file/9eb197283b4e0fdb38db20ffa395a3a3.webp' 
+      },
+      { id: 'Pink', 
+        name: 'Hồng', 
+        hex: '#F2C3CA',
+        image: 'https://down-vn.img.susercontent.com/file/8e90badeb8483fd03f6ea0260d6c0137.webp' 
+      },
+      { id: 'Green',
+        name: 'Xanh lá',
+        hex: '#085045',
+        image: 'https://down-vn.img.susercontent.com/file/1d76bf31f96ecaa3e8ca0451e939b74f.webp'
+      },
+      { id: 'Gray',
+        name: 'Xám',
+        hex: '#9B9B9B',
+        image: 'https://down-vn.img.susercontent.com/file/sg-11134201-22120-3x19dwvaemlv42.webp'
+      },
+      { id: 'White',
+        name: 'Trắng',
+        hex: '#FFFFFF',
+        image: 'https://down-vn.img.susercontent.com/file/372483fc9b5844ad043badf2bca24981.webp'
+      },
+    ],
+    care: 
+      ['Nên hòa tan xà bông giặt với nước và bỏ áo vào ngâm, tránh đổ trực tiếp lên áo sẽ làm áo bị loang màu.', 
+        'Khi giặt và phơi bạn nên lộn trái sản phẩm sẽ giúp giữ màu sản phẩm được bền hơn, nên sử dụng túi giặt.',
+        'Không giặt chung đồ màu với đồ trắng và ngược lại. ',
+      ]
+    },
+{
+    id: 'p007',
+    category: 'dresses',
+    subcategory: 'midi',
+    name: 'Đầm Trắng Nữ Hở Vai Tay Bo 2 Lớp - Váy Nữ Cổ Yếm Dài Tay Dáng Ngắn Chất Voan',
+    price: 149000,
+    originalPrice: 199000,
+    image: 'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mj8p8t1abn5t6b.webp',
+    isNew: true,
+    inStock: true,
+    isBestSeller: false,
+    soldCount: 312,
+    sizes: ['S', 'M', 'L', 'XL'],
+    material: 'Voan',
+    description:
+      'Váy babydoll dáng xoè cổ yếm khoét vai chất voan tơ 2 lớp, Đầm công chúa xoè chữ A dài tay bồng tiểu thư đi chơi dụ tiệc.',
+    details: [
+      'Chất liệu: mềm mịn, co dãn tốt, mỏng ',
+      'Kiểu dáng: form ôm tôn dáng dễ mix đồ',
+      'Đường may chắc chắn tỉ mỉ không chỉ thừa',
+      'Mix: quần ống rộng, quần jean hay chân váy ngắn đều siu siu xinh',
+    ],
+    rating: 3.9,              // điểm đánh giá
+    reviewCount: 509,         // "Đánh giá"
+    soldCount: 2150,          // "Đã bán"
+    images: [                 // ảnh lớn + hàng ảnh nhỏ (ảnh đầu = ảnh chính)
+      'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mj8p8t1abn5t6b.webp',
+      'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mj9b1evlf6kn88.webp',
+      'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mj9b1evlgl53e5.webp',
+    ],
+    colors: [                 
+      { 
+        id: 'White', 
+        name: 'Trắng kem', 
+        image: 'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mj9b1evefqx20a@resize_w900_nl.webp' 
+      },
+    ],
+    care: 
+      ['Nên hòa tan xà bông giặt với nước và bỏ áo vào ngâm, tránh đổ trực tiếp lên áo sẽ làm áo bị loang màu.', 
+        'Khi giặt và phơi bạn nên lộn trái sản phẩm sẽ giúp giữ màu sản phẩm được bền hơn, nên sử dụng túi giặt.',
+        'Không giặt chung đồ màu với đồ trắng và ngược lại. ',
+      ]
+    },
   {
     id: 'p008',
     category: 'accessories',

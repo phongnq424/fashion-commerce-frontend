@@ -60,3 +60,52 @@
     transform: translateY(-6px);
   }
 }
+
+/* ---------- Kiểu gọn: 🏠 Trang chủ › Danh mục sản phẩm (trang Danh mục sản phẩm) ---------- */
+.breadcrumb--compact {
+  background: var(--color-surface-muted);
+  border-bottom: none;
+  animation: none;
+}
+
+.breadcrumb--compact .breadcrumb__list {
+  min-height: 44px;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* Dấu › thay cho / */
+.breadcrumb--compact .breadcrumb__item + .breadcrumb__item::before {
+  content: '›';
+  margin-inline: var(--space-2);
+  color: var(--color-text);
+  font-size: 1.2em;
+  font-weight: var(--fw-bold);
+  line-height: 1;
+}
+
+.breadcrumb--compact .breadcrumb__link,
+.breadcrumb--compact .breadcrumb__text,
+.breadcrumb--compact .breadcrumb__current {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.breadcrumb--compact .breadcrumb__link,
+.breadcrumb--compact .breadcrumb__text {
+  color: var(--color-text);
+}
+
+.breadcrumb--compact .breadcrumb__link:hover {
+  color: var(--color-brand);
+}
+
+/* Trang đang xem: in hoa, màu thương hiệu (mẫu dùng màu đỏ -> đổi sang màu của site) */
+.breadcrumb--compact .breadcrumb__current {
+  color: var(--color-brand);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+}

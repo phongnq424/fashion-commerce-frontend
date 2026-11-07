@@ -22,5 +22,7 @@ export const FLASH_SALE = {
   limit: 10, // tối đa bao nhiêu sản phẩm
   quota: 1000, // số suất của mỗi sản phẩm -> thanh "Đã bán": soldCount / quota
   almostGonePercent: 80, // bán từ 80% suất trở lên -> "Sắp cháy hàng"
-  seeAllHref: '/collections/sale', // nút "Xem thêm sản phẩm"
+  // nút "Xem thêm sản phẩm" -> trang Danh mục sản phẩm (Trang chủ › Danh mục sản phẩm)
+  // Muốn mở sẵn chỉ các sản phẩm đang giảm giá -> đổi thành '/products?offer=sale'
+  seeAllHref: '/products',
 };
