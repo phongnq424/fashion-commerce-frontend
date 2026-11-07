@@ -9,6 +9,7 @@ const en = {
     loading: 'Loading…',
     retry: 'Try again',
     viewAll: 'View all',
+    seeMoreProducts: 'See more products',
   },
   brand: {
     homeLabel: 'sợi. home',

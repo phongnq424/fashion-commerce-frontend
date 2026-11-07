@@ -45,8 +45,8 @@ function NewArrivalsSection({ onAddToCart }) {
         id="new-arrivals-title"
         align="split"
         title={t('home.newArrivals.title')}
-        actionLabel={t('common.viewAll')}
-        actionHref="/collections/new-arrivals"
+        actionLabel={t('common.seeMoreProducts')}
+        actionHref="/products" // -> trang Danh mục sản phẩm
       />
       <ProductGrid
         products={products}

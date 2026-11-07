@@ -11,6 +11,7 @@ const vi = {
     loading: 'Đang tải…',
     retry: 'Thử lại',
     viewAll: 'Xem tất cả',
+    seeMoreProducts: 'Xem thêm sản phẩm', // link ở tiêu đề các mục trang chủ -> trang Danh mục sản phẩm
   },
   brand: {
     homeLabel: 'Giới thiệu.',

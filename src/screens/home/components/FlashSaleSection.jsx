@@ -229,7 +229,7 @@ function FlashSaleRail({ products, loading, ended }) {
 function FlashSaleCard({ product, ended }) {
   const { t, language } = useLanguage();
   const [imageFailed, setImageFailed] = useState(false);
-  const { id, name, price, originalPrice, image, colors = [], soldCount = 0, inStock } = product;
+  const { id, name, price, originalPrice, image, colors = [], soldCount = 0, inStock, isNew } = product;
   const discount = getDiscountPercent(price, originalPrice);
   const soldOut = inStock === false;
   const percent = soldOut ? 100 : Math.min(100, Math.round((soldCount / FLASH_SALE.quota) * 100));
@@ -257,6 +257,8 @@ function FlashSaleCard({ product, ended }) {
               <span className="visually-hidden">{t('home.flashSale.discount')} </span>-{discount}%
             </span>
           )}
+          {/* Nhãn "Mới" giống mọi thẻ sản phẩm khác (product.isNew trong mockProducts.js) */}
+          {isNew && <span className="fs-card__new">{t('product.badgeNew')}</span>}
         </div>
 
         <div className="fs-card__body">
