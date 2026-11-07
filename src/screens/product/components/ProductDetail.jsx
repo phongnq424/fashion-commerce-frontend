@@ -101,7 +101,11 @@ function ProductDetail({ product, onAddToCart }) {
       variant,
       image: color?.image ?? gallery[0] ?? null,
       quantity,
-      gift: gift && giftChoice.selected ? { name: gift.name, option: giftChoice.option } : null,
+      // Quà tặng kèm: lưu đủ tên + ảnh + giá gốc để trang thanh toán hiện được
+      gift:
+        gift && giftChoice.selected
+          ? { name: gift.name, image: gift.image, originalPrice: gift.originalPrice, option: giftChoice.option }
+          : null,
       buyNow,
     });
   };

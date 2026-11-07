@@ -4,7 +4,7 @@ import SectionHeading from '../../../components/common/SectionHeading';
 import { useLanguage } from '../../../hooks/useLanguage';
 import { getBestSellers } from '../../../services/productService';
 
-// 2 hàng x 5 cột = 10 sản phẩm bán chạy nhất. Không gắn nhãn trên ảnh.
+// 2 hàng x 5 cột = 10 sản phẩm bán chạy nhất. Nhãn trên ảnh dùng quy tắc chung (ProductCard.jsx).
 const COLUMNS = 5;
 const ROWS = 2;
 
@@ -34,8 +34,8 @@ function BestSellersSection({ onAddToCart }) {
         id="best-sellers-title"
         align="split"
         title={t('home.bestSellers.title')}
-        actionLabel={t('common.viewAll')}
-        actionHref="/collections/best-sellers"
+        actionLabel={t('common.seeMoreProducts')}
+        actionHref="/products" // -> trang Danh mục sản phẩm
       />
       <ProductGrid
         products={products}

@@ -11,9 +11,9 @@ import ProductDetailScreen from './screens/product/ProductDetailScreen';
 import CollectionScreen from './screens/collection/CollectionScreen';
 import NotFoundScreen from './screens/notFound/NotFoundScreen';
 import CartScreen from './screens/cart/CartScreen';
+import CheckoutScreen from './screens/checkout/CheckoutScreen';
 import { useLanguage } from './hooks/useLanguage';
 import { useCart } from './hooks/useCart';
-import { useAuth } from './hooks/useAuth';
 
 // Mỗi lần đổi trang thì cuộn lên đầu.
 // Link có # (vd "/#lookbook") -> cuộn tới phần có id tương ứng.
@@ -48,9 +48,11 @@ const CART_ERROR_KEYS = {
 function App() {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const { user, openAuth } = useAuth();
   const { addItem, selectedItems } = useCart();
   const [notice, setNotice] = useState(null); // { id, type, message } | null
+  // Trang thanh toán có bố cục riêng (logo + 2 cột), không hiện Header / Footer của site
+  const { pathname } = useLocation();
+  const isCheckout = pathname.startsWith('/checkout');
 
   // useCallback giữ hàm ổn định giữa các lần render (Notice dùng nó trong useEffect)
   const closeNotice = useCallback(() => setNotice(null), []);
@@ -68,12 +70,13 @@ function App() {
   );
 
   // options (tuỳ chọn, từ trang chi tiết): { size, color, colorId, variant, image, quantity, gift, buyNow }
-  //   buyNow = true: bấm "Mua ngay" -> thêm vào giỏ rồi chuyển sang trang giỏ hàng
+  //   buyNow = true: bấm "Mua ngay" -> thêm vào giỏ rồi chuyển thẳng sang trang thanh toán
   const handleAddToCart = useCallback(
     async (product, options = {}) => {
       const quantity = options.quantity ?? 1;
+      let result;
       try {
-        const result = await addItem(product, options);
+        result = await addItem(product, options);
         // Thẻ sản phẩm có nhiều size/màu -> mở trang chi tiết để khách chọn
         if (result.status === 'needsOptions') {
           notify('info', t('cart.chooseOptions', { name: product.name }));
@@ -84,8 +87,9 @@ function App() {
         notifyCartError(error);
         return;
       }
+      // "Mua ngay": thêm vào giỏ rồi sang thẳng trang thanh toán, CHỈ thanh toán đúng món vừa bấm
       if (options.buyNow) {
-        navigate('/cart');
+        navigate('/checkout', { state: { buyNowKey: result.key } });
         return;
       }
       const params = { quantity, name: product.name, size: options.size, color: options.color };
@@ -97,26 +101,17 @@ function App() {
     [addItem, navigate, notify, notifyCartError, t],
   );
 
-  // Nút "Thanh toán" (popup giỏ hàng + trang giỏ hàng).
-  // Backend mới có POST /checkout/preview (cần địa chỉ giao hàng), chưa có API tạo đơn,
-  // nên ở đây chỉ kiểm tra điều kiện rồi báo. Khi có trang thanh toán -> navigate('/checkout').
+  // Nút "Thanh toán" (popup giỏ hàng + trang giỏ hàng) -> trang thanh toán /checkout
+  // với các sản phẩm ĐANG ĐƯỢC TICK trong giỏ. Khách chưa đăng nhập vẫn thanh toán được
+  // (trang thanh toán có sẵn dòng "Đã có tài khoản? Đăng nhập" để tự điền thông tin).
   const handleCheckout = useCallback(() => {
     if (selectedItems.length === 0) {
       notify('warning', t('cart.checkoutEmpty'));
       navigate('/cart');
       return;
     }
-    if (!user) {
-      notify('info', t('cart.loginToCheckout'));
-      openAuth('login');
-      return;
-    }
-    if (selectedItems.some((item) => item.origin === 'local')) {
-      notify('warning', t('cart.demoItemsNotice'));
-      return;
-    }
-    notify('info', t('cart.checkoutPending'));
-  }, [selectedItems, user, openAuth, notify, navigate, t]);
+    navigate('/checkout');
+  }, [selectedItems, notify, navigate, t]);
 
   const handleSearch = useCallback(
     (query) => {
@@ -135,7 +130,9 @@ function App() {
       <a href="#main-content" className="skip-link">
         {t('common.skipToContent')}
       </a>
-      <Header onSearch={handleSearch} onNotify={notify} onCheckout={handleCheckout} onCartError={notifyCartError} />
+      {!isCheckout && (
+        <Header onSearch={handleSearch} onNotify={notify} onCheckout={handleCheckout} onCartError={notifyCartError} />
+      )}
       <main id="main-content" tabIndex={-1}>
         {/* BẢNG ĐỊNH TUYẾN: đường dẫn nào -> hiện màn hình nào */}
         <Routes>
@@ -150,11 +147,13 @@ function App() {
             path="/cart"
             element={<CartScreen onCheckout={handleCheckout} onCartError={notifyCartError} onNotify={notify} />}
           />
+          {/* Trang thanh toán: Giao hàng -> Phương thức thanh toán -> Đặt hàng thành công */}
+          <Route path="/checkout" element={<CheckoutScreen onNotify={notify} />} />
           <Route path="/contact" element={<ContactScreen />} />
           <Route path="*" element={<NotFoundScreen />} />
         </Routes>
       </main>
-      <Footer />
+      {!isCheckout && <Footer />}
       {/* Popup đăng nhập / đăng ký: đặt 1 lần ở đây, mở bằng openAuth() từ bất kỳ đâu */}
       <AuthModal onNotify={notify} />
       {/* key đổi mỗi lần -> thông báo mới luôn hiện lại từ đầu và đếm giờ lại */}

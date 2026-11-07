@@ -278,7 +278,6 @@ function CatalogScreen({ onAddToCart }) {
                 status={status}
                 columns={4}
                 skeletonCount={8}
-                cardBadges={['sale', 'new']}
                 errorMessage={t('category.error')}
                 emptyMessage={t('catalog.empty')}
                 onRetry={() => load(true)}

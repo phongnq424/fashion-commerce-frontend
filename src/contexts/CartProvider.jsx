@@ -25,7 +25,9 @@ const MOCK_MAX_QUANTITY = 10;
  *   unitPrice, originalPrice, quantity, maxQuantity, selected, availability }
  *
  * Hàm:
- *   addItem(product, options)  -> { status: 'added' | 'needsOptions' }  (lỗi Backend thì throw ApiError)
+ *   addItem(product, options)  -> { status: 'added', key } | { status: 'needsOptions' }  (lỗi Backend thì throw ApiError)
+ *     key = mã dòng giỏ vừa thêm -> "Mua ngay" dùng để trang thanh toán chỉ lấy đúng món này
+ *     options.gift = { name, image, originalPrice, option } -> quà tặng kèm (hiện ở trang thanh toán)
  *   updateQuantity(item, n) | toggleSelected(item, bool) | setAllSelected(bool)
  *   changeItemOptions(item, product, { size, colorId })  -> đổi màu / size của 1 dòng (nút bút ở trang giỏ)
  *   removeItem(item) | removeItems(items) | reload()
@@ -201,9 +203,12 @@ export function CartProvider({ children }) {
 
       // Đã đăng nhập + sản phẩm Backend -> thêm vào giỏ Backend
       if (variant && userKey) {
-        await runServer((version) => addCartItem({ expectedVersion: version, variantId: variant.id, quantity }));
+        const cart = await runServer((version) =>
+          addCartItem({ expectedVersion: version, variantId: variant.id, quantity }),
+        );
         setLastAddedAt(Date.now());
-        return { status: 'added' };
+        const line = cart.items.find((item) => item.variantId === variant.id);
+        return { status: 'added', key: line?.key ?? null };
       }
 
       // Còn lại -> giỏ local
@@ -214,7 +219,12 @@ export function CartProvider({ children }) {
         if (existing) {
           return items.map((item) =>
             item.key === key
-              ? { ...item, quantity: Math.min(maxQuantity, item.quantity + quantity), selected: true }
+              ? {
+                  ...item,
+                  quantity: Math.min(maxQuantity, item.quantity + quantity),
+                  selected: true,
+                  gift: options.gift !== undefined ? options.gift : item.gift ?? null,
+                }
               : item,
           );
         }
@@ -236,12 +246,13 @@ export function CartProvider({ children }) {
             maxQuantity,
             selected: true,
             availability: 'AVAILABLE',
+            gift: options.gift ?? null,
             addedAt: Date.now(),
           },
         ];
       });
       setLastAddedAt(Date.now());
-      return { status: 'added' };
+      return { status: 'added', key };
     },
     [userKey, runServer],
   );
@@ -345,6 +356,7 @@ export function CartProvider({ children }) {
           maxQuantity,
           selected: item.selected,
           availability: 'AVAILABLE',
+          gift: item.gift ?? null,
           addedAt: item.addedAt ?? Date.now(),
         };
         rest.splice(Math.max(0, position), 0, updated); // giữ nguyên vị trí dòng trong giỏ

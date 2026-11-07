@@ -58,3 +58,43 @@
   font-weight: var(--fw-medium);
   color: var(--color-danger);
 }
+
+/* ---------- Nhãn nổi (floating label) ----------
+   Ô trống: nhãn nằm giữa ô như chữ gợi ý.
+   Đang gõ / đã có chữ: nhãn thu nhỏ lên góc trên, chữ nhập nằm bên dưới. */
+.field--floating {
+  position: relative;
+}
+
+.field--floating .field__label {
+  position: absolute;
+  top: 0;
+  left: calc(var(--space-4) + 1.5px);
+  display: flex;
+  align-items: center;
+  height: var(--checkout-field-height, 56px);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  color: var(--color-text-muted);
+  pointer-events: none; /* bấm vào nhãn = bấm vào ô */
+  transition: height var(--transition), font-size var(--transition);
+}
+
+.field--floating .field__input {
+  min-height: var(--checkout-field-height, 56px);
+  padding-top: 18px;
+  padding-bottom: 2px;
+}
+
+.field--floating:has(.field__input:focus) .field__label,
+.field--floating:has(.field__input:not(:placeholder-shown)) .field__label {
+  height: 26px;
+  align-items: flex-end;
+  font-size: var(--fs-xs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field--floating .field__label {
+    transition: none;
+  }
+}

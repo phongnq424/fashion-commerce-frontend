@@ -1,0 +1,47 @@
+/* Ảnh nhỏ + huy hiệu số lượng ở góc */
+.order-thumb {
+  position: relative;
+  display: block;
+  width: 64px;
+  height: 64px;
+}
+
+.order-thumb__frame {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+}
+
+.order-thumb__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.order-thumb__badge {
+  position: absolute;
+  top: -9px;
+  right: -9px;
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  background: var(--color-text-muted);
+  color: var(--color-surface);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  line-height: 1;
+}
+
+.order-thumb__badge--gift {
+  background: var(--color-gift);
+  color: var(--color-on-overlay);
+}

@@ -310,6 +310,20 @@
   box-shadow: 0 4px 10px -4px rgb(0 0 0 / 0.35);
 }
 
+/* Nhãn "Mới" ở góc phải trên ảnh (góc trái đã có "-25%") */
+.fs-card__new {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  padding: 0.2rem 0.55rem;
+  background: var(--color-surface);
+  color: var(--color-brand);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+}
+
 .fs-card__body {
   display: flex;
   flex: 1;
