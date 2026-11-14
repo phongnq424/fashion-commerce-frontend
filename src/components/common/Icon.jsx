@@ -47,6 +47,18 @@ const PATHS = {
       <path d="M19 19c0 1.4-2.2 2-5 2" />
     </>
   ),
+  // ----- Icon khu vực tài khoản người mua -----
+  bell: <><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9Z" /><path d="M10 20a2.2 2.2 0 0 0 4 0" /></>,
+  mapPin: <><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z" /><circle cx="12" cy="9.5" r="2.5" /></>,
+  flag: <path d="M5 21V4m0 0h11l-2 4 2 4H5" />,
+  plus: <path d="M12 5v14M5 12h14" />,
+  minus: <path d="M5 12h14" />,
+  clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
+  card: <><rect x="3" y="5.5" width="18" height="13" rx="2" /><path d="M3 10h18M7 15h3" /></>,
+  receipt: <><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z" /><path d="M9 8h6M9 12h6M9 16h3" /></>,
+  store: <><path d="M4 9.5 5.5 4h13L20 9.5" /><path d="M4 9.5a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0" /><path d="M5.5 12v8h13v-8M10 20v-4.5h4V20" /></>,
+  doc: <><path d="M6 3h8l4 4v14H6V3Z" /><path d="M14 3v4h4M9 12h6M9 16h6" /></>,
+  image: <><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="9" cy="10" r="1.8" /><path d="m21 16-5-5L5 20" /></>,
   // ----- Icon danh mục thời trang (nét mảnh, dùng với strokeWidth nhỏ) -----
   tshirt: <path d="M8.5 3.5 4 5.5 2.5 10l3 1L7 9.5V20.5h10V9.5l1.5 1.5 3-1L20 5.5l-4.5-2C15 5 13.7 6 12 6s-3-1-3.5-2.5Z" />,
   shirt: (

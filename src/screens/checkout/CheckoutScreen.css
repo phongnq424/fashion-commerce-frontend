@@ -1196,3 +1196,16 @@
     transition: none;
   }
 }
+
+/* 2 nút sau khi đặt hàng thành công: Tiếp tục mua sắm | Theo dõi đơn hàng */
+.order-success__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+@media (max-width: 480px) {
+  .order-success__actions > * {
+    flex: 1 1 100%;
+  }
+}

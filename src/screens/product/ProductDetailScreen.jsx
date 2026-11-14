@@ -18,7 +18,7 @@ import './ProductDetailScreen.css';
  * Màn hình này lo phần TẢI DỮ LIỆU (đang tải / lỗi / không tìm thấy),
  * còn phần hiển thị + chọn size, số lượng nằm ở ./components/ProductDetail.jsx
  */
-function ProductDetailScreen({ onAddToCart }) {
+function ProductDetailScreen({ onAddToCart, onNotify }) {
   const { t } = useLanguage();
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
@@ -73,7 +73,7 @@ function ProductDetailScreen({ onAddToCart }) {
         {/* key = id sản phẩm: sang sản phẩm khác thì size / số lượng đã chọn tự reset */}
         {status === 'success' && (
           <>
-            <ProductDetail key={product.id} product={product} onAddToCart={onAddToCart} />
+            <ProductDetail onNotify={onNotify} key={product.id} product={product} onAddToCart={onAddToCart} />
             {/* Dưới phần chi tiết: đánh giá của khách, rồi tới gợi ý sản phẩm khác */}
             <ProductReviews key={`reviews-${product.id}`} product={product} />
             <RelatedProducts product={product} onAddToCart={onAddToCart} />

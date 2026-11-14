@@ -6,6 +6,9 @@ import ProductGallery from './ProductGallery';
 import SizeGuideDialog from './SizeGuideDialog';
 import GiftOffer from './GiftOffer';
 import ProductInfoTabs from './ProductInfoTabs';
+import ReportProductDialog from './ReportProductDialog';
+import { useAuth } from '../../../hooks/useAuth';
+import { useWishlist } from '../../../hooks/useWishlist';
 import { useLanguage } from '../../../hooks/useLanguage';
 import { formatCompact, formatPrice, getDiscountPercent } from '../../../utils/format';
 import { buildGallery, findVariant, isColorAvailable, isSizeAvailable } from '../../../utils/productVariants';
@@ -19,8 +22,11 @@ const MAX_QUANTITY = 10;
  * - onAddToCart(product, { size, color, colorId, variant, image, quantity, gift, buyNow })
  *   variant: biến thể Backend khớp size + màu đang chọn (null với sản phẩm mock)
  */
-function ProductDetail({ product, onAddToCart }) {
+function ProductDetail({ product, onAddToCart, onNotify }) {
   const { t, language } = useLanguage();
+  const { user, openAuth } = useAuth();
+  const { isWishlisted, toggleWishlist } = useWishlist();
+  const [reportOpen, setReportOpen] = useState(false);
   const {
     name,
     price: basePrice,
@@ -41,7 +47,24 @@ function ProductDetail({ product, onAddToCart }) {
   const [colorId, setColorId] = useState(colors.length === 1 ? colors[0].id : '');
   const [quantity, setQuantity] = useState(1);
   const [errors, setErrors] = useState({ size: false, color: false });
-  const [wishlisted, setWishlisted] = useState(false);
+  // Yêu thích dùng chung toàn site (WishlistProvider -> PUT/DELETE /wishlist/items/{productId})
+  const wishlisted = isWishlisted(product.id);
+  const handleWishlist = async () => {
+    try {
+      const result = await toggleWishlist(product);
+      if (result === 'needsLogin') openAuth('login');
+      else onNotify?.('success', t(result === 'added' ? 'wishlist.added' : 'wishlist.removed'));
+    } catch {
+      onNotify?.('error', t('account.actionError'));
+    }
+  };
+
+  // Báo cáo sản phẩm (chỉ sản phẩm thật từ backend, cần đăng nhập)
+  const openReport = () => (user ? setReportOpen(true) : openAuth('login'));
+  const handleReported = (success) => {
+    setReportOpen(false);
+    onNotify?.(success ? 'success' : 'error', t(success ? 'report.sent' : 'account.actionError'));
+  };
   const [activeImage, setActiveImage] = useState(0);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [giftChoice, setGiftChoice] = useState({ selected: true, option: gift?.options?.[0] ?? '' });
@@ -329,11 +352,18 @@ function ProductDetail({ product, onAddToCart }) {
             aria-label={
               wishlisted ? t('product.removeFromWishlist', { name }) : t('product.addToWishlist', { name })
             }
-            onClick={() => setWishlisted((value) => !value)}
+            onClick={handleWishlist}
           >
             <Icon name="heart" size={20} filled={wishlisted} />
           </button>
         </div>
+
+        {product.source !== 'mock' && (
+          <button type="button" className="product-detail__report" onClick={openReport}>
+            <Icon name="flag" size={16} />
+            {t('report.open')}
+          </button>
+        )}
 
         <hr className="product-detail__divider" />
 
@@ -342,6 +372,7 @@ function ProductDetail({ product, onAddToCart }) {
       </div>
 
       <SizeGuideDialog open={sizeGuideOpen} onClose={() => setSizeGuideOpen(false)} />
+      <ReportProductDialog open={reportOpen} product={product} onClose={() => setReportOpen(false)} onDone={handleReported} />
     </article>
   );
 }

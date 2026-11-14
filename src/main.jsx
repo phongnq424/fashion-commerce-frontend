@@ -10,6 +10,8 @@ import { ThemeProvider } from './contexts/ThemeProvider';
 import { LanguageProvider } from './contexts/LanguageProvider';
 import { AuthProvider } from './contexts/AuthProvider';
 import { CartProvider } from './contexts/CartProvider';
+import { WishlistProvider } from './contexts/WishlistProvider';
+import { NotificationProvider } from './contexts/NotificationProvider';
 import App from './App';
 
 // Bọc App trong các Provider để MỌI component bên trong dùng được useTheme / useLanguage / useAuth.
@@ -22,7 +24,12 @@ createRoot(document.getElementById('root')).render(
           <AuthProvider>
             {/* Giỏ hàng cần biết đã đăng nhập chưa -> nằm TRONG AuthProvider */}
             <CartProvider>
-              <App />
+              {/* Yêu thích + số thông báo chưa đọc cũng cần biết đã đăng nhập chưa */}
+              <WishlistProvider>
+                <NotificationProvider>
+                  <App />
+                </NotificationProvider>
+              </WishlistProvider>
             </CartProvider>
           </AuthProvider>
         </LanguageProvider>

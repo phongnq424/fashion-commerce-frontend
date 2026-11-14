@@ -7,6 +7,7 @@ import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import AccountButton from './AccountButton';
 import CartButton from './CartButton';
+import NotificationBell from './NotificationBell';
 import { useLanguage } from '../../hooks/useLanguage';
 import './Header.css';
 
@@ -70,6 +71,8 @@ function Header({ onSearch, onNotify, onCheckout, onCartError }) {
           </div>
           <ThemeSwitcher />
           {/* Chưa đăng nhập: mở popup đăng nhập | Đã đăng nhập: menu tài khoản */}
+          {/* Đã đăng nhập: chuông thông báo (số chưa đọc) */}
+          <NotificationBell />
           <AccountButton onNotify={onNotify} />
           {/* Bấm -> trang giỏ hàng | Rê chuột -> popup giỏ hàng nhỏ */}
           <CartButton onCheckout={onCheckout} onError={onCartError} />

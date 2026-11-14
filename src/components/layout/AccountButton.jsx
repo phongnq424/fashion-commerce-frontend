@@ -1,8 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Icon from '../common/Icon';
 import { useAuth } from '../../hooks/useAuth';
 import { useLanguage } from '../../hooks/useLanguage';
 import './AccountButton.css';
+
+// Các mục trong menu tài khoản (trang nằm trong screens/account)
+const ACCOUNT_LINKS = [
+  { to: '/account', icon: 'user', key: 'auth.myAccount' },
+  { to: '/account/orders', icon: 'package', key: 'auth.myOrders' },
+  { to: '/account/returns', icon: 'refresh', key: 'account.nav.returns' },
+  { to: '/account/wishlist', icon: 'heart', key: 'account.nav.wishlist' },
+  { to: '/account/addresses', icon: 'mapPin', key: 'account.nav.addresses' },
+];
 
 /**
  * Nút 👤 trên Header.
@@ -81,18 +91,14 @@ function AccountButton({ onNotify }) {
             <p className="account__email">{user.email}</p>
           </div>
           <ul className="account__links">
-            <li>
-              <a href="#account" className="account__item" onClick={() => setMenuOpen(false)}>
-                <Icon name="user" size={18} />
-                {t('auth.myAccount')}
-              </a>
-            </li>
-            <li>
-              <a href="#orders" className="account__item" onClick={() => setMenuOpen(false)}>
-                <Icon name="package" size={18} />
-                {t('auth.myOrders')}
-              </a>
-            </li>
+            {ACCOUNT_LINKS.map((link) => (
+              <li key={link.to}>
+                <Link to={link.to} className="account__item" onClick={() => setMenuOpen(false)}>
+                  <Icon name={link.icon} size={18} />
+                  {t(link.key)}
+                </Link>
+              </li>
+            ))}
             <li>
               <button type="button" className="account__item account__item--danger" onClick={handleLogout}>
                 <Icon name="logout" size={18} />

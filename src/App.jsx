@@ -12,6 +12,17 @@ import CollectionScreen from './screens/collection/CollectionScreen';
 import NotFoundScreen from './screens/notFound/NotFoundScreen';
 import CartScreen from './screens/cart/CartScreen';
 import CheckoutScreen from './screens/checkout/CheckoutScreen';
+import SearchScreen from './screens/search/SearchScreen';
+import PolicyScreen from './screens/policies/PolicyScreen';
+import ProfileScreen from './screens/account/profile/ProfileScreen';
+import AddressBookScreen from './screens/account/addresses/AddressBookScreen';
+import OrderListScreen from './screens/account/orders/OrderListScreen';
+import OrderDetailScreen from './screens/account/orders/OrderDetailScreen';
+import ReturnListScreen from './screens/account/returns/ReturnListScreen';
+import ReturnRequestScreen from './screens/account/returns/ReturnRequestScreen';
+import ReturnDetailScreen from './screens/account/returns/ReturnDetailScreen';
+import WishlistScreen from './screens/account/wishlist/WishlistScreen';
+import NotificationsScreen from './screens/account/notifications/NotificationsScreen';
 import { useLanguage } from './hooks/useLanguage';
 import { useCart } from './hooks/useCart';
 
@@ -113,15 +124,16 @@ function App() {
     navigate('/checkout');
   }, [selectedItems, notify, navigate, t]);
 
+  // Ô tìm kiếm trên Header -> trang kết quả /search?q=...
   const handleSearch = useCallback(
     (query) => {
       if (!query) {
         setNotice({ id: Date.now(), type: 'warning', message: t('search.emptyQuery') });
         return;
       }
-      setNotice({ id: Date.now(), type: 'info', message: t('search.pending', { query }) });
+      navigate(`/search?q=${encodeURIComponent(query)}`);
     },
-    [t],
+    [navigate, t],
   );
 
   return (
@@ -141,7 +153,12 @@ function App() {
           <Route path="/products" element={<CatalogScreen onAddToCart={handleAddToCart} />} />
           <Route path="/category/:categoryId" element={<CatalogScreen onAddToCart={handleAddToCart} />} />
           <Route path="/category/:categoryId/:subId" element={<CatalogScreen onAddToCart={handleAddToCart} />} />
-          <Route path="/product/:productId" element={<ProductDetailScreen onAddToCart={handleAddToCart} />} />
+          <Route
+            path="/product/:productId"
+            element={<ProductDetailScreen onAddToCart={handleAddToCart} onNotify={notify} />}
+          />
+          {/* Trang kết quả tìm kiếm (ô tìm kiếm trên Header) */}
+          <Route path="/search" element={<SearchScreen onAddToCart={handleAddToCart} />} />
           <Route path="/collections/:collectionId" element={<CollectionScreen onAddToCart={handleAddToCart} />} />
           <Route
             path="/cart"
@@ -150,6 +167,18 @@ function App() {
           {/* Trang thanh toán: Giao hàng -> Phương thức thanh toán -> Đặt hàng thành công */}
           <Route path="/checkout" element={<CheckoutScreen onNotify={notify} />} />
           <Route path="/contact" element={<ContactScreen />} />
+          {/* Chính sách: returns | shipping | payment | privacy | terms (data/policyContent.js) */}
+          <Route path="/policies/:policyId" element={<PolicyScreen />} />
+          {/* KHU VỰC TÀI KHOẢN NGƯỜI MUA (cần đăng nhập — AccountLayout tự hiện khối mời đăng nhập) */}
+          <Route path="/account" element={<ProfileScreen />} />
+          <Route path="/account/orders" element={<OrderListScreen onNotify={notify} />} />
+          <Route path="/account/orders/:orderId" element={<OrderDetailScreen onNotify={notify} />} />
+          <Route path="/account/returns" element={<ReturnListScreen />} />
+          <Route path="/account/returns/new" element={<ReturnRequestScreen onNotify={notify} />} />
+          <Route path="/account/returns/:returnId" element={<ReturnDetailScreen onNotify={notify} />} />
+          <Route path="/account/addresses" element={<AddressBookScreen onNotify={notify} />} />
+          <Route path="/account/wishlist" element={<WishlistScreen onAddToCart={handleAddToCart} />} />
+          <Route path="/account/notifications" element={<NotificationsScreen />} />
           <Route path="*" element={<NotFoundScreen />} />
         </Routes>
       </main>

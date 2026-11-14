@@ -98,3 +98,24 @@
     transition: none;
   }
 }
+
+/* ---------- Ô nhiều dòng (Textarea.jsx) ---------- */
+.field__input--textarea {
+  font: inherit;
+  min-height: 96px;
+  padding: var(--space-3) var(--space-4);
+  line-height: var(--lh-base);
+  resize: vertical;
+}
+
+.field__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.field__count {
+  margin-left: auto;
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+}

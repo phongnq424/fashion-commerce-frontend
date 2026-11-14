@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../common/Button';
 import Icon from '../common/Icon';
+import { useAuth } from '../../hooks/useAuth';
 import { useLanguage } from '../../hooks/useLanguage';
+import { useWishlist } from '../../hooks/useWishlist';
 import { formatPrice, getDiscountPercent } from '../../utils/format';
 import './ProductCard.css';
 
@@ -28,7 +30,17 @@ const DEFAULT_BADGES = ['new', 'sale'];
 function ProductCard({ product, onAddToCart, badges = DEFAULT_BADGES }) {
   const { t, language } = useLanguage();
   const [imageFailed, setImageFailed] = useState(false);
-  const [wishlisted, setWishlisted] = useState(false);
+  const { openAuth } = useAuth();
+  const { isWishlisted, toggleWishlist } = useWishlist();
+  // ♥ dùng chung toàn site (WishlistProvider). Chưa đăng nhập -> mở popup đăng nhập
+  const wishlisted = isWishlisted(product.id);
+  const handleWishlist = async () => {
+    try {
+      if ((await toggleWishlist(product)) === 'needsLogin') openAuth('login');
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const { id, name, price, originalPrice, image, isNew, isBestSeller, inStock } = product;
   const discount = getDiscountPercent(price, originalPrice);
@@ -83,7 +95,7 @@ function ProductCard({ product, onAddToCart, badges = DEFAULT_BADGES }) {
           aria-label={
             wishlisted ? t('product.removeFromWishlist', { name }) : t('product.addToWishlist', { name })
           }
-          onClick={() => setWishlisted((value) => !value)}
+          onClick={handleWishlist}
         >
           <Icon name="heart" size={18} filled={wishlisted} />
         </button>

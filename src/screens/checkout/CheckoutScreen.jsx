@@ -120,14 +120,16 @@ function CheckoutScreen({ onNotify }) {
   // Lỗi (mất mạng...) được PaymentStep bắt và hiện ngay trên nút
   // paymentDetails: { cardBrand, cardLast4, saveCard } khi trả bằng thẻ (không bao giờ có số thẻ đầy đủ)
   const handlePlaceOrder = async (paymentDetails = null) => {
-    const { orderCode } = await placeOrder({
+    const { orderCode, orderId } = await placeOrder({
       items,
       shipping,
+      totals,
       paymentMethod,
       paymentDetails,
       voucherCode: voucher?.code,
+      owner: user?.email ?? shipping.email,
     });
-    setPlacedOrder({ orderCode, items, totals, voucher, shipping, paymentMethod });
+    setPlacedOrder({ orderCode, orderId, items, totals, voucher, shipping, paymentMethod });
     window.scrollTo(0, 0);
     // Chỉ xoá các món VỪA MUA khỏi giỏ (món khách bỏ tick vẫn giữ lại). Lỗi xoá không ảnh hưởng đơn đã đặt.
     removeItems(buyingLines).catch((error) => console.warn('[Checkout] Không xoá được món đã mua khỏi giỏ', error));

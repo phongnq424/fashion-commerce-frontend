@@ -1,0 +1,274 @@
+/* =====================================================================
+   TIN NỔI BẬT DẠNG POP-UP (kiểu Instagram Stories)
+   Máy tính: nền tối toàn màn hình, khung tin dọc 9:16 ở giữa, nút ‹ › hai bên.
+   Mobile: khung tin phủ kín màn hình.
+   Màu trong khung tin cố định sáng-trên-tối (giống Instagram) ở cả 2 theme.
+   ===================================================================== */
+.story-viewer {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--neutral-0);
+}
+
+.story-viewer::backdrop {
+  background: rgb(10 12 24 / 0.92);
+}
+
+.story-viewer__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  width: 100%;
+  height: 100%;
+  padding: var(--space-4);
+}
+
+.story-viewer__nav {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.9);
+  color: var(--neutral-900);
+  cursor: pointer;
+  transition: transform var(--transition), opacity var(--transition);
+}
+
+.story-viewer__nav:hover:not(:disabled) {
+  transform: scale(1.08);
+}
+
+.story-viewer__nav:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+/* ---------- Khung tin ---------- */
+.story {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: min(88dvh, 860px);
+  aspect-ratio: 9 / 16;
+  max-width: calc(100vw - 2rem);
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--neutral-900);
+  box-shadow: 0 30px 60px rgb(0 0 0 / 0.5);
+  user-select: none;
+}
+
+.story__bars {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 3;
+  display: flex;
+  gap: 4px;
+  padding: 10px 10px 0;
+}
+
+.story__bar {
+  flex: 1;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: rgb(255 255 255 / 0.35);
+}
+
+.story__bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--neutral-0);
+  transform-origin: left center;
+}
+
+.story__head {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 22px 8px 28px 12px;
+  background: linear-gradient(rgb(0 0 0 / 0.55), transparent);
+}
+
+.story__avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 2px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--periwinkle-300), var(--periwinkle-600));
+}
+
+.story__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 2px solid var(--neutral-900);
+  border-radius: 50%;
+}
+
+.story__meta {
+  flex: 1;
+  display: grid;
+  min-width: 0;
+  line-height: 1.25;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+}
+
+.story__name {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+}
+
+.story__time {
+  font-size: var(--fs-xs);
+  opacity: 0.85;
+}
+
+.story__icon-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--neutral-0);
+  cursor: pointer;
+}
+
+.story__icon-btn:hover {
+  background: rgb(255 255 255 / 0.15);
+}
+
+.story__icon-btn:focus-visible,
+.story-viewer__nav:focus-visible,
+.story__cta:focus-visible {
+  outline: 3px solid var(--periwinkle-300);
+  outline-offset: 2px;
+}
+
+.story__media {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.story__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: story-in 280ms ease;
+  -webkit-user-drag: none;
+}
+
+@keyframes story-in {
+  from {
+    opacity: 0.4;
+    transform: scale(1.03);
+  }
+}
+
+.story__fallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: rgb(255 255 255 / 0.5);
+}
+
+.story__body {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  display: grid;
+  justify-items: start;
+  gap: var(--space-2);
+  padding: 80px var(--space-5) var(--space-5);
+  background: linear-gradient(transparent, rgb(0 0 0 / 0.78) 45%);
+  pointer-events: none; /* bấm xuyên xuống vùng ảnh, trừ nút CTA */
+}
+
+.story__tag {
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--periwinkle-500);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.story__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-heading);
+}
+
+.story__text {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-base);
+  opacity: 0.92;
+}
+
+.story__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  background: var(--neutral-0);
+  color: var(--neutral-900);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  text-decoration: none;
+  pointer-events: auto;
+  transition: transform var(--transition);
+}
+
+.story__cta:hover {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story__image {
+    animation: none;
+  }
+}
+
+/* ---------- Mobile: phủ kín màn hình ---------- */
+@media (max-width: 640px) {
+  .story-viewer__stage {
+    padding: 0;
+  }
+
+  .story-viewer__nav {
+    display: none;
+  }
+
+  .story {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    aspect-ratio: auto;
+    border-radius: 0;
+  }
+}

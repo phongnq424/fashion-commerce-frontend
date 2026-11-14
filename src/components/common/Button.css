@@ -90,3 +90,11 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Nút nguy hiểm (Xoá, Hủy đơn) */
+.btn.btn--danger {
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+  color: var(--color-on-brand);
+}
+

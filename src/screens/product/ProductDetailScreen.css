@@ -1296,3 +1296,40 @@ a.rating-bar__item:hover .rating-bar__number {
     animation: none;
   }
 }
+
+/* Nút "Báo cáo sản phẩm" (mở ReportProductDialog) */
+.product-detail__report {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  align-self: flex-start;
+  margin-top: var(--space-3);
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+
+.product-detail__report:hover {
+  color: var(--color-danger);
+  text-decoration: underline;
+}
+
+.report-form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.report-form .radio-list__item {
+  min-height: 56px;
+  padding-block: var(--space-2);
+}
+
+.report-form__hint {
+  display: block;
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+}

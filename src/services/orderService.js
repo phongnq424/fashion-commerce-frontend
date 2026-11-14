@@ -1,4 +1,5 @@
 import { MOCK_VOUCHERS } from '../data/mockVouchers';
+import { saveMockOrder } from './mockOrderStore';
 
 // =====================================================================
 // ĐƠN HÀNG: mã giảm giá, phí vận chuyển, tính tổng tiền, đặt hàng.
@@ -73,11 +74,13 @@ export function calculateTotals({ subtotal, voucher, provinceId }) {
   return { subtotal, discount, shippingFee, shippingDiscount, total };
 }
 
-// Đặt hàng. Trả về mã đơn để hiện ở màn "Đặt hàng thành công"
+// Đặt hàng (GIẢ LẬP): tạo mã đơn + LƯU đơn vào kho giả lập (services/mockOrderStore.js)
+// để trang "Đơn hàng của tôi" đọc lại được. Trả về { orderCode, orderId }.
 // Backend: POST `${API}/orders` với { items, shipping, paymentMethod, voucherCode }
 // paymentDetails (thẻ): { cardBrand, cardLast4, saveCard } — số thẻ đầy đủ KHÔNG BAO GIỜ đi qua đây.
 //   Khi có cổng thanh toán thật, thẻ được nhập trong ô / trang của cổng, Backend chỉ nhận mã giao dịch.
-export async function placeOrder({ items, shipping, paymentMethod, paymentDetails, voucherCode }) {
+// owner: email người đặt (đã đăng nhập: email tài khoản | khách: email trong form giao hàng)
+export async function placeOrder({ items, shipping, totals, paymentMethod, paymentDetails, voucherCode, owner }) {
   await wait(800);
   if (!items?.length || !shipping || !paymentMethod) {
     throw Object.assign(new Error('Invalid order'), { code: 'ORDER_INVALID' });
@@ -85,5 +88,6 @@ export async function placeOrder({ items, shipping, paymentMethod, paymentDetail
   void voucherCode;
   void paymentDetails;
   const orderCode = `TL${Date.now().toString().slice(-8)}`;
-  return { orderCode };
+  const order = saveMockOrder({ orderCode, items, shipping, totals, paymentMethod, owner });
+  return { orderCode, orderId: order.id };
 }

@@ -24,7 +24,8 @@ export const HERO_SLIDES = [
     imagePosition: '65% center',
     textAlign: 'left',
     buttons: [
-      { id: 'shopNow', to: '/category/tops', variant: 'primary' },
+      // Nút 'Mua sắm ngay' -> TRANG CHỦ / DANH MỤC SẢN PHẨM
+      { id: 'shopNow', to: '/products', variant: 'primary' },
       { id: 'newArrivals', to: '#new-arrivals', variant: 'outline' },
     ],
   },
