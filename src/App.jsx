@@ -23,6 +23,22 @@ import ReturnRequestScreen from './screens/account/returns/ReturnRequestScreen';
 import ReturnDetailScreen from './screens/account/returns/ReturnDetailScreen';
 import WishlistScreen from './screens/account/wishlist/WishlistScreen';
 import NotificationsScreen from './screens/account/notifications/NotificationsScreen';
+// TRANG QUẢN TRỊ (/admin) — chỉ nhân viên TrendyLab, đăng nhập riêng; web khách không có link tới đây
+import AdminLoginScreen from './screens/admin/login/AdminLoginScreen';
+import AdminLayout from './screens/admin/components/AdminLayout';
+import AdminDashboardScreen from './screens/admin/dashboard/AdminDashboardScreen';
+import ProductListScreen from './screens/admin/products/ProductListScreen';
+import ProductEditorScreen from './screens/admin/products/ProductEditorScreen';
+import InventoryScreen from './screens/admin/inventory/InventoryScreen';
+import AdminOrderListScreen from './screens/admin/orders/AdminOrderListScreen';
+import AdminOrderDetailScreen from './screens/admin/orders/AdminOrderDetailScreen';
+import CodScreen from './screens/admin/cod/CodScreen';
+import AdminReturnListScreen from './screens/admin/returns/AdminReturnListScreen';
+import AdminReturnDetailScreen from './screens/admin/returns/AdminReturnDetailScreen';
+import AdminReviewsScreen from './screens/admin/reviews/AdminReviewsScreen';
+import ShopProfileScreen from './screens/admin/shop/ShopProfileScreen';
+import ShopSettingsScreen from './screens/admin/shop/ShopSettingsScreen';
+import StaffScreen from './screens/admin/shop/StaffScreen';
 import { useLanguage } from './hooks/useLanguage';
 import { useCart } from './hooks/useCart';
 
@@ -64,6 +80,9 @@ function App() {
   // Trang thanh toán có bố cục riêng (logo + 2 cột), không hiện Header / Footer của site
   const { pathname } = useLocation();
   const isCheckout = pathname.startsWith('/checkout');
+  // Trang quản trị là khu vực riêng của nhân viên (thanh trên + menu trái), không phải web khách
+  const isAdmin = pathname === '/admin' || pathname.startsWith('/admin/');
+  const hideSiteChrome = isCheckout || isAdmin;
 
   // useCallback giữ hàm ổn định giữa các lần render (Notice dùng nó trong useEffect)
   const closeNotice = useCallback(() => setNotice(null), []);
@@ -142,7 +161,7 @@ function App() {
       <a href="#main-content" className="skip-link">
         {t('common.skipToContent')}
       </a>
-      {!isCheckout && (
+      {!hideSiteChrome && (
         <Header onSearch={handleSearch} onNotify={notify} onCheckout={handleCheckout} onCartError={notifyCartError} />
       )}
       <main id="main-content" tabIndex={-1}>
@@ -179,10 +198,29 @@ function App() {
           <Route path="/account/addresses" element={<AddressBookScreen onNotify={notify} />} />
           <Route path="/account/wishlist" element={<WishlistScreen onAddToCart={handleAddToCart} />} />
           <Route path="/account/notifications" element={<NotificationsScreen />} />
+          {/* TRANG QUẢN TRỊ: /admin/login đăng nhập riêng; AdminLayout tự chuyển về đây nếu chưa đăng nhập */}
+          <Route path="/admin/login" element={<AdminLoginScreen />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboardScreen onNotify={notify} />} />
+            <Route path="products" element={<ProductListScreen onNotify={notify} />} />
+            <Route path="products/new" element={<ProductEditorScreen onNotify={notify} />} />
+            <Route path="products/:productId" element={<ProductEditorScreen onNotify={notify} />} />
+            <Route path="inventory" element={<InventoryScreen onNotify={notify} />} />
+            <Route path="orders" element={<AdminOrderListScreen onNotify={notify} />} />
+            <Route path="orders/:shopOrderId" element={<AdminOrderDetailScreen onNotify={notify} />} />
+            <Route path="cod" element={<CodScreen onNotify={notify} />} />
+            <Route path="returns" element={<AdminReturnListScreen onNotify={notify} />} />
+            <Route path="returns/:returnId" element={<AdminReturnDetailScreen onNotify={notify} />} />
+            <Route path="reviews" element={<AdminReviewsScreen onNotify={notify} />} />
+            <Route path="profile" element={<ShopProfileScreen onNotify={notify} />} />
+            <Route path="settings" element={<ShopSettingsScreen onNotify={notify} />} />
+            <Route path="staff" element={<StaffScreen onNotify={notify} />} />
+            <Route path="*" element={<NotFoundScreen />} />
+          </Route>
           <Route path="*" element={<NotFoundScreen />} />
         </Routes>
       </main>
-      {!isCheckout && <Footer />}
+      {!hideSiteChrome && <Footer />}
       {/* Popup đăng nhập / đăng ký: đặt 1 lần ở đây, mở bằng openAuth() từ bất kỳ đâu */}
       <AuthModal onNotify={notify} />
       {/* key đổi mỗi lần -> thông báo mới luôn hiện lại từ đầu và đếm giờ lại */}

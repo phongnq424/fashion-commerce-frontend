@@ -33,6 +33,33 @@ const TONES = {
   RETURNING: 'info',
   RECEIVED: 'info',
   REFUNDED: 'success',
+  // ----- Seller Center -----
+  // Sản phẩm (products.status)
+  DRAFT: 'muted',
+  ACTIVE: 'success',
+  HIDDEN: 'warning',
+  ARCHIVED: 'muted',
+  REMOVED: 'danger',
+  INACTIVE: 'muted',
+  // Hồ sơ đăng ký bán hàng / shop
+  PENDING_REVIEW: 'warning',
+  UNDER_REVIEW: 'warning',
+  SUSPENDED: 'danger',
+  CLOSED: 'muted',
+  // Nhân viên, lời mời, chuyển quyền sở hữu
+  INVITED: 'warning',
+  DISABLED: 'muted',
+  DECLINED: 'muted',
+  ACCEPTED: 'success',
+  // Thu hộ COD
+  COLLECTION_FAILED: 'danger',
+  COLLECTED: 'info',
+  RECONCILED: 'success',
+  // Vận đơn
+  PICKED_UP: 'info',
+  IN_TRANSIT: 'info',
+  OUT_FOR_DELIVERY: 'info',
+  DELIVERY_FAILED: 'danger',
 };
 
 export const statusTone = (status) => TONES[status] ?? 'muted';
