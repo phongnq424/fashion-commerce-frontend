@@ -15,7 +15,7 @@ import './ProductCard.css';
 //   soldOut    "Hết hàng" / "Sold out"     (khi product.inStock = false)
 // ĐỒNG BỘ TOÀN SITE: mọi thẻ sản phẩm (trang chủ, trang danh mục, "Có thể bạn sẽ thích"...) dùng CHUNG
 // danh sách nhãn này -> 1 sản phẩm ở đâu cũng hiện nhãn giống nhau.
-// Nhãn tự bật theo dữ liệu trong mockProducts.js: isNew: true -> "Mới", originalPrice > price -> "-25%".
+// Nhãn tự bật theo dữ liệu sản phẩm: isNew (đăng bán ≤ 7 ngày) -> "Mới", originalPrice > price -> "-25%".
 // Muốn thêm nhãn "Bán chạy" cho mọi nơi: thêm 'bestSeller' vào mảng dưới.
 // Các mục KHÔNG nên truyền prop badges riêng, nếu không sẽ lệch lại.
 const DEFAULT_BADGES = ['new', 'sale'];

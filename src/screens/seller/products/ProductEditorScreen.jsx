@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Button from '../../../components/common/Button';
 import EmptyState from '../../../components/common/EmptyState';
@@ -6,7 +6,7 @@ import Icon from '../../../components/common/Icon';
 import StatusBadge from '../../../components/common/StatusBadge';
 import { useLanguage } from '../../../hooks/useLanguage';
 import { useSeller } from '../../../hooks/useSeller';
-import { getCategoryOptions } from '../../../services/seller/catalogOptions';
+import { useCategoryOptions } from '../../../services/seller/catalogOptions';
 import {
   addImage,
   addVariant,
@@ -68,7 +68,7 @@ function validateBasic(basic, t) {
 function CreateForm({ shopId, onNotify }) {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const categories = useMemo(() => getCategoryOptions(t), [t]);
+  const categories = useCategoryOptions();
   const [basic, setBasic] = useState(EMPTY);
   const [images, setImages] = useState([]); // [{ id, url, primary }]
   const [matrix, setMatrix] = useState({ options: [], variants: [] });
@@ -171,7 +171,7 @@ function CreateForm({ shopId, onNotify }) {
 // ---------- SỬA ----------
 function EditForm({ shopId, productId, onNotify }) {
   const { t, language } = useLanguage();
-  const categories = useMemo(() => getCategoryOptions(t), [t]);
+  const categories = useCategoryOptions();
   const [product, setProduct] = useState(null);
   const [status, setStatus] = useState('loading');
   const [basic, setBasic] = useState(EMPTY);

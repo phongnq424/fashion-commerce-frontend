@@ -40,7 +40,7 @@ function readFilters(params) {
 
 /**
  * /search?q=... — Trang kết quả tìm kiếm (bố cục phổ biến: bộ lọc cột trái | lưới sản phẩm bên phải).
- * Dữ liệu: DỮ LIỆU GIẢ của frontend (data/mockProducts.js) qua services/searchService.js — không gọi backend.
+ * Dữ liệu: sản phẩm đang bán của mọi shop (GET /products) qua services/searchService.js.
  * Bộ lọc nằm trên đường dẫn -> gửi link cho người khác vẫn giữ nguyên kết quả.
  */
 function SearchScreen({ onAddToCart }) {

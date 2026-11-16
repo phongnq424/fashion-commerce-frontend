@@ -6,7 +6,6 @@ import Icon from '../../../components/common/Icon';
 import StatusBadge from '../../../components/common/StatusBadge';
 import { useLanguage } from '../../../hooks/useLanguage';
 import { useSeller } from '../../../hooks/useSeller';
-import { simulateReviewDecision } from '../../../services/seller/onboardingService';
 import { formatDateTime, statusTone } from '../../../utils/status';
 import SellerPage from '../components/SellerPage';
 
@@ -17,7 +16,7 @@ const stageOf = (status) => ({ DRAFT: 0, PENDING_REVIEW: 2, REJECTED: 3, COMPLET
 /**
  * /seller/register/status — Trạng thái hồ sơ đăng ký bán hàng (GET /seller/onboarding/me).
  *   DRAFT -> nhắc hoàn tất ; PENDING_REVIEW -> chờ kiểm duyệt ; REJECTED -> lý do + sửa hồ sơ ; COMPLETED -> vào shop
- * Kèm khối "Mô phỏng kiểm duyệt" — CHỈ có ở bản giả lập để xem tiếp luồng (backend thật do admin duyệt).
+ * Hồ sơ do nhân viên sàn duyệt ở trang /admin. Bấm "Tải lại trạng thái" để cập nhật kết quả.
  */
 function OnboardingStatusScreen({ onNotify }) {
   const { t, language } = useLanguage();
@@ -43,17 +42,17 @@ function OnboardingStatusScreen({ onNotify }) {
   const status = onboarding.status;
   const stage = stageOf(status);
 
-  const simulate = async (decision) => {
+  // Tải lại hồ sơ + danh sách shop. Được duyệt -> vào shop vừa tạo.
+  const refresh = async () => {
     setBusy(true);
     try {
-      await simulateReviewDecision(onboarding.id, decision);
-      await refreshOnboarding();
-      if (decision === 'APPROVED') {
+      const row = await refreshOnboarding();
+      if (row?.status === 'COMPLETED') {
         await refreshShops();
-        selectShop(onboarding.shop.shopId);
+        if (row.shop?.shopId) selectShop(row.shop.shopId);
         onNotify?.('success', t('seller.status.approvedToast'));
         navigate('/seller');
-      } else {
+      } else if (row?.status === 'REJECTED') {
         onNotify?.('warning', t('seller.status.rejectedToast'));
       }
     } catch (error) {
@@ -146,18 +145,12 @@ function OnboardingStatusScreen({ onNotify }) {
         </section>
 
         {status === 'PENDING_REVIEW' && (
-          <section className="account-card seller-mock-panel">
-            <h2 className="account-card__title">
-              <Icon name="settings" size={18} />
-              {t('seller.status.mockTitle')}
-            </h2>
-            <p className="account-muted">{t('seller.status.mockText')}</p>
+          <section className="account-card">
+            <p className="account-muted">{t('market.seller.pendingReviewHint')}</p>
             <div className="seller-form__actions">
-              <Button variant="outline" className="btn--danger-outline" disabled={busy} onClick={() => simulate('REJECTED')}>
-                {t('seller.status.mockReject')}
-              </Button>
-              <Button disabled={busy} onClick={() => simulate('APPROVED')}>
-                {t('seller.status.mockApprove')}
+              <Button variant="outline" disabled={busy} onClick={refresh}>
+                <Icon name="refresh" size={16} />
+                {busy ? t('common.loading') : t('market.seller.refreshStatus')}
               </Button>
             </div>
           </section>

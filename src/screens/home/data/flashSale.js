@@ -2,7 +2,7 @@
 // CẤU HÌNH FLASH SALE TRANG CHỦ  (giao diện: components/FlashSaleSection.jsx)
 // ---------------------------------------------------------------------
 // Sản phẩm: lấy các sản phẩm đang giảm giá (giá gốc > giá bán) từ getSaleProducts().
-//   Hiện là dữ liệu mock (data/mockProducts.js -> sản phẩm có originalPrice).
+//   Lấy từ Backend: sản phẩm có compareAtPriceMinor > giá bán (services/productService.js).
 //   Backend chưa có API flash sale -> khi có thì chỉ cần đổi hàm lấy dữ liệu trong FlashSaleSection.jsx.
 // Chữ hiển thị: vi.js / en.js -> home.flashSale
 // =====================================================================

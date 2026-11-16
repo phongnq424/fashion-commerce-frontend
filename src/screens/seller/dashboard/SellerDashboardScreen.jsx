@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Button from '../../../components/common/Button';
 import Icon from '../../../components/common/Icon';
 import StatusBadge from '../../../components/common/StatusBadge';
 import { useLanguage } from '../../../hooks/useLanguage';
 import { useSeller } from '../../../hooks/useSeller';
-import { getCodCollections } from '../../../services/seller/codService';
-import { createDemoShop, onboardingProgress } from '../../../services/seller/onboardingService';
-import { getShopOrders } from '../../../services/seller/sellerOrderService';
-import { getShopProducts } from '../../../services/seller/sellerProductService';
-import { getShopReturns } from '../../../services/seller/sellerReturnService';
+import { getAllCodCollections } from '../../../services/seller/codService';
+import { getSalesReport } from '../../../services/seller/financeService';
+import { onboardingProgress } from '../../../services/seller/onboardingService';
+import { getAllShopOrders } from '../../../services/seller/sellerOrderService';
+import { getAllShopProducts } from '../../../services/seller/sellerProductService';
+import { getAllShopReturns } from '../../../services/seller/sellerReturnService';
 import { getMyInvitations } from '../../../services/seller/staffService';
 import { formatPrice } from '../../../utils/format';
 import { formatDateTime, statusTone } from '../../../utils/status';
@@ -19,33 +20,16 @@ import SellerPage from '../components/SellerPage';
 const STEPS = ['shop', 'pickup', 'shipping', 'tax', 'identity', 'policies'];
 
 // Chưa có shop: trang giới thiệu + mời đăng ký (hoặc tiếp tục hồ sơ đang làm dở)
-function Welcome({ onNotify }) {
+function Welcome() {
   const { t } = useLanguage();
-  const navigate = useNavigate();
-  const { onboarding, refreshShops, refreshOnboarding } = useSeller();
+  const { onboarding } = useSeller();
   const [invites, setInvites] = useState(0);
-  const [creating, setCreating] = useState(false);
   const progress = onboardingProgress(onboarding);
   const done = STEPS.filter((step) => progress[step]).length;
 
   useEffect(() => {
     getMyInvitations().then((items) => setInvites(items.length)).catch(() => {});
   }, []);
-
-  const demo = async () => {
-    setCreating(true);
-    try {
-      await createDemoShop();
-      await Promise.all([refreshShops(), refreshOnboarding()]);
-      onNotify?.('success', t('seller.welcome.demoCreated'));
-      navigate('/seller');
-    } catch (error) {
-      console.error(error);
-      onNotify?.('error', t('account.actionError'));
-    } finally {
-      setCreating(false);
-    }
-  };
 
   if (onboarding?.status === 'PENDING_REVIEW') {
     return (
@@ -83,11 +67,7 @@ function Welcome({ onNotify }) {
             {onboarding ? t('seller.welcome.continue') : t('seller.welcome.start')}
             <Icon name="arrowRight" size={18} />
           </Button>
-          <Button variant="outline" onClick={demo} disabled={creating}>
-            {creating ? t('common.loading') : t('seller.welcome.demo')}
-          </Button>
         </div>
-        <p className="seller-welcome__demo-note">{t('seller.welcome.demoNote')}</p>
       </section>
 
       <section className="account-card">
@@ -126,8 +106,17 @@ function Dashboard() {
   useEffect(() => {
     let active = true;
     setData(null);
-    Promise.all([getShopOrders(shopId), getShopReturns(shopId), getCodCollections(shopId), getShopProducts(shopId)])
-      .then(([orders, returns, cod, products]) => {
+    const monthFrom = new Date();
+    monthFrom.setDate(1);
+    const period = { from: monthFrom.toISOString().slice(0, 10), to: new Date().toISOString().slice(0, 10) };
+    Promise.all([
+      getAllShopOrders(shopId),
+      getAllShopReturns(shopId),
+      getAllCodCollections(shopId).catch(() => ({ items: [] })),
+      getAllShopProducts(shopId).catch(() => ({ items: [] })),
+      getSalesReport(shopId, period).catch(() => null), // nhân viên không có quyền báo cáo -> tự cộng
+    ])
+      .then(([orders, returns, cod, products, sales]) => {
         if (!active) return;
         const count = (status) => orders.items.filter((o) => status.includes(o.status)).length;
         const monthStart = new Date();
@@ -144,7 +133,7 @@ function Dashboard() {
             { id: 'outOfStock', value: products.items.filter((p) => p.status === 'ACTIVE' && p.quantityOnHand - p.quantityReserved <= 0).length, to: '/seller/inventory?filter=out' },
             { id: 'drafts', value: products.items.filter((p) => p.status === 'DRAFT').length, to: '/seller/products?status=DRAFT' },
           ],
-          revenue: orders.items.filter((o) => o.status === 'COMPLETED' && new Date(o.placedAt) >= monthStart).reduce((sum, o) => sum + o.totalMinor, 0),
+          revenue: sales ? sales.finance.netRevenueMinor : orders.items.filter((o) => o.status === 'COMPLETED' && new Date(o.placedAt) >= monthStart).reduce((sum, o) => sum + o.totalMinor, 0),
           completed: count(['COMPLETED']),
           activeProducts: products.items.filter((p) => p.status === 'ACTIVE').length,
           recent: orders.items.slice(0, 5),
@@ -218,7 +207,7 @@ function Dashboard() {
             <thead>
               <tr>
                 <th>{t('seller.orders.columns.code')}</th>
-                <th>{t('seller.orders.columns.buyer')}</th>
+                <th className="num">{t('market.seller.itemCount')}</th>
                 <th className="num">{t('seller.orders.columns.total')}</th>
                 <th>{t('seller.orders.columns.status')}</th>
                 <th>{t('seller.orders.columns.placedAt')}</th>
@@ -232,7 +221,7 @@ function Dashboard() {
                       {order.shopOrderNumber}
                     </Link>
                   </td>
-                  <td>{order.recipientName}</td>
+                  <td className="num">{order.itemCount}</td>
                   <td className="num">{formatPrice(order.totalMinor, language)}</td>
                   <td>
                     <StatusBadge tone={statusTone(order.status)}>{t(`shopOrderStatus.${order.status}`)}</StatusBadge>
@@ -253,9 +242,9 @@ function Dashboard() {
  *   Chưa có shop -> giới thiệu + đăng ký (hoặc tiếp tục hồ sơ / xem trạng thái chờ duyệt)
  *   Có shop      -> tổng quan: doanh thu tháng, việc cần làm, đơn mới
  */
-function SellerDashboardScreen({ onNotify }) {
+function SellerDashboardScreen() {
   const { shopId } = useSeller();
-  return shopId ? <Dashboard /> : <Welcome onNotify={onNotify} />;
+  return shopId ? <Dashboard /> : <Welcome />;
 }
 
 export default SellerDashboardScreen;

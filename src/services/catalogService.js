@@ -1,4 +1,3 @@
-import { mockProducts } from '../data/mockProducts';
 import { getCategoryRouteId } from '../mappers/categoryMapper';
 import { mapProductSummaryPage } from '../mappers/productMapper';
 import { apiClient } from './apiClient';
@@ -6,9 +5,8 @@ import { getCategories } from './productService';
 
 /**
  * Dữ liệu cho trang "Danh mục sản phẩm" (/products và /category/...).
- * Gộp 2 nguồn rồi lọc + sắp xếp ngay trên trình duyệt (số sản phẩm còn ít nên làm vậy cho nhanh):
- *   - Backend: GET /products (mỗi lần tối đa 100, đi theo nextCursor) -> CHỈ ĐỌC, không sửa gì Backend
- *   - Mock:    data/mockProducts.js
+ * Lấy sản phẩm đang bán của MỌI SHOP trên sàn rồi lọc + sắp xếp ngay trên trình duyệt:
+ *   - Backend: GET /products (mỗi lần tối đa 100, đi theo nextCursor) -> CHỈ ĐỌC
  * Mỗi sản phẩm được gắn thêm categoryRouteId ('tops' | 'bottoms' | 'dresses') để khớp với menu
  * (constants/navigation.js). Backend chỉ có 3 danh mục gốc, không có danh mục con.
  */
@@ -42,26 +40,27 @@ async function getApiProducts() {
   });
 }
 
-function getMockProducts(offset) {
-  return mockProducts.map((product, index) => ({
-    ...product,
-    source: 'mock',
-    categoryRouteId: product.category,
-    order: offset + index,
-  }));
+// Cache ngắn (1 phút) để trang chủ / bộ sưu tập / tìm kiếm không tải lại nhiều lần
+let cached = null;
+export function getAllPublicProducts() {
+  if (!cached || Date.now() - cached.at > 60_000) {
+    const request = getApiProducts().catch((error) => {
+      cached = null;
+      throw error;
+    });
+    cached = { at: Date.now(), request };
+  }
+  return cached.request;
 }
 
-// Trả về { products, apiFailed }. Backend lỗi -> vẫn hiện sản phẩm mock, apiFailed = true.
+// Trả về { products, apiFailed }.
 export async function getCatalogProducts() {
-  let apiProducts = [];
-  let apiFailed = false;
   try {
-    apiProducts = await getApiProducts();
+    return { products: await getAllPublicProducts(), apiFailed: false };
   } catch (error) {
-    console.warn('[Catalog] Không tải được sản phẩm từ Backend, chỉ hiện dữ liệu mock', error);
-    apiFailed = true;
+    console.warn('[Catalog] Không tải được sản phẩm từ Backend', error);
+    return { products: [], apiFailed: true };
   }
-  return { products: [...apiProducts, ...getMockProducts(apiProducts.length)], apiFailed };
 }
 
 // ---------------------------------------------------------------------------

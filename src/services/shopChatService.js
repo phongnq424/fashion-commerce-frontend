@@ -32,7 +32,9 @@ const contactCache = new Map();
  */
 export async function getShopContact(product, { loggedIn } = {}) {
   const shopId = product?.source === 'api' ? product.shopId : null;
-  if (!shopId || !loggedIn) return { ...DEFAULT_CONTACT, id: shopId ?? 'trendylab' };
+  if (!shopId) return { ...DEFAULT_CONTACT, id: 'trendylab' };
+  // Chưa đăng nhập (GET /shops/{id} cần đăng nhập) -> dùng tên shop có sẵn trong sản phẩm
+  if (!loggedIn) return { ...DEFAULT_CONTACT, id: shopId, name: product.shopName || DEFAULT_CONTACT.name, official: false };
   if (contactCache.has(shopId)) return contactCache.get(shopId);
 
   try {

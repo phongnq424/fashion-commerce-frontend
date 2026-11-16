@@ -257,7 +257,7 @@ function FlashSaleCard({ product, ended }) {
               <span className="visually-hidden">{t('home.flashSale.discount')} </span>-{discount}%
             </span>
           )}
-          {/* Nhãn "Mới" giống mọi thẻ sản phẩm khác (product.isNew trong mockProducts.js) */}
+          {/* Nhãn "Mới" giống mọi thẻ sản phẩm khác (product.isNew) */}
           {isNew && <span className="fs-card__new">{t('product.badgeNew')}</span>}
         </div>
 

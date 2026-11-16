@@ -32,7 +32,20 @@ const NAV_GROUPS = [
       { id: 'inventory', to: '/seller/inventory', icon: 'package' },
     ],
   },
-  { id: 'customers', items: [{ id: 'reviews', to: '/seller/reviews', icon: 'star' }] },
+  {
+    id: 'marketing',
+    items: [
+      { id: 'vouchers', to: '/seller/vouchers', icon: 'ticket' },
+      { id: 'reviews', to: '/seller/reviews', icon: 'star' },
+    ],
+  },
+  {
+    id: 'finance',
+    items: [
+      { id: 'finance', to: '/seller/finance', icon: 'card' },
+      { id: 'reports', to: '/seller/reports', icon: 'receipt' },
+    ],
+  },
   {
     id: 'shop',
     items: [

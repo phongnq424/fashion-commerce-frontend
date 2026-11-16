@@ -33,11 +33,14 @@ export function mapCartResponse(cart) {
       maxQuantity: Math.max(1, Math.min(99, item.availableQuantity)),
       selected: item.selected,
       availability: item.availability,
+      shopId: shop.shopId,
       shopName: shop.shopName,
+      shopSlug: shop.shopSlug,
+      shopShippingFee: shop.defaultShippingFeeMinor,
     })),
   );
 
-  return { id: cart.id, version: cart.version, items };
+  return { id: cart.id, version: cart.version, items, selectedSubtotal: cart.selectedItemsSubtotalMinor };
 }
 
 export async function fetchCart() {

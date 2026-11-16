@@ -18,7 +18,7 @@ const MOCK_MAX_QUANTITY = 10;
 /**
  * Giỏ hàng cho toàn site. Có 2 nơi lưu, giao diện KHÔNG cần biết:
  *   - 'server': giỏ Backend (GET/POST/PUT/DELETE /cart...) khi ĐÃ đăng nhập và sản phẩm có variantId
- *   - 'local' : localStorage khi chưa đăng nhập, hoặc sản phẩm mock
+ *   - 'local' : localStorage khi chưa đăng nhập (đăng nhập xong được chuyển lên giỏ Backend)
  * Đăng nhập xong -> các dòng local có variantId được tự chuyển lên giỏ Backend.
  *
  * Mỗi dòng giỏ (item): { key, origin, id, productId, variantId, name, image, variantText,
@@ -398,6 +398,26 @@ export function CartProvider({ children }) {
     [items, runServer, withPending],
   );
 
+  // Chỉ chọn đúng các dòng truyền vào (bỏ chọn phần còn lại) — dùng cho "Mua ngay" trước khi xem trước đơn.
+  // Backend chỉ thanh toán các dòng đang selected. Trả về cart mới (có version).
+  const selectOnly = useCallback(
+    async (keep) => {
+      const keepKeys = new Set(keep.map((item) => item.key));
+      const serverItems = items.filter((item) => item.origin === 'server');
+      const toSelect = serverItems.filter((item) => keepKeys.has(item.key) && !item.selected).map((item) => item.id);
+      const toUnselect = serverItems.filter((item) => !keepKeys.has(item.key) && item.selected).map((item) => item.id);
+      let cart = serverCart;
+      if (toUnselect.length) {
+        cart = await runServer((version) => updateCartSelection({ expectedVersion: version, itemIds: toUnselect, selected: false }));
+      }
+      if (toSelect.length) {
+        cart = await runServer((version) => updateCartSelection({ expectedVersion: version, itemIds: toSelect, selected: true }));
+      }
+      return cart;
+    },
+    [items, serverCart, runServer],
+  );
+
   const removeItems = useCallback(
     async (list) => {
       for (const item of list) await removeItem(item);
@@ -411,6 +431,7 @@ export function CartProvider({ children }) {
       items,
       status,
       isServerCart: Boolean(userKey),
+      cartVersion: serverCart?.version ?? null,
       lastAddedAt,
       totalQuantity: items.reduce((sum, item) => sum + item.quantity, 0),
       totalPrice: items.reduce((sum, item) => sum + item.lineTotal, 0),
@@ -424,6 +445,7 @@ export function CartProvider({ children }) {
       setAllSelected,
       removeItem,
       removeItems,
+      selectOnly,
       reload,
     };
   }, [
@@ -438,6 +460,7 @@ export function CartProvider({ children }) {
     setAllSelected,
     removeItem,
     removeItems,
+    selectOnly,
     reload,
   ]);
 

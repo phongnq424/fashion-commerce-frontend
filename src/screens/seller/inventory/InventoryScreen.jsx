@@ -8,7 +8,7 @@ import Input from '../../../components/common/Input';
 import { useLanguage } from '../../../hooks/useLanguage';
 import { useSeller } from '../../../hooks/useSeller';
 import { variantLabel } from '../../../services/seller/catalogOptions';
-import { getShopProduct, getShopProducts, updateInventory } from '../../../services/seller/sellerProductService';
+import { getAllShopProducts, getShopProduct, updateInventory } from '../../../services/seller/sellerProductService';
 import RequireShop from '../components/RequireShop';
 import SellerPage from '../components/SellerPage';
 
@@ -30,7 +30,7 @@ function InventoryTable({ shopId, onNotify }) {
   // Gộp mọi SKU của mọi sản phẩm (trừ sản phẩm đã gỡ) thành 1 bảng
   const load = useCallback(async () => {
     try {
-      const summaries = (await getShopProducts(shopId)).items.filter((p) => p.status !== 'REMOVED');
+      const summaries = (await getAllShopProducts(shopId)).items.filter((p) => p.status !== 'REMOVED');
       const products = await Promise.all(summaries.map((p) => getShopProduct(shopId, p.id)));
       setRows(
         products.flatMap((product) =>

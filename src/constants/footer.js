@@ -45,6 +45,7 @@ export const FOOTER_COLUMNS = [
       { key: 'footer.about', to: '/about' },
       { key: 'footer.story', to: '/about#story' },
       { key: 'footer.contact', to: '/contact' },
+      { key: 'market.nav.sellOnTrendyLab', to: '/seller' }, // mời mở shop trên sàn
       { key: 'footer.careers', to: '/careers' },
     ],
   },

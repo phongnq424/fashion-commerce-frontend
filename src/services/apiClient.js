@@ -86,12 +86,12 @@ export async function refreshAuthSession() {
 
 export async function apiRequest(
     path,
-    { method = 'GET', body, headers, auth = true, retryAuth = true, ...options } = {},
+    { method = 'GET', body, headers, auth = true, retryAuth = true, accept = 'application/json', ...options } = {},
 ) {
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
     const execute = async (accessToken) => {
         const requestHeaders = new Headers(headers);
-        requestHeaders.set('Accept', 'application/json');
+        requestHeaders.set('Accept', accept);
         if (body !== undefined) requestHeaders.set('Content-Type', 'application/json');
         if (auth && accessToken) requestHeaders.set('Authorization', `Bearer ${accessToken}`);
 

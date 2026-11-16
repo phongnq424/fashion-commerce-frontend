@@ -4,23 +4,22 @@ import Button from '../../../components/common/Button';
 import Icon from '../../../components/common/Icon';
 import Input from '../../../components/common/Input';
 import Logo from '../../../components/layout/Logo';
-import { useAdminSession } from '../../../hooks/useAdminSession';
+import { useAuth } from '../../../hooks/useAuth';
 import { useLanguage } from '../../../hooks/useLanguage';
-import { loginAdmin } from '../../../services/admin/adminAuth';
+import { isPlatformStaff } from '../../../services/admin/platformService';
 import '../AdminScreens.css';
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
- * /admin/login — Đăng nhập trang quản trị (CHỈ nhân viên TrendyLab).
- * Trang độc lập: không Header / Footer của web khách, không dùng popup đăng nhập của khách.
- * Bố cục 2 cột phổ biến của trang admin: trái giới thiệu thương hiệu | phải form đăng nhập.
+ * /admin/login — Đăng nhập trang quản trị sàn (CHỈ nhân viên TrendyLab có vai trò PLATFORM_*).
+ * Dùng chung POST /auth/login với web; sau khi đăng nhập kiểm tra roles trong GET /users/me.
+ * Tài khoản không có vai trò quản trị -> báo "không có quyền" (vẫn giữ đăng nhập để mua hàng).
  */
 function AdminLoginScreen() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
-  const session = useAdminSession();
+  const { user, login, isAuthLoading } = useAuth();
   const [form, setForm] = useState({ email: '', password: '', remember: true });
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState('');
@@ -28,22 +27,26 @@ function AdminLoginScreen() {
   const [loading, setLoading] = useState(false);
 
   const target = location.state?.from && location.state.from !== '/admin/login' ? location.state.from : '/admin';
-  if (session) return <Navigate to={target} replace />;
+  if (!isAuthLoading && isPlatformStaff(user)) return <Navigate to={target} replace />;
 
   const submit = async (event) => {
     event.preventDefault();
     const next = {};
-    if (!EMAIL.test(form.email.trim())) next.email = t('admin.login.errors.email');
+    if (!form.email.trim()) next.email = t('admin.login.errors.email');
     if (!form.password) next.password = t('admin.login.errors.password');
     setErrors(next);
     setFormError('');
     if (Object.keys(next).length) return;
     setLoading(true);
     try {
-      await loginAdmin(form);
+      const loggedIn = await login({ identifier: form.email, password: form.password, remember: form.remember });
+      if (!isPlatformStaff(loggedIn)) {
+        setFormError(t('admin.login.errors.denied'));
+        return;
+      }
       navigate(target, { replace: true });
     } catch (error) {
-      setFormError(t(error?.code === 'ADMIN_ACCESS_DENIED' ? 'admin.login.errors.denied' : 'admin.login.errors.invalid'));
+      setFormError(t(error?.code === 'NETWORK_ERROR' ? 'market.errors.NETWORK_ERROR' : 'admin.login.errors.invalid'));
     } finally {
       setLoading(false);
     }
@@ -54,13 +57,13 @@ function AdminLoginScreen() {
       <section className="admin-login__brand" aria-hidden="true">
         <div className="admin-login__brand-inner">
           <Logo />
-          <h1>{t('admin.login.brandTitle')}</h1>
-          <p>{t('admin.login.brandText')}</p>
+          <h1>{t('market.admin.loginTitle')}</h1>
+          <p>{t('market.admin.loginText')}</p>
           <ul>
-            {['orders', 'products', 'reports'].map((key) => (
+            {['sellers', 'moderation', 'payouts'].map((key) => (
               <li key={key}>
                 <Icon name="check" size={18} />
-                {t(`admin.login.features.${key}`)}
+                {t(`market.admin.loginFeatures.${key}`)}
               </li>
             ))}
           </ul>
@@ -72,7 +75,7 @@ function AdminLoginScreen() {
           <div className="admin-login__mobile-logo">
             <Logo />
           </div>
-          <span className="admin-top__tag">{t('admin.brandTag')}</span>
+          <span className="admin-top__tag">{t('market.admin.brandTag')}</span>
           <h2>{t('admin.login.title')}</h2>
           <p className="account-muted">{t('admin.login.subtitle')}</p>
 
@@ -85,7 +88,7 @@ function AdminLoginScreen() {
 
           <Input
             label={t('admin.login.email')}
-            type="email"
+            type="text"
             autoComplete="username"
             value={form.email}
             placeholder="ten@trendylab.vn"
@@ -119,13 +122,6 @@ function AdminLoginScreen() {
           </Button>
           <p className="cell-sub admin-login__help">{t('admin.login.help')}</p>
 
-          {/* CHỈ CÓ Ở BẢN GIẢ LẬP — xoá khối này khi nối backend */}
-          <div className="admin-note admin-login__demo">
-            <Icon name="info" size={18} />
-            <span>
-              {t('admin.login.demo')} <strong>admin@trendylab.vn</strong> / <strong>Admin@123</strong>
-            </span>
-          </div>
         </form>
       </main>
     </div>

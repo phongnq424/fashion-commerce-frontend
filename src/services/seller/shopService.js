@@ -1,83 +1,67 @@
-import { apiError, isOwner, myShopIds, now, requireShop, shopSummary, slice, transact } from './sellerDb';
+import { apiClient } from '../apiClient';
+import { currentUserId, enc, SHIPPING_PROVIDERS } from './constants';
 
 // =====================================================================
-// SHOP CỦA TÔI — GIẢ LẬP, đúng dạng backend (contract mục 6):
+// SHOP CỦA TÔI — API thật
 //   GET    /shops/mine?limit=&offset=     -> SliceResponse<ShopSummaryResponse>
 //   GET    /shops/{shopId}                -> ShopResponse
-//   PATCH  /shops/{shopId}                UpdateShopRequest -> ShopResponse
-//   DELETE /shops/{shopId}                -> 204 (chỉ chủ shop)
+//   PATCH  /shops/{shopId}                UpdateRequest -> ShopResponse
+//   DELETE /shops/{shopId}                -> 204 (chỉ chủ shop, đóng shop)
 //   GET    /shops/{shopId}/settings       -> SettingsResponse
 //   PUT    /shops/{shopId}/settings       UpdateSettingsRequest -> SettingsResponse
-// Riêng bản giả lập: ShopSummaryResponse có thêm myRoles (vai trò của tôi trong shop).
+// ShopSummaryResponse KHÔNG có vai trò của tôi -> frontend tự thêm myRoles:
+//   chủ shop (ownerUserId = tôi) -> ['SHOP_OWNER'];
+//   còn lại -> đọc GET /shops/{id}/members (cần quyền shop.staff.read), không đọc được -> ['SHOP_STAFF'].
 // =====================================================================
 
-export function getMyShops({ limit = 50, offset = 0 } = {}) {
-  return transact((db, me) => slice(myShopIds(db, me).map((id) => shopSummary(db.shops[id], me)), limit, offset), 120);
+async function rolesInShop(shop, me) {
+  if (me && shop.ownerUserId === me) return ['SHOP_OWNER'];
+  try {
+    const page = await apiClient.get(`/shops/${enc(shop.id)}/members?limit=100&offset=0`);
+    const mine = (page?.items ?? []).find((member) => member.userId === me);
+    if (mine?.roles?.length) return mine.roles;
+  } catch {
+    /* không có quyền xem nhân viên -> nhân viên thường */
+  }
+  return ['SHOP_STAFF'];
+}
+
+export async function getMyShops({ limit = 50, offset = 0 } = {}) {
+  const page = await apiClient.get(`/shops/mine?limit=${limit}&offset=${offset}`);
+  const me = currentUserId();
+  const items = await Promise.all((page?.items ?? []).map(async (shop) => ({ ...shop, myRoles: await rolesInShop(shop, me) })));
+  return { ...page, items };
 }
 
 export function getShop(shopId) {
-  return transact((db, me) => requireShop(db, me, shopId).profile, 120);
+  return apiClient.get(`/shops/${enc(shopId)}`);
 }
 
+// Chỉ gửi các trường có giá trị (PATCH)
 export function updateShop(shopId, request) {
-  return transact((db, me) => {
-    const shop = requireShop(db, me, shopId);
-    if (request.slug && request.slug !== shop.profile.slug) {
-      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(request.slug)) throw apiError(400, 'SHOP_SLUG_INVALID');
-      const taken = Object.values(db.shops).some((s) => s.profile.id !== shopId && s.profile.slug === request.slug);
-      if (taken) throw apiError(409, 'SHOP_SLUG_TAKEN');
-    }
-    const p = shop.profile;
-    Object.assign(p, {
-      name: request.name ?? p.name,
-      slug: request.slug ?? p.slug,
-      description: request.description !== undefined ? request.description : p.description,
-      logoKey: request.logoKey !== undefined ? request.logoKey : p.logoKey,
-      logoUrl: request.logoKey !== undefined ? request.logoKey : p.logoUrl,
-      bannerKey: request.bannerKey !== undefined ? request.bannerKey : p.bannerKey,
-      bannerUrl: request.bannerKey !== undefined ? request.bannerKey : p.bannerUrl,
-      contactEmail: request.contactEmail ?? p.contactEmail,
-      contactPhone: request.contactPhone ?? p.contactPhone,
-      pickupAddress: request.pickupAddress ?? p.pickupAddress,
-      updatedAt: now(),
-    });
-    return p;
-  });
+  const body = Object.fromEntries(Object.entries(request).filter(([, value]) => value !== undefined));
+  return apiClient.patch(`/shops/${enc(shopId)}`, body);
 }
 
 export function deleteShop(shopId) {
-  return transact((db, me) => {
-    const shop = requireShop(db, me, shopId);
-    if (!isOwner(shop, me)) throw apiError(403, 'SHOP_OWNER_REQUIRED');
-    shop.profile.status = 'CLOSED';
-    shop.profile.updatedAt = now();
-  });
+  return apiClient.delete(`/shops/${enc(shopId)}`);
 }
 
 export function getSettings(shopId) {
-  return transact((db, me) => ({ shopId, ...requireShop(db, me, shopId).settings }), 120);
+  return apiClient.get(`/shops/${enc(shopId)}/settings`);
 }
 
 export function updateSettings(shopId, request) {
-  return transact((db, me) => {
-    const shop = requireShop(db, me, shopId);
-    const n = (value, min, max) => {
-      const number = Number(value);
-      if (!Number.isInteger(number) || number < min || number > max) throw apiError(400, 'SHOP_SETTINGS_INVALID');
-      return number;
-    };
-    shop.settings = {
-      handlingDays: n(request.handlingDays, 0, 30),
-      returnWindowDays: n(request.returnWindowDays, 0, 90),
-      defaultShippingFeeMinor: n(request.defaultShippingFeeMinor, 0, 10_000_000),
-      allowCod: Boolean(request.allowCod),
-      autoAcceptOrders: Boolean(request.autoAcceptOrders),
-    };
-    return { shopId, ...shop.settings };
+  return apiClient.put(`/shops/${enc(shopId)}/settings`, {
+    handlingDays: Number(request.handlingDays),
+    returnWindowDays: Number(request.returnWindowDays),
+    defaultShippingFeeMinor: Number(request.defaultShippingFeeMinor),
+    allowCod: Boolean(request.allowCod),
+    autoAcceptOrders: Boolean(request.autoAcceptOrders),
   });
 }
 
-// Đơn vị vận chuyển shop đang bật (dùng khi giao hàng). Backend: cấu hình ở bước đăng ký.
-export function getShopShippingProviders(shopId) {
-  return transact((db, me) => requireShop(db, me, shopId).shippingProviders.filter((p) => p.enabled), 80);
+// Hãng vận chuyển dùng khi giao hàng. Backend chưa có API đọc danh sách hãng của shop sau khi đăng ký.
+export async function getShopShippingProviders() {
+  return SHIPPING_PROVIDERS;
 }

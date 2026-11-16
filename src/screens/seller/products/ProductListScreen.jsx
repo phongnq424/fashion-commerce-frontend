@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Button from '../../../components/common/Button';
 import EmptyState from '../../../components/common/EmptyState';
@@ -6,8 +6,7 @@ import Icon from '../../../components/common/Icon';
 import StatusBadge from '../../../components/common/StatusBadge';
 import { useLanguage } from '../../../hooks/useLanguage';
 import { useSeller } from '../../../hooks/useSeller';
-import { categoryLabel, getCategoryOptions } from '../../../services/seller/catalogOptions';
-import { getShopProducts, publishProduct, unpublishProduct } from '../../../services/seller/sellerProductService';
+import { getAllShopProducts, publishProduct, unpublishProduct } from '../../../services/seller/sellerProductService';
 import { formatPrice } from '../../../utils/format';
 import { formatDateTime, statusTone } from '../../../utils/status';
 import RequireShop from '../components/RequireShop';
@@ -34,13 +33,11 @@ function ProductTable({ shopId, onNotify }) {
   const [items, setItems] = useState([]);
   const [status, setStatus] = useState('loading');
   const [query, setQuery] = useState('');
-  const [category, setCategory] = useState('');
   const [busyId, setBusyId] = useState(null);
-  const categories = useMemo(() => getCategoryOptions(t), [t]);
 
   const load = useCallback(async () => {
     try {
-      setItems((await getShopProducts(shopId)).items);
+      setItems((await getAllShopProducts(shopId)).items);
       setStatus('success');
     } catch (error) {
       console.error(error);
@@ -57,7 +54,6 @@ function ProductTable({ shopId, onNotify }) {
   const shown = items.filter(
     (p) =>
       (!tab.statuses || tab.statuses.includes(p.status)) &&
-      (!category || p.categoryId === category) &&
       (!q || p.name.toLowerCase().includes(q) || (p.sellerProductCode ?? '').toLowerCase().includes(q)),
   );
 
@@ -102,14 +98,6 @@ function ProductTable({ shopId, onNotify }) {
             <Icon name="search" size={18} />
             <input type="search" value={query} placeholder={t('seller.products.search')} aria-label={t('seller.products.search')} onChange={(e) => setQuery(e.target.value)} />
           </label>
-          <select className="seller-select" value={category} aria-label={t('seller.products.category')} onChange={(e) => setCategory(e.target.value)}>
-            <option value="">{t('seller.products.allCategories')}</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
           <span className="seller-toolbar__count">{t('seller.products.count', { count: shown.length })}</span>
         </div>
 
@@ -124,7 +112,6 @@ function ProductTable({ shopId, onNotify }) {
               <thead>
                 <tr>
                   <th>{t('seller.products.columns.product')}</th>
-                  <th>{t('seller.products.columns.category')}</th>
                   <th className="num">{t('seller.products.columns.price')}</th>
                   <th className="num">{t('seller.products.columns.stock')}</th>
                   <th>{t('seller.products.columns.status')}</th>
@@ -154,7 +141,6 @@ function ProductTable({ shopId, onNotify }) {
                           </span>
                         </div>
                       </td>
-                      <td>{categoryLabel(p.categoryId, t)}</td>
                       <td className="num">{price}</td>
                       <td className="num">
                         <span className={avail <= 0 ? 'text-danger' : avail <= 5 ? 'text-warning' : ''}>{avail}</span>
@@ -179,7 +165,7 @@ function ProductTable({ shopId, onNotify }) {
                 })}
                 {shown.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="seller-table__empty">
+                    <td colSpan={6} className="seller-table__empty">
                       {t('seller.products.noMatch')}
                     </td>
                   </tr>

@@ -5,7 +5,7 @@ import EmptyState from '../../../components/common/EmptyState';
 import StatusBadge from '../../../components/common/StatusBadge';
 import { useLanguage } from '../../../hooks/useLanguage';
 import { useSeller } from '../../../hooks/useSeller';
-import { getShopReturns } from '../../../services/seller/sellerReturnService';
+import { getAllShopReturns } from '../../../services/seller/sellerReturnService';
 import { formatPrice } from '../../../utils/format';
 import { formatDateTime, statusTone } from '../../../utils/status';
 import RequireShop from '../components/RequireShop';
@@ -21,7 +21,7 @@ function ReturnTable({ shopId }) {
 
   const load = useCallback(async () => {
     try {
-      setItems((await getShopReturns(shopId)).items);
+      setItems((await getAllShopReturns(shopId)).items);
       setStatus('success');
     } catch (error) {
       console.error(error);
@@ -54,7 +54,6 @@ function ReturnTable({ shopId }) {
               <thead>
                 <tr>
                   <th>{t('returns.columns.code')}</th>
-                  <th>{t('seller.orders.columns.buyer')}</th>
                   <th>{t('returns.columns.reason')}</th>
                   <th className="num">{t('returns.columns.refund')}</th>
                   <th>{t('returns.columns.status')}</th>
@@ -67,9 +66,7 @@ function ReturnTable({ shopId }) {
                   <tr key={item.id}>
                     <td>
                       <strong>{item.shopOrderNumber}</strong>
-                      <span className="cell-sub">{t('seller.returns.itemCount', { count: item.itemCount })}</span>
                     </td>
-                    <td>{item.buyerName ?? '—'}</td>
                     <td>{t(`returns.reasons.${item.reasonCode}`)}</td>
                     <td className="num">{formatPrice(item.requestedRefundMinor, language)}</td>
                     <td>
@@ -91,7 +88,7 @@ function ReturnTable({ shopId }) {
                 ))}
                 {shown.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="seller-table__empty">
+                    <td colSpan={6} className="seller-table__empty">
                       {t('seller.returns.empty')}
                     </td>
                   </tr>
