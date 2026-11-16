@@ -7,8 +7,8 @@ import { SEARCH_OFFERS } from '../../../services/searchService';
 /**
  * Cột bộ lọc trang tìm kiếm. Máy tính: cột trái. Mobile: ngăn trượt từ trái (open / onClose).
  * Các nhóm lọc khớp với trường có trong data/mockProducts.js:
- *   Danh mục (category / subcategory) • Khoảng giá (price) • Ưu đãi (originalPrice, isNew) • Còn hàng (inStock)
- * - categories: MAIN_NAV có children (constants/navigation.js)
+ *   Danh mục (category) • Khoảng giá (price) • Ưu đãi (originalPrice, isNew) • Còn hàng (inStock)
+ * - categories: CATEGORY_NAV (constants/navigation.js) — chỉ 3 danh mục gốc, Backend không có danh mục con
  * - onChange({ key: value }) — key là tên tham số trên đường dẫn
  */
 function SearchFilters({ id, open, onClose, filters, categories, pricePresets, onChange, onClear, hasFilters }) {
@@ -38,13 +38,13 @@ function SearchFilters({ id, open, onClose, filters, categories, pricePresets, o
       offer: filters.offers.includes(offer) ? filters.offers.filter((item) => item !== offer) : [...filters.offers, offer],
     });
 
-  const categoryOption = (label, categoryId, subId, key) => (
+  const categoryOption = (label, categoryId, key) => (
     <label key={key} className="filter-option">
       <input
         type="radio"
         name="search-category"
-        checked={filters.category === categoryId && filters.sub === subId}
-        onChange={() => onChange({ category: categoryId, sub: subId })}
+        checked={filters.category === categoryId}
+        onChange={() => onChange({ category: categoryId })}
       />
       <span>{label}</span>
     </label>
@@ -64,17 +64,8 @@ function SearchFilters({ id, open, onClose, filters, categories, pricePresets, o
 
       <fieldset className="filter-group">
         <legend className="filter-group__title">{t('searchPage.category')}</legend>
-        {categoryOption(t('searchPage.any'), '', '', 'all')}
-        {categories.map((category) => (
-          <div key={category.id}>
-            {categoryOption(t(category.key), category.id, '', category.id)}
-            <div className="filter-group__children">
-              {category.children.map((child) =>
-                categoryOption(t(child.key), category.id, child.id, `${category.id}-${child.id}`),
-              )}
-            </div>
-          </div>
-        ))}
+        {categoryOption(t('searchPage.any'), '', 'all')}
+        {categories.map((category) => categoryOption(t(category.key), category.id, category.id))}
       </fieldset>
 
       <fieldset className="filter-group">

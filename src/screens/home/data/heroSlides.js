@@ -31,7 +31,7 @@ export const HERO_SLIDES = [
   },
   {
     id: 'freeship',
-    image: '/banners/banner-6.png',
+    image: '/banners/banner-2.png',
     imagePosition: 'center',
     textAlign: 'right',
     textOffset: 'clamp(2rem, 20vw, 26rem)', // đẩy chữ vào khoảng trống giữa ảnh

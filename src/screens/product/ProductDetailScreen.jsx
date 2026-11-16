@@ -43,12 +43,11 @@ function ProductDetailScreen({ onAddToCart, onNotify }) {
 
   if (status === 'notFound') return <NotFoundScreen />;
 
-  // Breadcrumb: Trang chủ / Áo / Áo sơ mi / Tên sản phẩm
-  const found = product ? findCategory(product.category, product.subcategory) : null;
+  // Breadcrumb: Trang chủ / Áo / Tên sản phẩm (Backend không có danh mục con)
+  const found = product ? findCategory(product.category) : null;
   const breadcrumbItems = [
     { label: t('breadcrumb.home'), to: '/' },
     ...(found ? [{ label: t(found.category.key), to: found.category.to }] : []),
-    ...(found?.sub ? [{ label: t(found.sub.key), to: found.sub.to }] : []),
     { label: status === 'success' ? product.name : t('common.loading') },
   ];
 

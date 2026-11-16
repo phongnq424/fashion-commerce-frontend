@@ -100,9 +100,6 @@ const adminEn = {
       SHOP_SUPPORT: 'Handle returns and reply to reviews.',
       SHOP_FINANCE: 'Reconcile COD and refunds.',
     },
-    extraCategories: {
-      accessories_bags: 'Accessories › Bags',
-    },
     genders: {
       FEMALE: 'Women',
       MALE: 'Men',

@@ -103,9 +103,6 @@ const adminVi = {
       SHOP_SUPPORT: 'Xử lý trả hàng và trả lời đánh giá.',
       SHOP_FINANCE: 'Đối soát COD và hoàn tiền.',
     },
-    extraCategories: {
-      accessories_bags: 'Phụ kiện › Túi xách',
-    },
     genders: {
       FEMALE: 'Nữ',
       MALE: 'Nam',

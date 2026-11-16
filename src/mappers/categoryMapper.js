@@ -22,11 +22,8 @@ export function mapCategoryResponse(category) {
   };
 }
 
-export function findCategoryForRoute(categories, categoryRouteId, subcategoryRouteId) {
-  if (subcategoryRouteId) {
-    return categories.find((category) => category.slug === subcategoryRouteId) ?? null;
-  }
-
+// Backend chỉ có 3 danh mục gốc (ao | quan | vay-dam), không có danh mục con.
+export function findCategoryForRoute(categories, categoryRouteId) {
   const apiSlug = ROOT_CATEGORY_SLUG_BY_ROUTE[categoryRouteId] ?? categoryRouteId;
   return categories.find((category) => category.slug === apiSlug) ?? null;
 }

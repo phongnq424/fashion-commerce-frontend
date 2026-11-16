@@ -36,10 +36,22 @@ export function apiError(status, code, message = code) {
   return Object.assign(new Error(message), { status, code });
 }
 
+// Backend không có danh mục con: dữ liệu cũ lưu categoryId "tops/tshirts" -> đổi về "tops"
+function migrateCategoryIds(data) {
+  Object.values(data.shops ?? {}).forEach((shop) => {
+    (shop?.products ?? []).forEach((product) => {
+      if (typeof product.categoryId === 'string' && product.categoryId.includes('/')) {
+        product.categoryId = product.categoryId.split('/')[0];
+      }
+    });
+  });
+  return data;
+}
+
 export function readDb() {
   try {
     const data = JSON.parse(localStorage.getItem(KEY) ?? 'null');
-    if (data && data.shops) return data;
+    if (data && data.shops) return migrateCategoryIds(data);
   } catch {
     /* dữ liệu hỏng -> tạo mới */
   }
@@ -185,7 +197,7 @@ function toProductResponse(source, shopId, index) {
   return {
     id: uuid(),
     shopId,
-    categoryId: `${source.category}/${source.subcategory}`,
+    categoryId: source.category,
     brandId: null,
     sellerProductCode: code,
     name: source.name,

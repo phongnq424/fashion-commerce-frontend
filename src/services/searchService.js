@@ -58,9 +58,9 @@ const SORTERS = {
 };
 
 /**
- * filters: { q, category, sub, minPrice, maxPrice, offers: ['sale'|'new'], inStock, sort }
- * categoryLabels: { tops: 'Áo', 'tops/tshirts': 'Áo thun', ... } — tên danh mục đã dịch, để tìm
- *   "áo thun" ra cả sản phẩm có tên không chứa chữ đó nhưng thuộc danh mục Áo thun.
+ * filters: { q, category, minPrice, maxPrice, offers: ['sale'|'new'], inStock, sort }
+ * categoryLabels: { tops: 'Áo', bottoms: 'Quần', dresses: 'Đầm & Váy' } — tên danh mục đã dịch, để tìm
+ *   "quần" ra cả sản phẩm có tên không chứa chữ đó nhưng thuộc danh mục Quần.
  * Trả về: { items: product[], total: number }  (toàn bộ kết quả; trang tự chia "Xem thêm")
  */
 export async function searchProducts(filters, categoryLabels = {}) {
@@ -71,7 +71,6 @@ export async function searchProducts(filters, categoryLabels = {}) {
     .map((product, index) => ({ ...product, source: 'mock', order: index }))
     .filter((product) => {
       if (filters.category && product.category !== filters.category) return false;
-      if (filters.sub && product.subcategory !== filters.sub) return false;
       if (filters.minPrice != null && product.price < filters.minPrice) return false;
       if (filters.maxPrice != null && product.price > filters.maxPrice) return false;
       if (filters.inStock && !product.inStock) return false;
@@ -84,7 +83,6 @@ export async function searchProducts(filters, categoryLabels = {}) {
           product.description,
           product.material,
           categoryLabels[product.category],
-          categoryLabels[`${product.category}/${product.subcategory}`],
         ].join(' '),
       );
       return words.every((word) => haystack.includes(word));

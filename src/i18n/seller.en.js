@@ -152,7 +152,6 @@ const sellerEn = {
       HOUSEHOLD_BUSINESS: { title: 'Household business', hint: 'Have a household business registration' },
       ENTERPRISE: { title: 'Enterprise', hint: 'A licensed company' },
     },
-    extraCategories: { accessories_bags: 'Accessories › Bags' },
     genders: { FEMALE: 'Women', MALE: 'Men', UNISEX: 'Unisex', KIDS: 'Kids' },
     fields: {
       shopName: 'Shop name',

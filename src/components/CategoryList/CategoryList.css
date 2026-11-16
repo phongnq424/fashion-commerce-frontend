@@ -4,13 +4,18 @@
      .category-item__circle  khung tròn chứa ảnh, có khe trắng ngăn với viền
    ===================================================================== */
 
-/* 6 cột trên máy tính, tự xuống 3 cột (tablet/mobile) */
+/* Các ô xếp 1 hàng và luôn CĂN GIỮA trang, dù có 3 hay 6 ô (Backend hiện có 3 danh mục) */
 .category-list {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: var(--space-6) var(--space-4);
-  max-width: 900px;      /* cả hàng chỉ rộng 900px -> các vòng tròn gần nhau hơn */
-  margin-inline: auto;   /* đặt hàng ở giữa trang */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-6) clamp(var(--space-5), 5vw, var(--space-8));
+  margin-inline: auto;
+}
+
+.category-list > li {
+  flex: 0 0 auto;
+  width: clamp(104px, 11vw, 160px); /* rộng bằng vòng tròn + chút lề cho tên */
 }
 
 .category-item {
@@ -98,15 +103,14 @@
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 900px) {
-  .category-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
 
 @media (max-width: 480px) {
   .category-list {
-    gap: var(--space-5) var(--space-2);
+    gap: var(--space-5) var(--space-4);
+  }
+
+  .category-list > li {
+    width: 96px;
   }
 
   .category-item__name {

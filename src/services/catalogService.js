@@ -9,8 +9,8 @@ import { getCategories } from './productService';
  * Gộp 2 nguồn rồi lọc + sắp xếp ngay trên trình duyệt (số sản phẩm còn ít nên làm vậy cho nhanh):
  *   - Backend: GET /products (mỗi lần tối đa 100, đi theo nextCursor) -> CHỈ ĐỌC, không sửa gì Backend
  *   - Mock:    data/mockProducts.js
- * Mỗi sản phẩm được gắn thêm categoryRouteId / subcategoryRouteId ('tops' / 'tshirts'...)
- * để khớp với menu (constants/navigation.js).
+ * Mỗi sản phẩm được gắn thêm categoryRouteId ('tops' | 'bottoms' | 'dresses') để khớp với menu
+ * (constants/navigation.js). Backend chỉ có 3 danh mục gốc, không có danh mục con.
  */
 
 const PAGE_LIMIT = 100; // Backend cho tối đa 100 / lần
@@ -33,11 +33,9 @@ async function getApiProducts() {
 
   return items.map((product, index) => {
     const category = byId.get(product.categoryId);
-    const parent = category?.parentId ? byId.get(category.parentId) : null;
     return {
       ...product,
-      categoryRouteId: getCategoryRouteId(parent ?? category),
-      subcategoryRouteId: parent ? category.slug : null,
+      categoryRouteId: getCategoryRouteId(category),
       soldCount: product.soldCount ?? 0,
       order: index, // thứ tự "Mặc định" = thứ tự Backend trả về (mới nhất trước)
     };
@@ -49,7 +47,6 @@ function getMockProducts(offset) {
     ...product,
     source: 'mock',
     categoryRouteId: product.category,
-    subcategoryRouteId: product.subcategory ?? null,
     order: offset + index,
   }));
 }
@@ -84,15 +81,14 @@ const OFFER_TESTS = {
 };
 
 /**
- * filters: { categoryId, subId, priceRanges: [{min, max}], offers: ['sale' | 'new' | 'best'],
+ * filters: { categoryId, priceRanges: [{min, max}], offers: ['sale' | 'new' | 'best'],
  *            collections: [{ id, productIds }] }
  * - Nhiều mức giá / nhiều ưu đãi được chọn cùng lúc -> sản phẩm chỉ cần khớp 1 trong số đó (HOẶC)
  * - Giữa các nhóm (danh mục, giá, ưu đãi, bộ sưu tập) -> phải khớp tất cả (VÀ)
  */
-export function filterProducts(products, { categoryId, subId, priceRanges = [], offers = [], collections = [] }) {
+export function filterProducts(products, { categoryId, priceRanges = [], offers = [], collections = [] }) {
   return products.filter((product) => {
     if (categoryId && product.categoryRouteId !== categoryId) return false;
-    if (subId && product.subcategoryRouteId !== subId) return false;
     if (priceRanges.length && !priceRanges.some((range) => product.price >= range.min && product.price < range.max)) {
       return false;
     }

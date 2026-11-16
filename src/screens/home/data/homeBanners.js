@@ -11,7 +11,7 @@
 // =====================================================================
 
 export const COLLECTION = {
-  to: '/category/tops/jackets', // bấm vào khối -> trang danh mục này
+  to: '/category/tops', // bấm vào khối -> trang danh mục này (Backend không có danh mục con)
 
   // ----- Hình 1: hàng chữ trên cùng + 4 ảnh ngang -----
   // Hàng chữ: các phong cách, mỗi chữ 1 cột. Chữ thật: vi.js / en.js -> home.lookbook.styles.<key>

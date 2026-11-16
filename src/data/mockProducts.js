@@ -17,7 +17,6 @@ export const mockProducts = [
   {
     id: 'p001',
     category: 'tops',
-    subcategory: 'jackets',
     name: '[ NỈ ÉP MÙA THU ĐÔNG ] Áo Khoác Hoodie Zip Xuân Hè, Vải Nỉ Ép, Form Boxy Unisex Nam Nữ.',
     price: 459000,
     originalPrice: null,
@@ -74,7 +73,6 @@ export const mockProducts = [
   {
     id: 'p002',
     category: 'tops',
-    subcategory: 'tshirts',
     name: 'Áo Thun Nữ Local Brand/The most famous.',
     price: 459000,
     originalPrice: null,
@@ -139,7 +137,6 @@ export const mockProducts = [
   {
     id: 'p003',
     category: 'tops',
-    subcategory: 'tshirts',
     name: '[NEW] Áo thun tay dài Glint.',
     price: 159000,
     originalPrice: 298000,
@@ -201,7 +198,6 @@ export const mockProducts = [
   {
     id: 'p004',
     category: 'tops',
-    subcategory: 'tshirts',
     name: '[NEW] Áo thun tay dài TRENDYLAB SPARK',
     price: 179000,
     originalPrice: 338000,
@@ -264,7 +260,6 @@ export const mockProducts = [
   {
     id: 'p005',
     category: 'tops',
-    subcategory: 'tshirts',
     name: 'Áo Thun Tay Dài kẻ sọc, Áo Thu Đông Raglan kẻ sọc Long Sleeve Boxy Cổ Tròn Unisex NEW',
     price: 79990,
     originalPrice: 139000,
@@ -316,7 +311,6 @@ export const mockProducts = [
   {
     id: 'p006',
     category: 'tops',
-    subcategory: 'tshirts',
     name: 'Áo thun unisex Local Brand - Tee Beat',
     price: 159000,
     originalPrice: 249000,
@@ -387,7 +381,6 @@ export const mockProducts = [
 {
     id: 'p007',
     category: 'dresses',
-    subcategory: 'midi',
     name: 'Đầm Trắng Nữ Hở Vai Tay Bo 2 Lớp - Váy Nữ Cổ Yếm Dài Tay Dáng Ngắn Chất Voan',
     price: 149000,
     originalPrice: 199000,
@@ -428,25 +421,8 @@ export const mockProducts = [
       ]
     },
   {
-    id: 'p008',
-    category: 'accessories',
-    subcategory: 'bags',
-    name: 'Túi tote canvas',
-    price: 259000,
-    originalPrice: null,
-    image: null, // cố tình để trống để xem khung "chưa có ảnh"
-    isNew: false,
-    inStock: true,
-    isBestSeller: false,
-    soldCount: 140,
-    sizes: ['Free size'],
-    material: 'Canvas dày',
-    description: 'Túi tote canvas dày dặn, đựng vừa laptop 14 inch. Có túi nhỏ bên trong để chìa khoá, điện thoại.',
-  },
-  {
     id: 'p009',
     category: 'bottoms',
-    subcategory: 'jeans',
     name: 'Quần jeans ống đứng',
     price: 599000,
     originalPrice: 750000,
@@ -463,7 +439,6 @@ export const mockProducts = [
   {
     id: 'p010',
     category: 'dresses',
-    subcategory: 'maxi',
     name: 'Đầm maxi hoa nhí',
     price: 790000,
     originalPrice: null,
@@ -480,7 +455,6 @@ export const mockProducts = [
   {
     id: 'p011',
     category: 'tops',
-    subcategory: 'jackets',
     name: 'Áo khoác da biker',
     price: 1290000,
     originalPrice: 1590000,
@@ -496,7 +470,6 @@ export const mockProducts = [
   {
     id: 'p012',
     category: 'tops',
-    subcategory: 'tshirts',
     name: 'Áo thun trơn form rộng',
     price: 199000,
     originalPrice: null,
@@ -512,7 +485,6 @@ export const mockProducts = [
   {
     id: 'p013',
     category: 'bottoms',
-    subcategory: 'jeans',
     name: 'Quần jeans ống loe',
     price: 649000,
     originalPrice: null,
@@ -528,7 +500,6 @@ export const mockProducts = [
   {
     id: 'p014',
     category: 'dresses',
-    subcategory: 'midi',
     name: 'Đầm suông cổ vuông',
     price: 690000,
     originalPrice: 860000,
@@ -544,7 +515,6 @@ export const mockProducts = [
   {
     id: 'p015',
     category: 'tops',
-    subcategory: 'shirts',
     name: 'Áo sơ mi lụa tay phồng',
     price: 489000,
     originalPrice: null,

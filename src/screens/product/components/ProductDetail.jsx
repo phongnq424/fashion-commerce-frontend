@@ -7,6 +7,7 @@ import SizeGuideDialog from './SizeGuideDialog';
 import GiftOffer from './GiftOffer';
 import ProductInfoTabs from './ProductInfoTabs';
 import ReportProductDialog from './ReportProductDialog';
+import { useChatProduct } from '../../../hooks/useShopChat';
 import { useAuth } from '../../../hooks/useAuth';
 import { useWishlist } from '../../../hooks/useWishlist';
 import { useLanguage } from '../../../hooks/useLanguage';
@@ -27,6 +28,8 @@ function ProductDetail({ product, onAddToCart, onNotify }) {
   const { user, openAuth } = useAuth();
   const { isWishlisted, toggleWishlist } = useWishlist();
   const [reportOpen, setReportOpen] = useState(false);
+  // Nút "Nhắn shop" góc phải dưới: đang xem sản phẩm này -> nhắn đúng shop bán + đính kèm sản phẩm
+  useChatProduct(product);
   const {
     name,
     price: basePrice,

@@ -154,7 +154,6 @@ export function mapProductDetailResponse(product, { categoryRouteId = null } = {
     categoryId: product.categoryId,
     brandId: product.brandId ?? null,
     category: categoryRouteId,
-    subcategory: null,
     name: product.name,
     description: product.description,
     material: product.material ?? null,

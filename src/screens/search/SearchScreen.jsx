@@ -5,7 +5,7 @@ import Button from '../../components/common/Button';
 import EmptyState from '../../components/common/EmptyState';
 import Icon from '../../components/common/Icon';
 import ProductGrid from '../../components/ProductGrid/ProductGrid';
-import { MAIN_NAV } from '../../constants/navigation';
+import { CATEGORY_NAV } from '../../constants/navigation';
 import { useLanguage } from '../../hooks/useLanguage';
 import {
   SEARCH_OFFERS,
@@ -18,20 +18,18 @@ import { formatPrice } from '../../utils/format';
 import SearchFilters from './components/SearchFilters';
 import './SearchScreen.css';
 
-// Danh mục lấy từ menu (constants/navigation.js) -> khớp với category / subcategory trong mockProducts.js
-const CATEGORIES = MAIN_NAV.filter((item) => item.children);
+// Danh mục lấy từ menu (constants/navigation.js): chỉ Áo / Quần / Đầm & Váy (Backend không có danh mục con)
+const CATEGORIES = CATEGORY_NAV;
 
 // Đọc bộ lọc từ đường dẫn:
-// /search?q=ao&category=tops&sub=tshirts&min=200000&max=500000&offer=sale,new&inStock=1&sort=priceAsc
+// /search?q=ao&category=tops&min=200000&max=500000&offer=sale,new&inStock=1&sort=priceAsc
 function readFilters(params) {
   const number = (value) => (value && /^\d+$/.test(value) ? Number(value) : null);
   const category = CATEGORIES.find((item) => item.id === params.get('category'));
-  const sub = category?.children.find((child) => child.id === params.get('sub'));
   const sort = params.get('sort');
   return {
     q: (params.get('q') ?? '').trim(),
     category: category?.id ?? '',
-    sub: sub?.id ?? '',
     minPrice: number(params.get('min')),
     maxPrice: number(params.get('max')),
     offers: (params.get('offer') ?? '').split(',').filter((id) => SEARCH_OFFERS.includes(id)),
@@ -56,17 +54,11 @@ function SearchScreen({ onAddToCart }) {
   const [visible, setVisible] = useState(SEARCH_PAGE_SIZE);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  // Tên danh mục đã dịch -> để tìm "áo thun" ra sản phẩm thuộc danh mục Áo thun
-  const categoryLabels = useMemo(() => {
-    const labels = {};
-    CATEGORIES.forEach((category) => {
-      labels[category.id] = t(category.key);
-      category.children.forEach((child) => {
-        labels[`${category.id}/${child.id}`] = t(child.key);
-      });
-    });
-    return labels;
-  }, [t]);
+  // Tên danh mục đã dịch -> để tìm "quần" ra sản phẩm thuộc danh mục Quần
+  const categoryLabels = useMemo(
+    () => Object.fromEntries(CATEGORIES.map((category) => [category.id, t(category.key)])),
+    [t],
+  );
 
   const load = useCallback(async () => {
     setStatus('loading');
@@ -101,7 +93,6 @@ function SearchScreen({ onAddToCart }) {
 
   // Chip "đang lọc"
   const category = CATEGORIES.find((item) => item.id === filters.category);
-  const sub = category?.children.find((child) => child.id === filters.sub);
   const priceLabel =
     filters.minPrice || filters.maxPrice
       ? [
@@ -112,8 +103,8 @@ function SearchScreen({ onAddToCart }) {
   const chips = [
     category && {
       key: 'category',
-      label: sub ? t(sub.key) : t(category.key),
-      remove: () => update({ category: '', sub: '' }),
+      label: t(category.key),
+      remove: () => update({ category: '' }),
     },
     priceLabel && { key: 'price', label: priceLabel, remove: () => update({ min: '', max: '' }) },
     ...filters.offers.map((offer) => ({

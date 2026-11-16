@@ -155,7 +155,6 @@ const sellerVi = {
       HOUSEHOLD_BUSINESS: { title: 'Hộ kinh doanh', hint: 'Có giấy đăng ký hộ kinh doanh' },
       ENTERPRISE: { title: 'Doanh nghiệp', hint: 'Công ty có giấy phép kinh doanh' },
     },
-    extraCategories: { accessories_bags: 'Phụ kiện › Túi xách' },
     genders: { FEMALE: 'Nữ', MALE: 'Nam', UNISEX: 'Unisex', KIDS: 'Trẻ em' },
     fields: {
       shopName: 'Tên shop',

@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import Icon from '../common/Icon';
 import StoryViewer from '../StoryViewer/StoryViewer';
+import { CATEGORY_NAV } from '../../constants/navigation';
 import { STORAGE_KEYS } from '../../constants/storageKeys';
 import { CATEGORY_STORIES } from '../../data/categoryStories';
 import { useLanguage } from '../../hooks/useLanguage';
@@ -8,65 +9,27 @@ import './CategoryList.css';
 
 // =====================================================================
 // DANH MỤC NỔI BẬT TRÊN TRANG CHỦ: ảnh tròn có viền màu + tên bên dưới
+// Khớp Backend (GET /catalog/categories): chỉ 3 danh mục gốc Áo / Quần / Đầm & Váy, KHÔNG có danh mục con.
+// - id:       id danh mục trên menu (constants/navigation.js) -> cũng là khoá tin trong data/categoryStories.js
 // - image:    ảnh trong thư mục public/categories/ -> ghi '/categories/ten-anh.jpg'
 //             (ảnh vuông là đẹp nhất, vd 400 x 400). Chưa có ảnh / ảnh lỗi -> tự hiện icon.
 // - position: phần ảnh ưu tiên giữ lại khi cắt tròn, vd 'center 20%' giữ phần mặt / vai
 // - icon:     icon dự phòng khi chưa có ảnh (tên icon trong components/common/Icon.jsx)
-// - labelKey: dùng LẠI chữ của menu (navSub trong vi.js, en.js) -> menu đổi tên thì ô này đổi theo
-// - to:       trang danh mục tương ứng (nút "Xem sản phẩm" ở cuối tin nổi bật dẫn tới đây)
+// Tên + đường dẫn lấy từ menu -> menu đổi tên thì ô này đổi theo.
 // Bấm vào ô -> mở TIN NỔI BẬT dạng pop-up (nội dung tin: data/categoryStories.js)
-// Muốn đổi / thêm / bớt ô: sửa mảng này.
 // =====================================================================
-const FEATURED_CATEGORIES = [
-  {
-    id: 'tshirts',
-    image: '/categories/ao-thun.jpg',
-    position: 'center 25%',
-    icon: 'tshirt',
-    labelKey: 'navSub.tops.tshirts',
-    to: '/category/tops/tshirts',
-  },
-  {
-    id: 'shirts',
-    image: '/categories/ao-so-mi.jpg',
-    position: 'center 25%',
-    icon: 'shirt',
-    labelKey: 'navSub.tops.shirts',
-    to: '/category/tops/shirts',
-  },
-  {
-    id: 'jackets',
-    image: '/categories/ao-khoac.jpg',
-    position: 'center 25%',
-    icon: 'jacket',
-    labelKey: 'navSub.tops.jackets',
-    to: '/category/tops/jackets',
-  },
-  {
-    id: 'jeans',
-    image: '/categories/quan-jeans.jpg',
-    position: 'center',
-    icon: 'pants',
-    labelKey: 'navSub.bottoms.jeans',
-    to: '/category/bottoms/jeans',
-  },
-  {
-    id: 'dresses',
-    image: '/categories/dam.jpg',
-    position: 'center 25%',
-    icon: 'dress',
-    labelKey: 'navSub.dresses.midi',
-    to: '/category/dresses/midi',
-  },
-  {
-    id: 'skirts',
-    image: '/categories/vay.jpg',
-    position: 'center',
-    icon: 'skirt',
-    labelKey: 'navSub.dresses.miniSkirts',
-    to: '/category/dresses/miniSkirts',
-  },
-];
+const FEATURED_STYLE = {
+  tops: { image: '/categories/ao-thun.jpg', position: 'center 25%', icon: 'tshirt' },
+  bottoms: { image: '/categories/quan-jeans.jpg', position: 'center', icon: 'pants' },
+  dresses: { image: '/categories/dam.jpg', position: 'center 25%', icon: 'dress' },
+};
+
+const FEATURED_CATEGORIES = CATEGORY_NAV.map((item) => ({
+  id: item.id,
+  labelKey: item.key,
+  to: item.to,
+  ...FEATURED_STYLE[item.id],
+}));
 
 // Ảnh trong vòng tròn. Lỗi ảnh -> thay bằng icon (khung không bị trống / vỡ hình)
 function CategoryThumb({ image, position, icon }) {

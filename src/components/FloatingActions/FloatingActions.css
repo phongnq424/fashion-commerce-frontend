@@ -1,0 +1,108 @@
+/* =====================================================================
+   NÚT NỔI ĐÁY MÀN HÌNH: ↑ lên đầu trang (trái) + "Nhắn shop" (phải)
+   Muốn đổi vị trí / kích thước: sửa biến ngay dưới đây.
+   ===================================================================== */
+:root {
+  --fab-offset: var(--space-5); /* cách mép màn hình (24px) */
+  --fab-top-size: 56px;         /* nút ↑ */
+  --fab-chat-size: 52px;        /* nút "Nhắn shop" */
+  --fab-chat-icon-ratio: 0.6;   /* icon = 60% đường kính nút -> đổi cỡ nút là icon tự to / nhỏ theo */
+  --fab-chat-bg: var(--color-surface); /* nền nút: trắng (Dark Mode tự đổi tối) */
+  --fab-chat-icon: var(--color-text);  /* màu icon: đen (Dark Mode tự đổi sáng) */
+}
+
+.fab {
+  position: fixed;
+  bottom: var(--fab-offset);
+  z-index: 50; /* trên nội dung trang, dưới thông báo (60), ngăn bộ lọc (110+) và khung chat (1000) */
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition), background-color var(--transition), opacity 200ms ease,
+    visibility 200ms;
+}
+
+.fab:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+/* ---------- ↑ Lên đầu trang (góc trái) ---------- */
+.fab--top {
+  left: var(--fab-offset);
+  width: var(--fab-top-size);
+  height: var(--fab-top-size);
+  color: var(--color-on-brand);
+  background: var(--color-brand);
+  /* Ẩn cho tới khi cuộn xuống */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+}
+
+.fab--top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.fab--top:hover {
+  background: var(--color-brand-hover);
+  transform: translateY(-3px);
+}
+
+/* ---------- "Nhắn shop" (góc phải): hình tròn nền trắng, icon đen, chỉ có icon ---------- */
+.fab--chat {
+  right: var(--fab-offset);
+  width: var(--fab-chat-size);
+  height: var(--fab-chat-size);
+  color: var(--fab-chat-icon);  /* màu icon */
+  background: var(--fab-chat-bg);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.14);
+  animation: fab-in 260ms ease-out;
+}
+
+.fab--chat:hover {
+  color: var(--color-brand);
+  transform: translateY(-3px);
+}
+
+.fab__icon {
+  display: block;
+  width: calc(var(--fab-chat-size) * var(--fab-chat-icon-ratio));
+  height: calc(var(--fab-chat-size) * var(--fab-chat-icon-ratio));
+}
+
+/* 3 chấm trong bong bóng = màu nền nút */
+.fab__icon-dot {
+  fill: var(--fab-chat-bg);
+}
+
+@keyframes fab-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+/* Mobile: nút nhỏ hơn, sát mép hơn */
+@media (max-width: 600px) {
+  :root {
+    --fab-offset: var(--space-4);
+    --fab-top-size: 48px;
+    --fab-chat-size: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fab,
+  .fab--chat {
+    transition: none;
+    animation: none;
+  }
+}

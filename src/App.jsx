@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Notice from './components/common/Notice';
+import FloatingActions from './components/FloatingActions/FloatingActions';
 import AuthModal from './components/AuthModal/AuthModal';
 import HomeScreen from './screens/home/HomeScreen';
 import CatalogScreen from './screens/catalog/CatalogScreen';
@@ -72,6 +73,12 @@ const CART_ERROR_KEYS = {
 };
 
 // App giữ thông báo dùng chung. Giỏ hàng nằm trong CartContext (contexts/CartProvider.jsx).
+// Link cũ có danh mục con (vd /category/tops/tshirts) -> về danh mục gốc /category/tops
+function LegacySubcategoryRedirect() {
+  const { categoryId } = useParams();
+  return <Navigate to={`/category/${categoryId}`} replace />;
+}
+
 function App() {
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -171,7 +178,8 @@ function App() {
           {/* Trang Danh mục sản phẩm: cùng 1 màn hình, cùng 1 banner cố định (screens/catalog) */}
           <Route path="/products" element={<CatalogScreen onAddToCart={handleAddToCart} />} />
           <Route path="/category/:categoryId" element={<CatalogScreen onAddToCart={handleAddToCart} />} />
-          <Route path="/category/:categoryId/:subId" element={<CatalogScreen onAddToCart={handleAddToCart} />} />
+          {/* Backend không có danh mục con -> link cũ /category/tops/tshirts chuyển về /category/tops */}
+          <Route path="/category/:categoryId/*" element={<LegacySubcategoryRedirect />} />
           <Route
             path="/product/:productId"
             element={<ProductDetailScreen onAddToCart={handleAddToCart} onNotify={notify} />}
@@ -223,6 +231,8 @@ function App() {
       {!hideSiteChrome && <Footer />}
       {/* Popup đăng nhập / đăng ký: đặt 1 lần ở đây, mở bằng openAuth() từ bất kỳ đâu */}
       <AuthModal onNotify={notify} />
+      {/* Nút nổi đáy màn hình: ↑ lên đầu trang (mọi trang) + "Nhắn shop" (trang của khách) */}
+      <FloatingActions showChat={!hideSiteChrome} />
       {/* key đổi mỗi lần -> thông báo mới luôn hiện lại từ đầu và đếm giờ lại */}
       {notice && <Notice key={notice.id} type={notice.type} message={notice.message} onClose={closeNotice} />}
     </>

@@ -40,16 +40,15 @@ const readList = (value, allowed) => (value ?? '').split(',').filter((item) => a
 /**
  * Trang "Danh mục sản phẩm". Dùng chung cho:
  *   /products                 -> tất cả sản phẩm (nút "Xem thêm sản phẩm" của Flash Sale)
- *   /category/tops            -> menu "Áo" trên header
- *   /category/tops/tshirts    -> menu con "Áo thun"
+ *   /category/tops            -> menu "Áo" trên header (Backend chỉ có Áo / Quần / Đầm & Váy, không có danh mục con)
  * Banner đầu trang CỐ ĐỊNH (data/catalogConfig.js). Lọc / sắp xếp chỉ đổi phần sản phẩm bên dưới.
  * Bộ lọc nằm trên đường dẫn (?price=100-200&offer=sale&sort=priceAsc) -> gửi link cho người khác vẫn giữ lọc.
  */
 function CatalogScreen({ onAddToCart }) {
   const { t } = useLanguage();
-  const { categoryId, subId } = useParams();
+  const { categoryId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  const found = categoryId ? findCategory(categoryId, subId) : null;
+  const found = categoryId ? findCategory(categoryId) : null;
 
   const [products, setProducts] = useState(() => freshValue()?.products ?? []);
   const [status, setStatus] = useState(() => (freshValue() ? 'success' : 'loading'));
@@ -95,7 +94,7 @@ function CatalogScreen({ onAddToCart }) {
   }, [location.key, location.state]);
 
   // Đổi bộ lọc / danh mục -> hiện lại từ đầu
-  const filterKey = `${categoryId ?? ''}|${subId ?? ''}|${priceIds.join()}|${offers.join()}|${collectionIds.join()}|${sort}`;
+  const filterKey = `${categoryId ?? ''}|${priceIds.join()}|${offers.join()}|${collectionIds.join()}|${sort}`;
   useEffect(() => {
     setVisible(PAGE_SIZE);
   }, [filterKey]);
@@ -103,7 +102,7 @@ function CatalogScreen({ onAddToCart }) {
   const priceRanges = PRICE_RANGES.filter((range) => priceIds.includes(range.id));
   const collections = COLLECTIONS.filter((item) => collectionIds.includes(item.id));
   const filtered = useMemo(
-    () => sortProducts(filterProducts(products, { categoryId, subId, priceRanges, offers, collections }), sort),
+    () => sortProducts(filterProducts(products, { categoryId, priceRanges, offers, collections }), sort),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- filterKey đã gồm đủ các bộ lọc
     [products, filterKey],
   );
@@ -146,15 +145,13 @@ function CatalogScreen({ onAddToCart }) {
   if (categoryId && !found) return <NotFoundScreen />;
 
   const category = found?.category ?? null;
-  const sub = found?.sub ?? null;
-  const title = sub ? t(sub.key) : category ? t(category.key) : t('catalog.title');
+  const title = category ? t(category.key) : t('catalog.title');
 
-  // Trang chủ / Danh mục sản phẩm / Áo / Áo thun
+  // Trang chủ / Danh mục sản phẩm / Áo
   const breadcrumb = [
     { label: t('breadcrumb.home'), to: '/' },
     { label: t('catalog.title'), to: category ? '/products' : undefined },
-    category && { label: t(category.key), to: sub ? category.to : undefined },
-    sub && { label: t(sub.key) },
+    category && { label: t(category.key) },
   ].filter(Boolean);
 
   // Chip "đang lọc" phía trên lưới (bấm ✕ để bỏ)

@@ -1,20 +1,17 @@
-import { MAIN_NAV } from '../../constants/navigation';
+import { CATEGORY_NAV } from '../../constants/navigation';
 
-// Danh mục cho form sản phẩm. Bản giả lập dùng menu của site (constants/navigation.js):
-// id = "<nhóm>/<mục con>" (vd "tops/tshirts"), khớp category/subcategory của mockProducts.
+// Danh mục cho form sản phẩm. Khớp Backend (GET /catalog/categories): chỉ 3 danh mục gốc
+// Áo / Quần / Đầm & Váy, KHÔNG có danh mục con.
+// Bản giả lập dùng id của menu site ('tops' | 'bottoms' | 'dresses'), khớp category của mockProducts.
 // Khi nối backend: thay bằng GET /catalog/categories (id là UUID).
-// Danh mục có trong mockProducts nhưng không nằm trên menu site (vd túi tote) — thêm riêng
-const EXTRA_CATEGORIES = ['accessories/bags'];
-
 export function getCategoryOptions(t) {
-  const fromNav = MAIN_NAV.filter((item) => item.children).flatMap((group) =>
-    group.children.map((child) => ({ id: `${group.id}/${child.id}`, name: `${t(group.key)} › ${t(child.key)}` })),
-  );
-  return [...fromNav, ...EXTRA_CATEGORIES.map((id) => ({ id, name: t(`admin.extraCategories.${id.replace('/', '_')}`) }))];
+  return CATEGORY_NAV.map((item) => ({ id: item.id, name: t(item.key) }));
 }
 
+// Dữ liệu cũ lưu dạng "tops/tshirts" -> chỉ lấy phần danh mục gốc "tops"
 export function categoryLabel(categoryId, t) {
-  return getCategoryOptions(t).find((item) => item.id === categoryId)?.name ?? categoryId ?? '—';
+  const rootId = categoryId?.split('/')[0];
+  return getCategoryOptions(t).find((item) => item.id === rootId)?.name ?? categoryId ?? '—';
 }
 
 // Nhãn phân loại của 1 SKU: { SIZE: 'M', COLOR: 'XAM_TRANG' } -> "M / Xám trắng"

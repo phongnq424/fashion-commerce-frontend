@@ -8,13 +8,13 @@ import { useLanguage } from '../../hooks/useLanguage';
 import { requestPasswordResetOtp, resetPassword } from '../../services/authService';
 import {
   serverErrorKey,
-  validateIdentifier,
+  validateEmail,
   validateNewPassword,
 } from './validation';
 
 function ForgotPasswordForm({ onSwitch }) {
   const { t } = useLanguage();
-  const [identifier, setIdentifier] = useState('');
+  const [email, setEmail] = useState('');
   const [challenge, setChallenge] = useState(null);
   const [values, setValues] = useState({ otp: '', password: '', confirmPassword: '' });
   const [errors, setErrors] = useState({});
@@ -31,8 +31,8 @@ function ForgotPasswordForm({ onSwitch }) {
   }, [secondsLeft]);
 
   const sendOtp = async (isResend = false) => {
-    const error = validateIdentifier(identifier);
-    setErrors({ identifier: error });
+    const error = validateEmail(email);
+    setErrors({ email: error });
     if (error) return;
 
     if (isResend) setResending(true);
@@ -40,7 +40,7 @@ function ForgotPasswordForm({ onSwitch }) {
     setServerError('');
 
     try {
-      const response = await requestPasswordResetOtp(identifier.trim());
+      const response = await requestPasswordResetOtp(email.trim());
       setChallenge(response);
       setSecondsLeft(response.resendAfter);
     } catch (requestError) {
@@ -80,7 +80,7 @@ function ForgotPasswordForm({ onSwitch }) {
     setServerError('');
     try {
       await resetPassword({
-        identifier: identifier.trim(),
+        identifier: email.trim(),
         otp: values.otp,
         newPassword: values.password,
       });
@@ -116,19 +116,20 @@ function ForgotPasswordForm({ onSwitch }) {
       <form className="auth-form" onSubmit={handleRequest} noValidate>
         <FormAlert message={serverError && t(serverError)} />
         <Input
-          type="text"
-          name="identifier"
-          label={t('auth.identifier')}
-          placeholder={t('auth.identifierPlaceholder')}
-          autoComplete="username"
+          type="email"
+          name="email"
+          label={t('auth.email')}
+          placeholder={t('auth.emailPlaceholder')}
+          autoComplete="email"
+          inputMode="email"
           autoFocus
-          value={identifier}
+          value={email}
           onChange={(event) => {
-            setIdentifier(event.target.value);
+            setEmail(event.target.value);
             setErrors({});
             setServerError('');
           }}
-          error={errors.identifier && t(errors.identifier)}
+          error={errors.email && t(errors.email)}
         />
         <Button type="submit" fullWidth disabled={submitting}>
           {submitting ? t('auth.sending') : t('auth.forgotSubmit')}
@@ -194,7 +195,7 @@ function ForgotPasswordForm({ onSwitch }) {
       </p>
       <button type="button" className="auth-link auth-back" onClick={() => setChallenge(null)}>
         <Icon name="chevronLeft" size={16} />
-        {t('auth.changeIdentifier')}
+        {t('auth.changeEmail')}
       </button>
     </form>
   );

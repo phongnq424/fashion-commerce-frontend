@@ -58,11 +58,10 @@ export async function getCategories() {
   return categoriesRequest;
 }
 
-export async function getProductsByCategory(categoryRouteId, subcategoryRouteId) {
+export async function getProductsByCategory(categoryRouteId) {
   const categories = await getCategories();
-  const category = findCategoryForRoute(categories, categoryRouteId, subcategoryRouteId);
+  const category = findCategoryForRoute(categories, categoryRouteId);
 
-  // Backend hiện có thể chưa seed category con tương ứng với route frontend.
   if (!category) return [];
 
   const page = await getProductPage({

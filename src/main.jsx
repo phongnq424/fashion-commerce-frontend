@@ -12,6 +12,7 @@ import { AuthProvider } from './contexts/AuthProvider';
 import { CartProvider } from './contexts/CartProvider';
 import { WishlistProvider } from './contexts/WishlistProvider';
 import { NotificationProvider } from './contexts/NotificationProvider';
+import { ShopChatProvider } from './contexts/ShopChatProvider';
 import App from './App';
 
 // Bọc App trong các Provider để MỌI component bên trong dùng được useTheme / useLanguage / useAuth.
@@ -27,7 +28,10 @@ createRoot(document.getElementById('root')).render(
               {/* Yêu thích + số thông báo chưa đọc cũng cần biết đã đăng nhập chưa */}
               <WishlistProvider>
                 <NotificationProvider>
-                  <App />
+                  {/* Chat với shop: nút "Nhắn shop" + khung chat dùng chung mọi trang */}
+                  <ShopChatProvider>
+                    <App />
+                  </ShopChatProvider>
                 </NotificationProvider>
               </WishlistProvider>
             </CartProvider>

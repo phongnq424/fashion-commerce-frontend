@@ -1,8 +1,8 @@
 // =====================================================================
-// TIN NỔI BẬT CỦA 6 DANH MỤC Ở TRANG CHỦ (bấm vòng tròn -> mở tin dạng pop-up, kiểu Instagram Stories)
+// TIN NỔI BẬT CỦA 3 DANH MỤC Ở TRANG CHỦ (Áo / Quần / Đầm & Váy — khớp Backend, không có danh mục con) (bấm vòng tròn -> mở tin dạng pop-up, kiểu Instagram Stories)
 // ---------------------------------------------------------------------
 // Đây là NỘI DUNG của shop (giống bài đăng) -> viết 1 ngôn ngữ, KHÔNG đưa vào vi.js / en.js.
-// Khoá của object = id danh mục trong components/CategoryList/CategoryList.jsx (tshirts, shirts...).
+// Khoá của object = id danh mục trên menu (constants/navigation.js): tops | bottoms | dresses.
 //
 // Mỗi tin (slide):
 //   image     ảnh dọc (đẹp nhất 1080 x 1920, tỉ lệ 9:16). Ảnh trong public/ ghi '/thu-muc/ten-anh.jpg'
@@ -20,7 +20,8 @@
 const hoursAgo = (hours) => new Date(Date.now() - hours * 3600 * 1000).toISOString();
 
 export const CATEGORY_STORIES = {
-  tshirts: [
+  tops: [
+    // (trước đây: tshirts)
     {
       image: '/categories/ao-thun.jpg',
       position: 'center 25%',
@@ -37,8 +38,7 @@ export const CATEGORY_STORIES = {
       text: 'Nhét nhẹ phần trước vào quần, để phần sau buông tự nhiên — dáng cao hơn ngay.',
       postedAt: hoursAgo(5),
     },
-  ],
-  shirts: [
+    // (trước đây: shirts)
     {
       image: '/categories/ao-so-mi.jpg',
       position: 'center 25%',
@@ -55,8 +55,7 @@ export const CATEGORY_STORIES = {
       postedAt: hoursAgo(8),
       cta: { label: 'Xem ưu đãi', to: '/collections/sale' },
     },
-  ],
-  jackets: [
+    // (trước đây: jackets)
     {
       image: '/categories/ao-khoac.jpg',
       position: 'center 25%',
@@ -72,7 +71,8 @@ export const CATEGORY_STORIES = {
       postedAt: hoursAgo(10),
     },
   ],
-  jeans: [
+  bottoms: [
+    // (trước đây: jeans)
     {
       image: '/categories/quan-jeans.jpg',
       tag: 'Mới về',
@@ -90,6 +90,7 @@ export const CATEGORY_STORIES = {
     },
   ],
   dresses: [
+    // (trước đây: dresses)
     {
       image: '/categories/dam.jpg',
       position: 'center 25%',
@@ -104,8 +105,7 @@ export const CATEGORY_STORIES = {
       text: 'Đầm maxi hoa nhí sắp về hàng — theo dõi để không bỏ lỡ nhé!',
       postedAt: hoursAgo(12),
     },
-  ],
-  skirts: [
+    // (trước đây: skirts)
     {
       image: '/categories/vay.jpg',
       tag: 'Xu hướng',
