@@ -2,11 +2,16 @@ import vi from './vi';
 import en from './en';
 import buyerVi from './buyer.vi';
 import buyerEn from './buyer.en';
+import sellerVi from './seller.vi';
+import sellerEn from './seller.en';
 import adminVi from './admin.vi';
 import adminEn from './admin.en';
+import marketVi from './market.vi';
+import marketEn from './market.en';
 
-// Gộp sâu (deep merge): chữ các trang người mua (buyer.*.js) và người bán (seller.*.js) được thêm vào từ điển chính.
-// Trùng key thì giữ chữ đã có trong vi.js / en.js.
+// Gộp sâu (deep merge): chữ các trang người mua (buyer.*), Kênh người bán (seller.*), quản trị (admin.*)
+// và chữ theo luồng sàn của Backend (market.*) được thêm vào từ điển chính.
+// Trùng key thì giữ chữ của từ điển đứng trước (market.* được ưu tiên nhất).
 function merge(base, extra) {
   const result = { ...base };
   Object.entries(extra).forEach(([key, value]) => {
@@ -20,9 +25,11 @@ function merge(base, extra) {
   return result;
 }
 
+const build = (...parts) => parts.reduce((acc, part) => merge(acc, part), {});
+
 export const dictionaries = {
-  vi: merge(merge(vi, buyerVi), adminVi),
-  en: merge(merge(en, buyerEn), adminEn),
+  vi: build(marketVi, vi, buyerVi, sellerVi, adminVi),
+  en: build(marketEn, en, buyerEn, sellerEn, adminEn),
 };
 export const SUPPORTED_LANGUAGES = ['vi', 'en'];
 export const DEFAULT_LANGUAGE = 'vi';

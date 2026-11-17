@@ -15,14 +15,15 @@ import './ProductCard.css';
 //   soldOut    "Hết hàng" / "Sold out"     (khi product.inStock = false)
 // ĐỒNG BỘ TOÀN SITE: mọi thẻ sản phẩm (trang chủ, trang danh mục, "Có thể bạn sẽ thích"...) dùng CHUNG
 // danh sách nhãn này -> 1 sản phẩm ở đâu cũng hiện nhãn giống nhau.
-// Nhãn tự bật theo dữ liệu trong mockProducts.js: isNew: true -> "Mới", originalPrice > price -> "-25%".
+// Nhãn tự bật theo dữ liệu sản phẩm: isNew (đăng bán ≤ 7 ngày) -> "Mới", originalPrice > price -> "-25%".
 // Muốn thêm nhãn "Bán chạy" cho mọi nơi: thêm 'bestSeller' vào mảng dưới.
 // Các mục KHÔNG nên truyền prop badges riêng, nếu không sẽ lệch lại.
 const DEFAULT_BADGES = ['new', 'sale'];
 
 /**
  * Thẻ sản phẩm, dùng ở Home, trang danh mục, sản phẩm liên quan...
- * - product: { id, name, price, originalPrice, image, isNew, inStock }
+ * - product: { id, name, price, originalPrice, image, isNew, inStock, shopName }
+ *   shopName: tên shop bán (PublicProductSummaryResponse.shopName) -> trên sàn khách luôn biết mua của shop nào
  * - onAddToCart(product): gọi khi bấm "Thêm vào giỏ"
  * - badges: danh sách nhãn muốn hiện (xem DEFAULT_BADGES ở trên)
  * Bấm vào ảnh hoặc tên -> mở trang chi tiết /product/<id>
@@ -42,7 +43,7 @@ function ProductCard({ product, onAddToCart, badges = DEFAULT_BADGES }) {
     }
   };
 
-  const { id, name, price, originalPrice, image, isNew, isBestSeller, inStock } = product;
+  const { id, name, price, originalPrice, image, isNew, isBestSeller, inStock, shopName } = product;
   const discount = getDiscountPercent(price, originalPrice);
   const showImage = image && !imageFailed;
 
@@ -124,6 +125,14 @@ function ProductCard({ product, onAddToCart, badges = DEFAULT_BADGES }) {
             </>
           )}
         </p>
+
+        {shopName && (
+          <p className="product-card__shop" title={shopName}>
+            <Icon name="store" size={13} />
+            <span className="visually-hidden">{t('market.shop.soldBy')}: </span>
+            <span className="product-card__shop-name">{shopName}</span>
+          </p>
+        )}
 
         <Button
           variant={inStock ? 'secondary' : 'ghost'}

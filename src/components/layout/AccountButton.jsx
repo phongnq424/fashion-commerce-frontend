@@ -12,6 +12,8 @@ const ACCOUNT_LINKS = [
   { to: '/account/returns', icon: 'refresh', key: 'account.nav.returns' },
   { to: '/account/wishlist', icon: 'heart', key: 'account.nav.wishlist' },
   { to: '/account/addresses', icon: 'mapPin', key: 'account.nav.addresses' },
+  // Kênh người bán: ai cũng đăng ký mở shop được (POST /seller/onboarding), shop đã có thì vào quản lý
+  { to: '/seller', icon: 'store', key: 'market.nav.sellerCenter' },
 ];
 
 /**

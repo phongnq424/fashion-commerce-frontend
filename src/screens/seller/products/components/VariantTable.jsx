@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Button from '../../../../components/common/Button';
 import Dialog from '../../../../components/common/Dialog';
 import Input from '../../../../components/common/Input';
-import Select from '../../../../components/common/Select';
+import Select from '../../../../components/common/FieldSelect';
 import StatusBadge from '../../../../components/common/StatusBadge';
 import { useLanguage } from '../../../../hooks/useLanguage';
 import { variantLabel } from '../../../../services/seller/catalogOptions';

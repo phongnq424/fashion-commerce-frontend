@@ -1,17 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Button from '../../../components/common/Button';
 import Icon from '../../../components/common/Icon';
 import StarRating from '../../../components/common/StarRating';
 import { useAuth } from '../../../hooks/useAuth';
 import { useLanguage } from '../../../hooks/useLanguage';
-import { addReview, getReviews } from '../../../services/reviewService';
+import { getReviews } from '../../../services/reviewService';
 import { formatDate } from '../../../utils/format';
 
 const STARS = [5, 4, 3, 2, 1];
 
 /**
  * Mục "Đánh giá sản phẩm" (kiểu Shopee): điểm trung bình + số đánh giá theo từng mức sao,
- * nút lọc theo số sao, danh sách đánh giá, "Xem thêm", và form viết đánh giá (cần đăng nhập).
+ * nút lọc theo số sao, danh sách đánh giá, "Xem thêm".
+ * Theo Backend: chỉ người ĐÃ MUA mới đánh giá được, từ trang "Đơn hàng của tôi" (từng dòng hàng đã giao).
  * Dữ liệu: services/reviewService.js
  */
 function ProductReviews({ product }) {
@@ -21,7 +23,6 @@ function ProductReviews({ product }) {
   const [page, setPage] = useState(1);
   const [data, setData] = useState(null);
   const [status, setStatus] = useState('loading');
-  const [writing, setWriting] = useState(false);
 
   const load = useCallback(async () => {
     setStatus('loading');
@@ -50,32 +51,16 @@ function ProductReviews({ product }) {
           {t('reviews.title')}
         </h2>
         {user ? (
-          !writing && (
-            <Button variant="outline" size="sm" onClick={() => setWriting(true)}>
-              <Icon name="star" size={16} />
-              {t('reviews.write')}
-            </Button>
-          )
+          <Button as={Link} to="/account/orders" variant="outline" size="sm">
+            <Icon name="star" size={16} />
+            {t('market.reviews.writeFromOrders')}
+          </Button>
         ) : (
           <Button variant="outline" size="sm" onClick={() => openAuth('login')}>
             {t('reviews.loginToWrite')}
           </Button>
         )}
       </div>
-
-      {writing && user && (
-        <ReviewForm
-          product={product}
-          user={user}
-          onCancel={() => setWriting(false)}
-          onDone={() => {
-            setWriting(false);
-            setFilter(0);
-            setPage(1);
-            load();
-          }}
-        />
-      )}
 
       {status === 'error' && (
         <p className="auth-alert" role="alert">
@@ -142,18 +127,14 @@ function ProductReviews({ product }) {
                   <div className="review__body">
                     <p className="review__name">{review.name}</p>
                     <StarRating value={review.rating} size={13} />
-                    <p className="review__meta">
-                      {formatDate(review.date, language)}
-                      {(review.color || review.size) && (
-                        <>
-                          {' | '}
-                          {t('reviews.variant', {
-                            variant: [review.color, review.size].filter(Boolean).join(', '),
-                          })}
-                        </>
-                      )}
-                    </p>
+                    <p className="review__meta">{formatDate(review.date, language)}</p>
+                    {review.title && <p className="review__name">{review.title}</p>}
                     <p className="review__comment">{review.comment}</p>
+                    {review.sellerReply && (
+                      <p className="review__comment" style={{ borderLeft: '3px solid currentColor', paddingLeft: 12, opacity: 0.85 }}>
+                        <strong>{t('market.reviews.sellerReply')}:</strong> {review.sellerReply}
+                      </p>
+                    )}
                   </div>
                 </li>
               ))}
@@ -170,97 +151,6 @@ function ProductReviews({ product }) {
         </>
       )}
     </section>
-  );
-}
-
-/** Form viết đánh giá: chọn số sao (radio thật, dùng bàn phím được) + nhận xét */
-function ReviewForm({ product, user, onCancel, onDone }) {
-  const { t } = useLanguage();
-  const [rating, setRating] = useState(0);
-  const [hover, setHover] = useState(0);
-  const [comment, setComment] = useState('');
-  const [errors, setErrors] = useState({});
-  const [submitting, setSubmitting] = useState(false);
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const next = {
-      rating: rating ? '' : 'reviews.ratingRequired',
-      comment: comment.trim().length >= 10 ? '' : 'reviews.commentRequired',
-    };
-    setErrors(next);
-    if (next.rating || next.comment) return;
-    setSubmitting(true);
-    try {
-      await addReview(product, { name: user.name, rating, comment: comment.trim() });
-      onDone();
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <form className="review-form" onSubmit={handleSubmit} noValidate>
-      <fieldset className="review-form__stars" onMouseLeave={() => setHover(0)}>
-        <legend className="option-group__label">{t('reviews.yourRating')}</legend>
-        <div className="review-form__star-row">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <label key={star} className="review-form__star" onMouseEnter={() => setHover(star)}>
-              <input
-                type="radio"
-                name="review-rating"
-                className="choice__input"
-                checked={rating === star}
-                onChange={() => {
-                  setRating(star);
-                  setErrors((prev) => ({ ...prev, rating: '' }));
-                }}
-              />
-              <span className="visually-hidden">{t('reviews.starLabel', { star })}</span>
-              <Icon name="star" size={28} filled={star <= (hover || rating)} />
-            </label>
-          ))}
-        </div>
-        {errors.rating && (
-          <p className="field__error" role="alert">
-            <Icon name="alert" size={16} />
-            {t(errors.rating)}
-          </p>
-        )}
-      </fieldset>
-
-      <label className="field__label" htmlFor="review-comment">
-        {t('reviews.commentLabel')}
-      </label>
-      <textarea
-        id="review-comment"
-        className="field__input review-form__textarea"
-        rows={4}
-        placeholder={t('reviews.commentPlaceholder')}
-        value={comment}
-        onChange={(event) => {
-          setComment(event.target.value);
-          setErrors((prev) => ({ ...prev, comment: '' }));
-        }}
-        aria-invalid={errors.comment ? 'true' : undefined}
-        aria-describedby={errors.comment ? 'review-comment-error' : undefined}
-      />
-      {errors.comment && (
-        <p id="review-comment-error" className="field__error" role="alert">
-          <Icon name="alert" size={16} />
-          {t(errors.comment)}
-        </p>
-      )}
-
-      <div className="review-form__actions">
-        <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
-          {t('reviews.cancel')}
-        </Button>
-        <Button type="submit" size="sm" disabled={submitting}>
-          {submitting ? t('reviews.submitting') : t('reviews.submit')}
-        </Button>
-      </div>
-    </form>
   );
 }
 

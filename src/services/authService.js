@@ -10,6 +10,15 @@ function normalizeUser(user) {
   return { ...user, name: user.displayName };
 }
 
+// Tên ngắn của trình duyệt / hệ điều hành, vd "Chrome · Windows" (chỉ để người dùng nhận ra phiên)
+function deviceLabel() {
+  if (typeof navigator === 'undefined') return 'Web';
+  const ua = navigator.userAgent;
+  const browser = /Edg\//.test(ua) ? 'Edge' : /Chrome\//.test(ua) ? 'Chrome' : /Firefox\//.test(ua) ? 'Firefox' : /Safari\//.test(ua) ? 'Safari' : 'Trình duyệt';
+  const os = /Windows/.test(ua) ? 'Windows' : /Android/.test(ua) ? 'Android' : /iPhone|iPad/.test(ua) ? 'iOS' : /Mac OS/.test(ua) ? 'macOS' : /Linux/.test(ua) ? 'Linux' : '';
+  return [browser, os].filter(Boolean).join(' · ').slice(0, 100);
+}
+
 function normalizeIdentifier(identifier) {
   const value = identifier.trim();
   return value.includes('@') ? value : value.replace(/[\s.]/g, '');
@@ -32,7 +41,8 @@ export async function login({ identifier, password, remember = true }) {
   const tokens = await apiClient.post(
     '/auth/login',
     { identifier: normalizeIdentifier(identifier), password },
-    { auth: false },
+    // X-Device-Label: tên thiết bị hiện trong "Phiên đăng nhập" (GET /users/me/sessions)
+    { auth: false, headers: { 'X-Device-Label': deviceLabel() } },
   );
   saveAuthSession(tokens, remember);
 
@@ -94,4 +104,37 @@ export async function logout() {
   } finally {
     clearAuthSession();
   }
+}
+
+// =====================================================================
+// TÀI KHOẢN CỦA TÔI (Backend: CurrentUserController)
+//   PATCH  /users/me                 { displayName?, email?, phone?, currentPassword? } -> AccountResponse
+//          đổi email / số điện thoại BẮT BUỘC gửi currentPassword
+//   POST   /users/me/password        { currentPassword, newPassword } -> 204, THU HỒI MỌI phiên (phải đăng nhập lại)
+//   GET    /users/me/sessions        SliceResponse<SessionResponse>
+//   DELETE /users/me/sessions/{id}   204
+// =====================================================================
+export async function updateProfile({ displayName, email, phone, currentPassword }) {
+  const body = {};
+  if (displayName !== undefined) body.displayName = displayName;
+  if (email !== undefined) body.email = email;
+  if (phone !== undefined) body.phone = phone.replace(/[\s.]/g, '');
+  if (currentPassword) body.currentPassword = currentPassword;
+  const user = normalizeUser(await apiClient.patch('/users/me', body));
+  storeSessionUser(user);
+  return user;
+}
+
+export async function changePassword({ currentPassword, newPassword }) {
+  await apiClient.post('/users/me/password', { currentPassword, newPassword });
+  // Backend đã thu hồi mọi phiên (kể cả phiên này) -> xoá token trên trình duyệt
+  clearAuthSession();
+}
+
+export async function getSessions({ limit = 50, offset = 0 } = {}) {
+  return apiClient.get(`/users/me/sessions?limit=${limit}&offset=${offset}`);
+}
+
+export async function revokeSession(sessionId) {
+  return apiClient.delete(`/users/me/sessions/${encodeURIComponent(sessionId)}`);
 }

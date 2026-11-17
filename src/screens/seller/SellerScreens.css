@@ -587,6 +587,8 @@ a.seller-stat:hover {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3);
+  /* Các ô cùng hàng thẳng mép trên (nhãn ngang nhau, ô nhập ngang nhau) dù ô bên cạnh có gợi ý / lỗi */
+  align-items: start;
 }
 
 .seller-form__row--3 {
@@ -1081,7 +1083,8 @@ a.seller-stat:hover {
 .image-field__preview {
   display: grid;
   place-items: center;
-  margin-top: 26px;
+  /* đẩy xuống đúng bằng chiều cao nhãn + khoảng cách -> khung ngang hàng với ô nhập */
+  margin-top: calc(var(--fs-sm) * var(--lh-base) + var(--space-1));
   overflow: hidden;
   border: 1px dashed var(--color-border-strong);
   border-radius: var(--radius-sm);
@@ -1097,6 +1100,17 @@ a.seller-stat:hover {
 .image-field__preview--wide {
   width: 84px;
   height: 52px;
+}
+
+.image-field__preview--card {
+  width: 120px;
+  height: var(--control-height);
+}
+
+/* Danh sách ảnh (CCCD): các hàng cách đều, khung xem trước thẳng cột */
+.image-field-list {
+  display: grid;
+  gap: var(--space-4);
 }
 
 .image-field__preview img {
@@ -1666,4 +1680,18 @@ a.seller-stat:hover {
 /* Mã đơn / mã trả hàng không bị xuống dòng giữa chừng (SO-90107) */
 .seller-table .account-link {
   white-space: nowrap;
+}
+
+/* Đăng ký bán hàng: dòng "* là bắt buộc" và tiêu đề nhóm ô */
+.wizard__required-note {
+  margin: 0;
+  font-size: var(--fs-sm);
+}
+
+.wizard__section-title {
+  margin: var(--space-2) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--fs-md, 1rem);
+  font-weight: var(--fw-semibold);
 }

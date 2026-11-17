@@ -77,6 +77,7 @@ function FlashSaleSection() {
     () => products.reduce((max, item) => Math.max(max, getDiscountPercent(item.price, item.originalPrice)), 0),
     [products],
   );
+  const shopCount = new Set(products.map((p) => p.shopId).filter(Boolean)).size;
 
   if (!FLASH_SALE.enabled) return null;
   if (countdown.phase === 'ended' && FLASH_SALE.hideWhenEnded) return null;
@@ -130,7 +131,8 @@ function FlashSaleSection() {
             {maxDiscount > 0 && (
               <span className="flash-sale__perk">{t('home.flashSale.upTo', { percent: maxDiscount })}</span>
             )}
-            <span className="flash-sale__perk">{t('home.flashSale.freeship')}</span>
+            {/* Sàn không có freeship chung (miễn phí ship là voucher riêng của từng shop) -> hiện số shop tham gia */}
+            {shopCount > 0 && <span className="flash-sale__perk">{t('market.flashSale.shops', { count: shopCount })}</span>}
           </p>
 
           </div>
@@ -229,14 +231,16 @@ function FlashSaleRail({ products, loading, ended }) {
 function FlashSaleCard({ product, ended }) {
   const { t, language } = useLanguage();
   const [imageFailed, setImageFailed] = useState(false);
-  const { id, name, price, originalPrice, image, colors = [], soldCount = 0, inStock, isNew } = product;
+  const { id, name, price, originalPrice, image, colors = [], inStock, isNew, shopName } = product;
   const discount = getDiscountPercent(price, originalPrice);
   const soldOut = inStock === false;
-  const percent = soldOut ? 100 : Math.min(100, Math.round((soldCount / FLASH_SALE.quota) * 100));
-  const almostGone = !soldOut && percent >= FLASH_SALE.almostGonePercent;
+  // Backend chưa trả số lượng đã bán -> thanh tiến độ tính theo TỒN KHO còn lại (availableQuantity):
+  // còn càng ít thì thanh càng đầy; còn <= FLASH_SALE.almostGoneStock thì báo "Sắp cháy hàng".
+  const left = Math.max(0, product.availableQuantity ?? 0);
+  const percent = soldOut ? 100 : Math.round(100 * (1 - Math.min(left, FLASH_SALE.fullStock) / FLASH_SALE.fullStock));
+  const almostGone = !soldOut && left <= FLASH_SALE.almostGoneStock;
 
-  let progressLabel = t('home.flashSale.sold', { count: soldCount.toLocaleString(language === 'vi' ? 'vi-VN' : 'en-US') });
-  if (soldCount === 0) progressLabel = t('home.flashSale.justOpened');
+  let progressLabel = t('market.flashSale.left', { count: left.toLocaleString(language === 'vi' ? 'vi-VN' : 'en-US') });
   if (almostGone) progressLabel = t('home.flashSale.almostGone');
   if (soldOut) progressLabel = t('product.soldOut');
   if (ended) progressLabel = t('home.flashSale.ended');
@@ -257,12 +261,19 @@ function FlashSaleCard({ product, ended }) {
               <span className="visually-hidden">{t('home.flashSale.discount')} </span>-{discount}%
             </span>
           )}
-          {/* Nhãn "Mới" giống mọi thẻ sản phẩm khác (product.isNew trong mockProducts.js) */}
+          {/* Nhãn "Mới" giống mọi thẻ sản phẩm khác (product.isNew) */}
           {isNew && <span className="fs-card__new">{t('product.badgeNew')}</span>}
         </div>
 
         <div className="fs-card__body">
           <h3 className="fs-card__name">{name}</h3>
+          {/* Tên shop bán (sàn nhiều shop) */}
+          {shopName && (
+            <p className="fs-card__shop">
+              <Icon name="store" size={12} />
+              {shopName}
+            </p>
+          )}
 
           {colors.length > 0 && (
             <p className="fs-card__swatches" aria-label={t('home.flashSale.colors', { count: colors.length })}>

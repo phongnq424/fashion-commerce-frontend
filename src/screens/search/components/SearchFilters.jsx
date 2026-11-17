@@ -6,7 +6,7 @@ import { SEARCH_OFFERS } from '../../../services/searchService';
 
 /**
  * Cột bộ lọc trang tìm kiếm. Máy tính: cột trái. Mobile: ngăn trượt từ trái (open / onClose).
- * Các nhóm lọc khớp với trường có trong data/mockProducts.js:
+ * Các nhóm lọc khớp với trường của sản phẩm (mappers/productMapper.js):
  *   Danh mục (category) • Khoảng giá (price) • Ưu đãi (originalPrice, isNew) • Còn hàng (inStock)
  * - categories: CATEGORY_NAV (constants/navigation.js) — chỉ 3 danh mục gốc, Backend không có danh mục con
  * - onChange({ key: value }) — key là tên tham số trên đường dẫn

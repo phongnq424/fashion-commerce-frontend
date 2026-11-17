@@ -10,6 +10,33 @@
   font-weight: var(--fw-semibold);
 }
 
+/* Dấu * của ô bắt buộc */
+.field__required {
+  color: var(--color-danger);
+  font-weight: var(--fw-bold, 700);
+}
+
+/* Ô chọn cùng kiểu với ô nhập (FieldSelect): nhãn ở trên, mũi tên bên phải */
+.field__select-wrap {
+  position: relative;
+}
+
+.field__select {
+  appearance: none;
+  padding-right: calc(var(--space-4) + 24px);
+  cursor: pointer;
+}
+
+.field__select-arrow {
+  position: absolute;
+  top: 50%;
+  right: var(--space-3);
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-text-muted);
+  display: inline-flex;
+}
+
 .field__input {
   width: 100%;
   min-height: var(--control-height);

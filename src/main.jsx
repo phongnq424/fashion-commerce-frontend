@@ -28,7 +28,7 @@ createRoot(document.getElementById('root')).render(
               {/* Yêu thích + số thông báo chưa đọc cũng cần biết đã đăng nhập chưa */}
               <WishlistProvider>
                 <NotificationProvider>
-                  {/* Chat với shop: nút "Nhắn shop" + khung chat dùng chung mọi trang */}
+                  {/* Chat với shop: nút chat góc phải + khung chat dùng chung các trang của khách */}
                   <ShopChatProvider>
                     <App />
                   </ShopChatProvider>

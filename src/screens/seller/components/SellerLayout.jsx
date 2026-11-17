@@ -14,32 +14,48 @@ import '../../account/AccountScreens.css';
 import '../SellerScreens.css';
 
 // Menu bên trái. Thêm mục: thêm 1 dòng + chữ trong i18n (seller.nav.<id>). badge: số việc cần làm.
+// roles: vai trò trong shop được thấy mục này (theo bảng role_permissions của Backend). Chủ shop (SHOP_OWNER)
+//   luôn thấy hết; không ghi roles = ai cũng thấy. Đây chỉ là ẩn menu cho gọn — Backend vẫn tự chặn (403)
+//   nếu nhân viên gõ thẳng đường dẫn, và màn hình sẽ báo "không có quyền".
 const NAV_GROUPS = [
   { id: 'overview', items: [{ id: 'dashboard', to: '/seller', icon: 'home', end: true }] },
   {
     id: 'orders',
     items: [
-      { id: 'orders', to: '/seller/orders', icon: 'receipt', badge: 'pendingOrders' },
-      { id: 'returns', to: '/seller/returns', icon: 'refresh', badge: 'requestedReturns' },
-      { id: 'cod', to: '/seller/cod', icon: 'card' },
+      { id: 'orders', to: '/seller/orders', icon: 'receipt', badge: 'pendingOrders', roles: ['SHOP_MANAGER', 'SHOP_ORDERS', 'SHOP_SUPPORT', 'SHOP_FINANCE'] },
+      { id: 'returns', to: '/seller/returns', icon: 'refresh', badge: 'requestedReturns', roles: ['SHOP_MANAGER', 'SHOP_SUPPORT', 'SHOP_FINANCE'] },
+      { id: 'cod', to: '/seller/cod', icon: 'card', roles: ['SHOP_MANAGER', 'SHOP_ORDERS', 'SHOP_FINANCE'] },
     ],
   },
   {
     id: 'products',
     items: [
-      { id: 'products', to: '/seller/products', icon: 'hanger', end: true },
-      { id: 'newProduct', to: '/seller/products/new', icon: 'plus' },
-      { id: 'inventory', to: '/seller/inventory', icon: 'package' },
+      { id: 'products', to: '/seller/products', icon: 'hanger', end: true, roles: ['SHOP_MANAGER', 'SHOP_CATALOG'] },
+      { id: 'newProduct', to: '/seller/products/new', icon: 'plus', roles: ['SHOP_MANAGER', 'SHOP_CATALOG'] },
+      { id: 'inventory', to: '/seller/inventory', icon: 'package', roles: ['SHOP_MANAGER', 'SHOP_CATALOG', 'SHOP_ORDERS'] },
     ],
   },
-  { id: 'customers', items: [{ id: 'reviews', to: '/seller/reviews', icon: 'star' }] },
+  {
+    id: 'marketing',
+    items: [
+      { id: 'vouchers', to: '/seller/vouchers', icon: 'ticket', roles: ['SHOP_MANAGER'] },
+      { id: 'reviews', to: '/seller/reviews', icon: 'star', roles: ['SHOP_MANAGER', 'SHOP_SUPPORT'] },
+    ],
+  },
+  {
+    id: 'finance',
+    items: [
+      { id: 'finance', to: '/seller/finance', icon: 'card', roles: ['SHOP_MANAGER', 'SHOP_FINANCE'] },
+      { id: 'reports', to: '/seller/reports', icon: 'receipt', roles: ['SHOP_MANAGER', 'SHOP_FINANCE'] },
+    ],
+  },
   {
     id: 'shop',
     items: [
       { id: 'profile', to: '/seller/profile', icon: 'store' },
-      { id: 'settings', to: '/seller/settings', icon: 'settings' },
-      { id: 'staff', to: '/seller/staff', icon: 'user' },
-      { id: 'ownership', to: '/seller/ownership', icon: 'shield' },
+      { id: 'settings', to: '/seller/settings', icon: 'settings', roles: ['SHOP_MANAGER'] },
+      { id: 'staff', to: '/seller/staff', icon: 'user', roles: ['SHOP_MANAGER'] },
+      { id: 'ownership', to: '/seller/ownership', icon: 'shield', roles: [] },
     ],
   },
   {
@@ -128,10 +144,21 @@ function ShopSwitcher() {
   );
 }
 
+// Mục menu có hiện với vai trò của tôi trong shop đang chọn không
+function canSee(item, myRoles) {
+  if (!item.roles) return true;
+  // Chưa có shop / không đọc được vai trò (SHOP_STAFF = FE tự suy ra) -> hiện hết, để Backend quyết định
+  if (!myRoles.length || myRoles.includes('SHOP_OWNER') || myRoles.includes('SHOP_STAFF')) return true;
+  return item.roles.some((role) => myRoles.includes(role));
+}
+
 function SellerShell() {
   const { t } = useLanguage();
   const { user, isAuthLoading, openAuth, logout } = useAuth();
-  const { shopId, status } = useSeller();
+  const { shopId, status, roles: myRoles = [] } = useSeller();
+  const navGroups = NAV_GROUPS.map((group) => ({ ...group, items: group.items.filter((item) => canSee(item, myRoles)) })).filter(
+    (group) => group.items.length > 0,
+  );
   const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [badges, setBadges] = useState({});
@@ -146,15 +173,14 @@ function SellerShell() {
       return;
     }
     let active = true;
-    Promise.all([getShopOrders(shopId, { status: 'PENDING_CONFIRMATION' }), getShopReturns(shopId)])
-      .then(([orders, returns]) => {
-        if (!active) return;
-        setBadges({
-          pendingOrders: orders.items.length,
-          requestedReturns: returns.items.filter((r) => r.status === 'REQUESTED').length,
-        });
-      })
-      .catch(() => {});
+    // Từng API riêng: nhân viên không có quyền xem trả hàng (403) vẫn thấy số đơn chờ xác nhận
+    Promise.allSettled([getShopOrders(shopId, { status: 'PENDING_CONFIRMATION' }), getShopReturns(shopId)]).then(([orders, returns]) => {
+      if (!active) return;
+      setBadges({
+        pendingOrders: orders.status === 'fulfilled' ? orders.value.items.length : 0,
+        requestedReturns: returns.status === 'fulfilled' ? returns.value.items.filter((r) => r.status === 'REQUESTED').length : 0,
+      });
+    });
     return () => {
       active = false;
     };
@@ -214,7 +240,7 @@ function SellerShell() {
           {menuOpen && <button type="button" className="seller-backdrop" aria-label={t('common.close')} onClick={() => setMenuOpen(false)} />}
           <aside className={`seller-side ${menuOpen ? 'seller-side--open' : ''}`} aria-label={t('seller.menuLabel')}>
             <nav>
-              {NAV_GROUPS.map((group) => (
+              {navGroups.map((group) => (
                 <div key={group.id} className="seller-side__group">
                   <p className="seller-side__title">{t(`seller.navGroups.${group.id}`)}</p>
                   <ul>

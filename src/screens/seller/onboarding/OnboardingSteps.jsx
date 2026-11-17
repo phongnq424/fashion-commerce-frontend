@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Button from '../../../components/common/Button';
 import Icon from '../../../components/common/Icon';
 import Input from '../../../components/common/Input';
-import Select from '../../../components/common/Select';
+import FieldSelect from '../../../components/common/FieldSelect';
 import Textarea from '../../../components/common/Textarea';
 import { useLanguage } from '../../../hooks/useLanguage';
 import { getProvinces } from '../../../services/locationService';
@@ -26,6 +26,16 @@ function useProvinces() {
   return provinces;
 }
 
+// Dòng nhắc "Ô có dấu * là bắt buộc" ở đầu mỗi bước
+function RequiredNote() {
+  const { t } = useLanguage();
+  return (
+    <p className="account-muted wizard__required-note">
+      <span className="field__required">*</span> {t('market.onboarding.requiredNote')}
+    </p>
+  );
+}
+
 function StepFooter({ saving, onBack, label }) {
   const { t } = useLanguage();
   return (
@@ -44,10 +54,10 @@ function StepFooter({ saving, onBack, label }) {
 }
 
 // Ô nhập link ảnh + ảnh xem trước (chưa có API upload)
-function ImageField({ label, hint, value, onChange, error, ratio = 'square' }) {
+function ImageField({ label, hint, value, onChange, error, ratio = 'square', required = false }) {
   return (
     <div className="image-field">
-      <Input label={label} hint={hint} value={value} onChange={(e) => onChange(e.target.value)} error={error} placeholder="https://..." />
+      <Input label={label} hint={hint} required={required} value={value} onChange={(e) => onChange(e.target.value)} error={error} placeholder="https://..." />
       <span className={`image-field__preview image-field__preview--${ratio}`}>
         {URL.test(value ?? '') ? <img src={value} alt="" /> : <Icon name="image" size={22} />}
       </span>
@@ -86,10 +96,11 @@ export function ShopStep({ onboarding, saving, onSave }) {
 
   return (
     <form className="seller-form" onSubmit={submit} noValidate>
-      <Input label={t('seller.fields.shopName')} value={form.name} maxLength={160} onChange={(e) => set('name')(e.target.value)} error={errors.name} />
+      <RequiredNote />
+      <Input required label={t('seller.fields.shopName')} value={form.name} maxLength={160} onChange={(e) => set('name')(e.target.value)} error={errors.name} />
       <div className="seller-form__row">
-        <Input label={t('seller.fields.email')} type="email" value={form.email} onChange={(e) => set('email')(e.target.value)} error={errors.email} />
-        <Input label={t('seller.fields.phone')} inputMode="tel" value={form.phone} onChange={(e) => set('phone')(e.target.value)} error={errors.phone} />
+        <Input required label={t('seller.fields.email')} type="email" value={form.email} onChange={(e) => set('email')(e.target.value)} error={errors.email} />
+        <Input required label={t('seller.fields.phone')} inputMode="tel" value={form.phone} onChange={(e) => set('phone')(e.target.value)} error={errors.phone} />
       </div>
       <div className="seller-form__row">
         <ImageField label={t('seller.fields.avatar')} hint={t('seller.fields.imageHint')} value={form.avatarKey} onChange={set('avatarKey')} error={errors.avatarKey} />
@@ -135,12 +146,14 @@ export function PickupStep({ onboarding, saving, onSave, onBack }) {
         <Icon name="info" size={18} />
         <span>{t('seller.onboarding.pickupNote')}</span>
       </p>
+      <RequiredNote />
       <div className="seller-form__row">
-        <Input label={t('seller.fields.contactName')} value={form.contactName} onChange={(e) => set('contactName')(e.target.value)} error={errors.contactName} />
-        <Input label={t('seller.fields.phone')} inputMode="tel" value={form.contactPhone} onChange={(e) => set('contactPhone')(e.target.value)} error={errors.contactPhone} />
+        <Input required label={t('seller.fields.contactName')} placeholder={t('market.onboarding.placeholders.contactName')} value={form.contactName} onChange={(e) => set('contactName')(e.target.value)} error={errors.contactName} />
+        <Input required label={t('seller.fields.phone')} inputMode="tel" value={form.contactPhone} onChange={(e) => set('contactPhone')(e.target.value)} error={errors.contactPhone} />
       </div>
       <div className="seller-form__row">
-        <Select
+        <FieldSelect
+          required
           label={t('seller.fields.province')}
           placeholder={t('addresses.choose')}
           options={provinces}
@@ -151,9 +164,9 @@ export function PickupStep({ onboarding, saving, onSave, onBack }) {
           }}
           error={errors.provinceName}
         />
-        <Input label={t('seller.fields.ward')} value={form.wardName} onChange={(e) => set('wardName')(e.target.value)} error={errors.wardName} />
+        <Input required label={t('seller.fields.ward')} placeholder={t('market.onboarding.placeholders.ward')} value={form.wardName} onChange={(e) => set('wardName')(e.target.value)} error={errors.wardName} />
       </div>
-      <Input label={t('seller.fields.addressDetail')} value={form.addressDetail} onChange={(e) => set('addressDetail')(e.target.value)} error={errors.addressDetail} />
+      <Input required label={t('seller.fields.addressDetail')} placeholder={t('market.onboarding.placeholders.addressDetail')} value={form.addressDetail} onChange={(e) => set('addressDetail')(e.target.value)} error={errors.addressDetail} />
       <StepFooter saving={saving} onBack={onBack} />
     </form>
   );
@@ -176,7 +189,9 @@ export function ShippingStep({ onboarding, saving, onSave, onBack }) {
 
   return (
     <form className="seller-form" onSubmit={submit} noValidate>
-      <p className="account-muted">{t('seller.onboarding.shippingNote')}</p>
+      <p className="account-muted">
+        {t('seller.onboarding.shippingNote')} <span className="field__required">*</span> {t('market.onboarding.chooseOneCarrier')}
+      </p>
       <div className="check-cards">
         {onboarding.shippingProviders.map((provider) => (
           <label key={provider.code} className="check-card">
@@ -268,8 +283,12 @@ export function TaxStep({ onboarding, saving, onSave, onBack }) {
 
   return (
     <form className="seller-form" onSubmit={submit} noValidate>
+      <RequiredNote />
       <fieldset className="check-cards check-cards--row">
-        <legend className="field__label">{t('seller.fields.businessType')}</legend>
+        <legend className="field__label">
+          {t('seller.fields.businessType')}
+          <span className="field__required" aria-hidden="true"> *</span>
+        </legend>
         {BUSINESS_TYPES.map((value) => (
           <label key={value} className="check-card">
             <input type="radio" name="business-type" checked={type === value} onChange={() => set('businessType')(value)} />
@@ -282,28 +301,29 @@ export function TaxStep({ onboarding, saving, onSave, onBack }) {
       </fieldset>
       <div className="seller-form__row">
         {type === 'ENTERPRISE' ? (
-          <Input label={t('seller.fields.legalRepresentative')} value={form.legalRepresentativeName} onChange={(e) => set('legalRepresentativeName')(e.target.value)} error={errors.legalRepresentativeName} />
+          <Input required label={t('seller.fields.legalRepresentative')} value={form.legalRepresentativeName} onChange={(e) => set('legalRepresentativeName')(e.target.value)} error={errors.legalRepresentativeName} />
         ) : (
-          <Input label={t(type === 'INDIVIDUAL' ? 'seller.fields.legalName' : 'seller.fields.householdOwner')} value={form.legalName} onChange={(e) => set('legalName')(e.target.value)} error={errors.legalName} />
+          <Input required label={t(type === 'INDIVIDUAL' ? 'seller.fields.legalName' : 'seller.fields.householdOwner')} value={form.legalName} onChange={(e) => set('legalName')(e.target.value)} error={errors.legalName} />
         )}
-        <Input label={t('seller.fields.taxCode')} value={form.taxCode} onChange={(e) => set('taxCode')(e.target.value)} error={errors.taxCode} hint={t('seller.fields.taxCodeHint')} />
+        <Input required label={t('seller.fields.taxCode')} value={form.taxCode} onChange={(e) => set('taxCode')(e.target.value)} error={errors.taxCode} hint={t('seller.fields.taxCodeHint')} />
       </div>
       {business && (
         <>
           <div className="seller-form__row">
-            <Input label={t('seller.fields.businessName')} value={form.businessName} onChange={(e) => set('businessName')(e.target.value)} error={errors.businessName} />
-            <Input label={t('seller.fields.registrationNumber')} value={form.businessRegistrationNumber} onChange={(e) => set('businessRegistrationNumber')(e.target.value)} error={errors.businessRegistrationNumber} />
+            <Input required label={t('seller.fields.businessName')} value={form.businessName} onChange={(e) => set('businessName')(e.target.value)} error={errors.businessName} />
+            <Input required label={t('seller.fields.registrationNumber')} value={form.businessRegistrationNumber} onChange={(e) => set('businessRegistrationNumber')(e.target.value)} error={errors.businessRegistrationNumber} />
           </div>
           <div className="seller-form__row">
-            <Input label={t('seller.fields.issuedDate')} type="date" value={form.issuedDate} onChange={(e) => set('issuedDate')(e.target.value)} error={errors.issuedDate} />
-            <Input label={t('seller.fields.issuedBy')} value={form.issuedBy} onChange={(e) => set('issuedBy')(e.target.value)} error={errors.issuedBy} />
+            <Input required label={t('seller.fields.issuedDate')} type="date" value={form.issuedDate} onChange={(e) => set('issuedDate')(e.target.value)} error={errors.issuedDate} />
+            <Input required label={t('seller.fields.issuedBy')} value={form.issuedBy} onChange={(e) => set('issuedBy')(e.target.value)} error={errors.issuedBy} />
           </div>
-          <ImageField label={t('seller.fields.registrationDocument')} hint={t('seller.fields.imageHint')} value={form.registrationDocumentKey} onChange={set('registrationDocumentKey')} error={errors.registrationDocumentKey} ratio="wide" />
+          <ImageField required label={t('seller.fields.registrationDocument')} hint={t('seller.fields.imageHint')} value={form.registrationDocumentKey} onChange={set('registrationDocumentKey')} error={errors.registrationDocumentKey} ratio="wide" />
         </>
       )}
-      <p className="field__label">{t('seller.fields.registeredAddress')}</p>
+      <h3 className="wizard__section-title">{t('seller.fields.registeredAddress')}</h3>
       <div className="seller-form__row">
-        <Select
+        <FieldSelect
+          required
           label={t('seller.fields.province')}
           placeholder={t('addresses.choose')}
           options={provinces}
@@ -311,10 +331,10 @@ export function TaxStep({ onboarding, saving, onSave, onBack }) {
           onChange={(id) => set('provinceName')(provinces.find((p) => p.id === id)?.name ?? '')}
           error={errors.provinceName}
         />
-        <Input label={t('seller.fields.ward')} value={form.wardName} onChange={(e) => set('wardName')(e.target.value)} error={errors.wardName} />
+        <Input required label={t('seller.fields.ward')} placeholder={t('market.onboarding.placeholders.ward')} value={form.wardName} onChange={(e) => set('wardName')(e.target.value)} error={errors.wardName} />
       </div>
-      <Input label={t('seller.fields.addressDetail')} value={form.addressDetail} onChange={(e) => set('addressDetail')(e.target.value)} error={errors.addressDetail} />
-      <Input label={t('seller.fields.invoiceEmail')} type="email" value={form.invoiceEmail} onChange={(e) => set('invoiceEmail')(e.target.value)} error={errors.invoiceEmail} />
+      <Input required label={t('seller.fields.addressDetail')} placeholder={t('market.onboarding.placeholders.addressDetail')} value={form.addressDetail} onChange={(e) => set('addressDetail')(e.target.value)} error={errors.addressDetail} />
+      <Input required label={t('seller.fields.invoiceEmail')} type="email" value={form.invoiceEmail} onChange={(e) => set('invoiceEmail')(e.target.value)} error={errors.invoiceEmail} />
       <StepFooter saving={saving} onBack={onBack} />
     </form>
   );
@@ -363,14 +383,17 @@ export function IdentityStep({ onboarding, saving, onSave, onBack }) {
         <Icon name="shield" size={18} />
         <span>{t('seller.onboarding.identityNote', { name: expected })}</span>
       </p>
+      <RequiredNote />
       <div className="seller-form__row">
-        <Input label={t('seller.fields.idName')} value={form.legalName} onChange={(e) => set('legalName')(e.target.value)} error={errors.legalName} />
-        <Input label={t('seller.fields.idLast4')} inputMode="numeric" maxLength={4} value={form.documentNumberLast4} onChange={(e) => set('documentNumberLast4')(e.target.value.replace(/\D/g, ''))} error={errors.documentNumberLast4} hint={t('seller.fields.idLast4Hint')} />
+        <Input required label={t('seller.fields.idName')} value={form.legalName} onChange={(e) => set('legalName')(e.target.value)} error={errors.legalName} />
+        <Input required label={t('seller.fields.idLast4')} inputMode="numeric" maxLength={4} value={form.documentNumberLast4} onChange={(e) => set('documentNumberLast4')(e.target.value.replace(/\D/g, ''))} error={errors.documentNumberLast4} hint={t('seller.fields.idLast4Hint')} />
       </div>
-      <div className="seller-form__row seller-form__row--3">
-        <ImageField label={t('seller.fields.idFront')} value={form.frontDocumentKey} onChange={set('frontDocumentKey')} error={errors.frontDocumentKey} ratio="wide" />
-        <ImageField label={t('seller.fields.idBack')} value={form.backDocumentKey} onChange={set('backDocumentKey')} error={errors.backDocumentKey} ratio="wide" />
-        <ImageField label={t('seller.fields.selfie')} value={form.selfieDocumentKey} onChange={set('selfieDocumentKey')} error={errors.selfieDocumentKey} />
+      <h3 className="wizard__section-title">{t('market.onboarding.idImages')}</h3>
+      {/* Mỗi ảnh 1 hàng: ô link + khung xem trước CÙNG kích thước, cao bằng ô nhập -> 3 hàng thẳng nhau */}
+      <div className="image-field-list">
+        <ImageField required label={t('seller.fields.idFront')} value={form.frontDocumentKey} onChange={set('frontDocumentKey')} error={errors.frontDocumentKey} ratio="card" />
+        <ImageField required label={t('seller.fields.idBack')} value={form.backDocumentKey} onChange={set('backDocumentKey')} error={errors.backDocumentKey} ratio="card" />
+        <ImageField required label={t('seller.fields.selfie')} value={form.selfieDocumentKey} onChange={set('selfieDocumentKey')} error={errors.selfieDocumentKey} ratio="card" />
       </div>
       <StepFooter saving={saving} onBack={onBack} />
     </form>
@@ -378,29 +401,51 @@ export function IdentityStep({ onboarding, saving, onSave, onBack }) {
 }
 
 // ---------- Bước 6: Chính sách & gửi duyệt ----------
-export function PolicyStep({ policies, progress, saving, onAccept, onSubmit, onBack, onGoto }) {
+// Tích / bỏ tích tự do. Chỉ khi bấm "Gửi hồ sơ duyệt" mới gửi các chính sách đã tích lên Backend
+// (POST policy-acceptances, Backend không có API rút lại đồng ý) rồi mới gửi duyệt.
+export function PolicyStep({ policies, progress, saving, onSubmit, onBack, onGoto }) {
   const { t } = useLanguage();
+  const [checked, setChecked] = useState(() => new Set(policies.filter((p) => p.accepted).map((p) => p.version)));
+  // Danh sách chính sách tải xong sau khi mở bước -> lấy lại các mục đã đồng ý trước đó
+  useEffect(() => {
+    setChecked((current) => new Set([...current, ...policies.filter((p) => p.accepted).map((p) => p.version)]));
+  }, [policies]);
   const missing = Object.entries(progress).filter(([step, ok]) => !ok && step !== 'policies').map(([step]) => step);
+  const requiredOk = policies.filter((p) => p.required).every((p) => checked.has(p.version));
+  const toggle = (version) =>
+    setChecked((current) => {
+      const next = new Set(current);
+      if (next.has(version)) next.delete(version);
+      else next.add(version);
+      return next;
+    });
 
   return (
     <div className="seller-form">
+      <p className="account-muted">
+        {t('market.onboarding.policyHint')} <span className="field__required">*</span> {t('market.onboarding.policyRequired')}
+      </p>
       <div className="check-cards">
         {policies.map((policy) => (
           <label key={policy.version} className="check-card">
-            <input type="checkbox" checked={policy.accepted} disabled={policy.accepted || saving} onChange={() => onAccept(policy.version)} />
+            <input type="checkbox" checked={checked.has(policy.version)} disabled={saving} onChange={() => toggle(policy.version)} />
             <span className="check-card__text">
               <strong>
                 {policy.title}
-                {policy.required && <span className="text-danger"> *</span>}
+                {policy.required && <span className="field__required"> *</span>}
+                {!policy.required && <span className="account-muted"> ({t('market.onboarding.optional')})</span>}
               </strong>
-              <span className="account-muted">
-                {t('seller.onboarding.policyVersion', { version: policy.version })}
-                {policy.accepted && ` · ${t('seller.onboarding.accepted')}`}
-              </span>
+              <span className="account-muted">{t('seller.onboarding.policyVersion', { version: policy.version })}</span>
             </span>
           </label>
         ))}
       </div>
+      {!requiredOk && policies.length > 0 && (
+        <p className="field__error" role="alert">
+          <Icon name="alert" size={16} />
+          {t('market.onboarding.acceptRequired')}
+        </p>
+      )}
       {missing.length > 0 && (
         <div className="seller-note seller-note--warning">
           <Icon name="alert" size={18} />
@@ -422,7 +467,7 @@ export function PolicyStep({ policies, progress, saving, onAccept, onSubmit, onB
           <Icon name="chevronLeft" size={16} />
           {t('seller.onboarding.back')}
         </Button>
-        <Button onClick={onSubmit} disabled={saving || !Object.values(progress).every(Boolean)}>
+        <Button onClick={() => onSubmit([...checked])} disabled={saving || missing.length > 0 || !requiredOk}>
           {saving ? t('common.saving') : t('seller.onboarding.submit')}
         </Button>
       </div>

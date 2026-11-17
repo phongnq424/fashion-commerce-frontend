@@ -171,3 +171,20 @@
   position: relative;
   z-index: 1;
 }
+
+/* Tên shop bán (sàn nhiều shop) */
+.product-card__shop {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+}
+
+.product-card__shop-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

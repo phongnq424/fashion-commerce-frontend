@@ -1,8 +1,9 @@
 // =====================================================================
-// Gửi form "Liên hệ với chúng tôi".
-// Backend hiện CHƯA có API nhận liên hệ -> tạm giả lập gửi thành công (không lưu đi đâu).
-// Khi backend có API (vd POST /api/v1/contact-messages), thay phần giả lập trong
-// sendContactMessage bằng lời gọi apiClient, giữ nguyên dữ liệu gửi lên: { name, email, phone, message }.
+// Form "Liên hệ với chúng tôi".
+// Backend CHƯA có API nhận liên hệ. Trước đây form giả vờ "gửi thành công" nhưng không lưu đi đâu.
+// Nay form mở ứng dụng email của khách (mailto:) với nội dung đã điền sẵn, gửi tới email của sàn.
+// Khi backend có API (vd POST /api/v1/contact-messages), thay buildContactMailto bằng lời gọi apiClient,
+// giữ nguyên dữ liệu: { name, email, phone, message }.
 // =====================================================================
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -34,14 +35,13 @@ export function validateContactForm(form) {
   return errors;
 }
 
-export async function sendContactMessage(form) {
-  const payload = {
-    name: form.name.trim(),
-    email: form.email.trim(),
-    phone: cleanPhone(form.phone),
-    message: form.message.trim().slice(0, MESSAGE_MAX),
-  };
-  // ----- GIẢ LẬP (xoá khi có API thật) -----
-  await new Promise((resolve) => setTimeout(resolve, 700));
-  return { ok: true, payload };
+// Link mailto: tới email của sàn, tiêu đề + nội dung điền sẵn từ form
+export function buildContactMailto(form, toEmail, subject) {
+  const body = [
+    form.message.trim().slice(0, MESSAGE_MAX),
+    '',
+    '---',
+    `${form.name.trim()} · ${cleanPhone(form.phone)} · ${form.email.trim()}`,
+  ].join('\n');
+  return `mailto:${toEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }

@@ -5,7 +5,7 @@ import Dialog from '../../../components/common/Dialog';
 import EmptyState from '../../../components/common/EmptyState';
 import Icon from '../../../components/common/Icon';
 import Input from '../../../components/common/Input';
-import Select from '../../../components/common/Select';
+import Select from '../../../components/common/FieldSelect';
 import StatusBadge from '../../../components/common/StatusBadge';
 import Textarea from '../../../components/common/Textarea';
 import { useLanguage } from '../../../hooks/useLanguage';

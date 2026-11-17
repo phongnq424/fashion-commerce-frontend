@@ -7,7 +7,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useLanguage } from '../../hooks/useLanguage';
 // Số điện thoại, email, bản đồ -> src/constants/contact.js
 import { CONTACT_INFO, getMapEmbedUrl } from '../../constants/contact';
-import { MESSAGE_MAX, sendContactMessage, validateContactForm } from '../../services/contactService';
+import { MESSAGE_MAX, buildContactMailto, validateContactForm } from '../../services/contactService';
 import './ContactScreen.css';
 
 /**
@@ -21,7 +21,7 @@ import './ContactScreen.css';
 function ContactScreen() {
   const { t, language } = useLanguage();
   const { user } = useAuth();
-  const emptyForm = { name: user?.name ?? '', email: user?.email ?? '', phone: '', message: '' };
+  const emptyForm = { name: user?.name ?? user?.displayName ?? '', email: user?.email ?? '', phone: user?.phone ?? '', message: '' };
 
   const [form, setForm] = useState(emptyForm);
   const [errors, setErrors] = useState({});
@@ -43,14 +43,9 @@ function ContactScreen() {
       document.getElementById(`contact-${firstError}`)?.focus();
       return;
     }
-    setStatus('sending');
-    try {
-      await sendContactMessage(form);
-      setForm((prev) => ({ ...prev, phone: '', message: '' })); // giữ tên + email cho lần gửi sau
-      setStatus('sent');
-    } catch {
-      setStatus('failed');
-    }
+    // Backend chưa có API liên hệ -> mở ứng dụng email của khách với nội dung đã điền sẵn
+    window.location.href = buildContactMailto(form, CONTACT_INFO.email, t('market.contact.mailSubject', { name: form.name.trim() }));
+    setStatus('sent');
   };
 
   const infoItems = [
@@ -166,7 +161,7 @@ function ContactScreen() {
             {status === 'sent' && (
               <p className="contact-form__result contact-form__result--success" role="status">
                 <Icon name="check" size={18} />
-                {t('contact.sent')}
+                {t('market.contact.mailOpened', { email: CONTACT_INFO.email })}
               </p>
             )}
             {status === 'failed' && (

@@ -430,23 +430,6 @@ const en = {
     backToTop: 'Back to top',
     chat: 'Chat',
   },
-  shopChat: {
-    responseTime: 'Usually replies within minutes',
-    askingAbout: 'You are asking about',
-    welcome: 'Hi! How can {name} help? Ask about sizes, colors, shipping or returns.',
-    you: 'You',
-    typing: 'Shop is typing',
-    quickLabel: 'Quick questions',
-    quick: {
-      size: 'Can you help me pick a size?',
-      stock: 'Is this item in stock?',
-      shipping: 'How long does delivery take?',
-      returns: 'How do returns work?',
-    },
-    placeholder: 'Type a message...',
-    send: 'Send',
-    demoNote: 'Preview: messages are stored in this browser.',
-  },
   productDetail: {
     error: 'Couldn’t load this product. Check your connection, then select Try again.',
     outOfStock: 'Sold out',

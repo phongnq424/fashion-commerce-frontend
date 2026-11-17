@@ -7,7 +7,7 @@ import SizeGuideDialog from './SizeGuideDialog';
 import GiftOffer from './GiftOffer';
 import ProductInfoTabs from './ProductInfoTabs';
 import ReportProductDialog from './ReportProductDialog';
-import { useChatProduct } from '../../../hooks/useShopChat';
+import { useChatContext } from '../../../hooks/useShopChat';
 import { useAuth } from '../../../hooks/useAuth';
 import { useWishlist } from '../../../hooks/useWishlist';
 import { useLanguage } from '../../../hooks/useLanguage';
@@ -28,8 +28,8 @@ function ProductDetail({ product, onAddToCart, onNotify }) {
   const { user, openAuth } = useAuth();
   const { isWishlisted, toggleWishlist } = useWishlist();
   const [reportOpen, setReportOpen] = useState(false);
-  // Nút "Nhắn shop" góc phải dưới: đang xem sản phẩm này -> nhắn đúng shop bán + đính kèm sản phẩm
-  useChatProduct(product);
+  // Nút chat góc phải dưới: đang xem sản phẩm này -> mở sẵn chat với shop bán + đính kèm sản phẩm
+  useChatContext(product.shop, product);
   const {
     name,
     price: basePrice,
@@ -167,10 +167,13 @@ function ProductDetail({ product, onAddToCart, onNotify }) {
               <span className="rating-bar__label">{t('productDetail.reviewsLabel')}</span>
             </a>
           )}
-          <span className="rating-bar__item">
-            <span className="rating-bar__label">{t('productDetail.soldLabel')}</span>
-            <span className="rating-bar__strong">{formatCompact(soldCount, language)}</span>
-          </span>
+          {/* Backend chưa trả số lượng đã bán -> chỉ hiện khi có số */}
+          {soldCount > 0 && (
+            <span className="rating-bar__item">
+              <span className="rating-bar__label">{t('productDetail.soldLabel')}</span>
+              <span className="rating-bar__strong">{formatCompact(soldCount, language)}</span>
+            </span>
+          )}
           {!inStock && (
             <span className="rating-bar__item rating-bar__soldout">
               <Icon name="alert" size={14} />

@@ -19,6 +19,8 @@ const PATHS = {
   flame: <path d="M12 22c4 0 7-2.8 7-6.8 0-3.7-2.6-6-4.4-8.4-.4 2-1.4 3.2-2.6 3.7C12.4 7.6 11 4.6 8.6 2.5 8.7 6 5 8.6 5 13.6 5 18.6 8 22 12 22Z" />,
   truck: <><path d="M3 6h11v10H3zM14 10h4l3 3v3h-7" /><circle cx="7" cy="18" r="1.6" /><circle cx="17" cy="18" r="1.6" /></>,
   refresh: <><path d="M20 11a8 8 0 0 0-14.6-4.5L4 8" /><path d="M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5L20 16" /><path d="M20 20v-4h-4" /></>,
+  lock: <><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></>,
+  monitor: <><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></>,
   shield: <><path d="M12 3 5 6v5c0 4.5 3 8.3 7 10 4-1.7 7-5.5 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-4" /></>,
   hanger: <path d="M12 7a2 2 0 1 1 2-2c0 1-.8 1.6-2 2.4v1.3L21 15v2H3v-2l9-6.3" />,
   check: <path d="m5 12 4.5 4.5L19 7" />,

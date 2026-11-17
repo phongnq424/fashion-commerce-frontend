@@ -4,12 +4,14 @@ import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Notice from './components/common/Notice';
 import FloatingActions from './components/FloatingActions/FloatingActions';
+import DemoBar from './components/DemoBar/DemoBar';
 import AuthModal from './components/AuthModal/AuthModal';
 import HomeScreen from './screens/home/HomeScreen';
 import CatalogScreen from './screens/catalog/CatalogScreen';
 import ContactScreen from './screens/contact/ContactScreen';
 import ProductDetailScreen from './screens/product/ProductDetailScreen';
 import CollectionScreen from './screens/collection/CollectionScreen';
+import ShopScreen from './screens/shop/ShopScreen';
 import NotFoundScreen from './screens/notFound/NotFoundScreen';
 import CartScreen from './screens/cart/CartScreen';
 import CheckoutScreen from './screens/checkout/CheckoutScreen';
@@ -24,22 +26,30 @@ import ReturnRequestScreen from './screens/account/returns/ReturnRequestScreen';
 import ReturnDetailScreen from './screens/account/returns/ReturnDetailScreen';
 import WishlistScreen from './screens/account/wishlist/WishlistScreen';
 import NotificationsScreen from './screens/account/notifications/NotificationsScreen';
-// TRANG QUẢN TRỊ (/admin) — chỉ nhân viên TrendyLab, đăng nhập riêng; web khách không có link tới đây
-import AdminLoginScreen from './screens/admin/login/AdminLoginScreen';
-import AdminLayout from './screens/admin/components/AdminLayout';
-import AdminDashboardScreen from './screens/admin/dashboard/AdminDashboardScreen';
-import ProductListScreen from './screens/admin/products/ProductListScreen';
-import ProductEditorScreen from './screens/admin/products/ProductEditorScreen';
-import InventoryScreen from './screens/admin/inventory/InventoryScreen';
-import AdminOrderListScreen from './screens/admin/orders/AdminOrderListScreen';
-import AdminOrderDetailScreen from './screens/admin/orders/AdminOrderDetailScreen';
-import CodScreen from './screens/admin/cod/CodScreen';
-import AdminReturnListScreen from './screens/admin/returns/AdminReturnListScreen';
-import AdminReturnDetailScreen from './screens/admin/returns/AdminReturnDetailScreen';
-import AdminReviewsScreen from './screens/admin/reviews/AdminReviewsScreen';
-import ShopProfileScreen from './screens/admin/shop/ShopProfileScreen';
-import ShopSettingsScreen from './screens/admin/shop/ShopSettingsScreen';
-import StaffScreen from './screens/admin/shop/StaffScreen';
+import SecurityScreen from './screens/account/security/SecurityScreen';
+// KÊNH NGƯỜI BÁN (/seller) — chủ shop / nhân viên shop, dùng chung tài khoản với web mua sắm
+import SellerLayout from './screens/seller/components/SellerLayout';
+import SellerDashboardScreen from './screens/seller/dashboard/SellerDashboardScreen';
+import OnboardingScreen from './screens/seller/onboarding/OnboardingScreen';
+import OnboardingStatusScreen from './screens/seller/onboarding/OnboardingStatusScreen';
+import ShopListScreen from './screens/seller/shops/ShopListScreen';
+import InvitationsScreen from './screens/seller/invitations/InvitationsScreen';
+import SellerProductListScreen from './screens/seller/products/ProductListScreen';
+import SellerProductEditorScreen from './screens/seller/products/ProductEditorScreen';
+import SellerInventoryScreen from './screens/seller/inventory/InventoryScreen';
+import SellerOrderListScreen from './screens/seller/orders/SellerOrderListScreen';
+import SellerOrderDetailScreen from './screens/seller/orders/SellerOrderDetailScreen';
+import SellerCodScreen from './screens/seller/cod/CodScreen';
+import SellerReturnListScreen from './screens/seller/returns/SellerReturnListScreen';
+import SellerReturnDetailScreen from './screens/seller/returns/SellerReturnDetailScreen';
+import SellerReviewsScreen from './screens/seller/reviews/SellerReviewsScreen';
+import VoucherScreen from './screens/seller/vouchers/VoucherScreen';
+import FinanceScreen from './screens/seller/finance/FinanceScreen';
+import ReportsScreen from './screens/seller/reports/ReportsScreen';
+import SellerShopProfileScreen from './screens/seller/shop/ShopProfileScreen';
+import SellerShopSettingsScreen from './screens/seller/shop/ShopSettingsScreen';
+import SellerStaffScreen from './screens/seller/shop/StaffScreen';
+import OwnershipScreen from './screens/seller/shop/OwnershipScreen';
 import { useLanguage } from './hooks/useLanguage';
 import { useCart } from './hooks/useCart';
 
@@ -87,9 +97,10 @@ function App() {
   // Trang thanh toán có bố cục riêng (logo + 2 cột), không hiện Header / Footer của site
   const { pathname } = useLocation();
   const isCheckout = pathname.startsWith('/checkout');
-  // Trang quản trị là khu vực riêng của nhân viên (thanh trên + menu trái), không phải web khách
-  const isAdmin = pathname === '/admin' || pathname.startsWith('/admin/');
-  const hideSiteChrome = isCheckout || isAdmin;
+  // Kênh người bán (/seller) có bố cục riêng (thanh trên + menu trái).
+  // Quản trị sàn KHÔNG nằm trong app này: app riêng ở thư mục admin/ (cổng 5174).
+  const isBackOffice = /^\/seller(\/|$)/.test(pathname);
+  const hideSiteChrome = isCheckout || isBackOffice;
 
   // useCallback giữ hàm ổn định giữa các lần render (Notice dùng nó trong useEffect)
   const closeNotice = useCallback(() => setNotice(null), []);
@@ -139,8 +150,8 @@ function App() {
   );
 
   // Nút "Thanh toán" (popup giỏ hàng + trang giỏ hàng) -> trang thanh toán /checkout
-  // với các sản phẩm ĐANG ĐƯỢC TICK trong giỏ. Khách chưa đăng nhập vẫn thanh toán được
-  // (trang thanh toán có sẵn dòng "Đã có tài khoản? Đăng nhập" để tự điền thông tin).
+  // với các sản phẩm ĐANG ĐƯỢC TICK trong giỏ. Backend bắt buộc đăng nhập để đặt hàng:
+  // khách chưa đăng nhập sẽ thấy khối mời đăng nhập ở trang thanh toán (giỏ tạm được chuyển lên sau khi đăng nhập).
   const handleCheckout = useCallback(() => {
     if (selectedItems.length === 0) {
       notify('warning', t('cart.checkoutEmpty'));
@@ -187,6 +198,8 @@ function App() {
           {/* Trang kết quả tìm kiếm (ô tìm kiếm trên Header) */}
           <Route path="/search" element={<SearchScreen onAddToCart={handleAddToCart} />} />
           <Route path="/collections/:collectionId" element={<CollectionScreen onAddToCart={handleAddToCart} />} />
+          {/* Trang gian hàng của 1 shop trên sàn ("Xem shop") */}
+          <Route path="/shop/:shopId" element={<ShopScreen onAddToCart={handleAddToCart} />} />
           <Route
             path="/cart"
             element={<CartScreen onCheckout={handleCheckout} onCartError={notifyCartError} onNotify={notify} />}
@@ -198,6 +211,7 @@ function App() {
           <Route path="/policies/:policyId" element={<PolicyScreen />} />
           {/* KHU VỰC TÀI KHOẢN NGƯỜI MUA (cần đăng nhập — AccountLayout tự hiện khối mời đăng nhập) */}
           <Route path="/account" element={<ProfileScreen />} />
+          <Route path="/account/security" element={<SecurityScreen onNotify={notify} />} />
           <Route path="/account/orders" element={<OrderListScreen onNotify={notify} />} />
           <Route path="/account/orders/:orderId" element={<OrderDetailScreen onNotify={notify} />} />
           <Route path="/account/returns" element={<ReturnListScreen />} />
@@ -206,23 +220,30 @@ function App() {
           <Route path="/account/addresses" element={<AddressBookScreen onNotify={notify} />} />
           <Route path="/account/wishlist" element={<WishlistScreen onAddToCart={handleAddToCart} />} />
           <Route path="/account/notifications" element={<NotificationsScreen />} />
-          {/* TRANG QUẢN TRỊ: /admin/login đăng nhập riêng; AdminLayout tự chuyển về đây nếu chưa đăng nhập */}
-          <Route path="/admin/login" element={<AdminLoginScreen />} />
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboardScreen onNotify={notify} />} />
-            <Route path="products" element={<ProductListScreen onNotify={notify} />} />
-            <Route path="products/new" element={<ProductEditorScreen onNotify={notify} />} />
-            <Route path="products/:productId" element={<ProductEditorScreen onNotify={notify} />} />
-            <Route path="inventory" element={<InventoryScreen onNotify={notify} />} />
-            <Route path="orders" element={<AdminOrderListScreen onNotify={notify} />} />
-            <Route path="orders/:shopOrderId" element={<AdminOrderDetailScreen onNotify={notify} />} />
-            <Route path="cod" element={<CodScreen onNotify={notify} />} />
-            <Route path="returns" element={<AdminReturnListScreen onNotify={notify} />} />
-            <Route path="returns/:returnId" element={<AdminReturnDetailScreen onNotify={notify} />} />
-            <Route path="reviews" element={<AdminReviewsScreen onNotify={notify} />} />
-            <Route path="profile" element={<ShopProfileScreen onNotify={notify} />} />
-            <Route path="settings" element={<ShopSettingsScreen onNotify={notify} />} />
-            <Route path="staff" element={<StaffScreen onNotify={notify} />} />
+          {/* KÊNH NGƯỜI BÁN: SellerLayout tự mời đăng nhập; chưa có shop -> mời đăng ký bán hàng */}
+          <Route path="/seller" element={<SellerLayout />}>
+            <Route index element={<SellerDashboardScreen onNotify={notify} />} />
+            <Route path="register" element={<OnboardingScreen onNotify={notify} />} />
+            <Route path="register/status" element={<OnboardingStatusScreen onNotify={notify} />} />
+            <Route path="shops" element={<ShopListScreen onNotify={notify} />} />
+            <Route path="invitations" element={<InvitationsScreen onNotify={notify} />} />
+            <Route path="products" element={<SellerProductListScreen onNotify={notify} />} />
+            <Route path="products/new" element={<SellerProductEditorScreen onNotify={notify} />} />
+            <Route path="products/:productId" element={<SellerProductEditorScreen onNotify={notify} />} />
+            <Route path="inventory" element={<SellerInventoryScreen onNotify={notify} />} />
+            <Route path="orders" element={<SellerOrderListScreen onNotify={notify} />} />
+            <Route path="orders/:shopOrderId" element={<SellerOrderDetailScreen onNotify={notify} />} />
+            <Route path="cod" element={<SellerCodScreen onNotify={notify} />} />
+            <Route path="returns" element={<SellerReturnListScreen onNotify={notify} />} />
+            <Route path="returns/:returnId" element={<SellerReturnDetailScreen onNotify={notify} />} />
+            <Route path="reviews" element={<SellerReviewsScreen onNotify={notify} />} />
+            <Route path="vouchers" element={<VoucherScreen onNotify={notify} />} />
+            <Route path="finance" element={<FinanceScreen onNotify={notify} />} />
+            <Route path="reports" element={<ReportsScreen onNotify={notify} />} />
+            <Route path="profile" element={<SellerShopProfileScreen onNotify={notify} />} />
+            <Route path="settings" element={<SellerShopSettingsScreen onNotify={notify} />} />
+            <Route path="staff" element={<SellerStaffScreen onNotify={notify} />} />
+            <Route path="ownership" element={<OwnershipScreen onNotify={notify} />} />
             <Route path="*" element={<NotFoundScreen />} />
           </Route>
           <Route path="*" element={<NotFoundScreen />} />
@@ -231,8 +252,10 @@ function App() {
       {!hideSiteChrome && <Footer />}
       {/* Popup đăng nhập / đăng ký: đặt 1 lần ở đây, mở bằng openAuth() từ bất kỳ đâu */}
       <AuthModal onNotify={notify} />
-      {/* Nút nổi đáy màn hình: ↑ lên đầu trang (mọi trang) + "Nhắn shop" (trang của khách) */}
+      {/* Nút nổi: ↑ lên đầu trang (góc trái, mọi trang) + chat với shop (góc phải, trang của khách) */}
       <FloatingActions showChat={!hideSiteChrome} />
+      {/* Chỉ hiện khi đang chạy với BE giả (npm run mock): tài khoản demo + đặt lại dữ liệu */}
+      <DemoBar app="web" />
       {/* key đổi mỗi lần -> thông báo mới luôn hiện lại từ đầu và đếm giờ lại */}
       {notice && <Notice key={notice.id} type={notice.type} message={notice.message} onClose={closeNotice} />}
     </>

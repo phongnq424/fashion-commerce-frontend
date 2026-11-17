@@ -1,11 +1,11 @@
 import Button from '../../../components/common/Button';
 import Icon from '../../../components/common/Icon';
 import { useLanguage } from '../../../hooks/useLanguage';
-import { COLLECTIONS, PRICE_RANGES } from '../data/catalogConfig';
+import { PRICE_RANGES } from '../data/catalogConfig';
 
 /**
  * Cột bộ lọc bên trái (desktop) / ngăn kéo từ trái ra (mobile, bấm nút "Bộ lọc").
- * 2 nhóm ô tick: Chọn mức giá | Bộ sưu tập (vd BST Tết 2027)
+ * 2 nhóm ô tick: Chọn mức giá | Shop bán (các shop đang có sản phẩm trên sàn)
  * Danh mục (Áo, Quần...) chọn bằng menu trên header.
  * Mỗi ô được tick -> hiện thành 1 chip phía trên lưới sản phẩm (vd "Dưới 100.000đ ✕").
  */
@@ -14,9 +14,10 @@ function CatalogFilters({
   open,
   onClose,
   priceIds,
-  collectionIds,
+  shops = [],
+  shopIds = [],
   onTogglePrice,
-  onToggleCollection,
+  onToggleShop,
   onClear,
   hasFilters,
   resultCount,
@@ -44,20 +45,20 @@ function CatalogFilters({
           ))}
         </fieldset>
 
-        {/* ----- Bộ sưu tập ----- */}
-        <fieldset className="catalog-filters__group">
-          <legend className="catalog-filters__title">{t('catalog.collectionsTitle')}</legend>
-          {COLLECTIONS.map((collection) => (
-            <label key={collection.id} className="catalog-check">
-              <input
-                type="checkbox"
-                checked={collectionIds.includes(collection.id)}
-                onChange={() => onToggleCollection(collection.id)}
-              />
-              <span>{t(`catalog.collections.${collection.id}`)}</span>
-            </label>
-          ))}
-        </fieldset>
+        {/* ----- Shop bán ----- */}
+        {shops.length > 1 && (
+          <fieldset className="catalog-filters__group">
+            <legend className="catalog-filters__title">{t('market.shop.filterTitle')}</legend>
+            {shops.map((shop) => (
+              <label key={shop.id} className="catalog-check">
+                <input type="checkbox" checked={shopIds.includes(shop.id)} onChange={() => onToggleShop(shop.id)} />
+                <span>
+                  {shop.name} <span className="catalog-check__count">({shop.count})</span>
+                </span>
+              </label>
+            ))}
+          </fieldset>
+        )}
 
         {hasFilters && (
           <button type="button" className="catalog-filters__clear" onClick={onClear}>

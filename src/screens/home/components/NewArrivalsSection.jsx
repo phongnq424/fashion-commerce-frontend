@@ -18,7 +18,7 @@ function NewArrivalsSection({ onAddToCart }) {
     setStatus('loading');
 
     try {
-      const products = await getNewArrivals();
+      const products = await getNewArrivals(COLUMNS * ROWS);
 
       setProducts(products);
       setStatus('success');

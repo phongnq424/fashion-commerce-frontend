@@ -1,6 +1,9 @@
 import { clearAuthSession, readAuthSession, replaceAuthTokens } from './authSession';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api/v1';
+
+// Mọi request đi qua proxy của Vite (/api -> http://localhost:8080). Cổng 8080 là Backend thật,
+// hoặc BE giả (npm run mock) khi chạy demo. FE không phân biệt hai trường hợp này.
 let refreshRequest = null;
 
 export class ApiError extends Error {
@@ -37,9 +40,11 @@ async function parseResponse(response) {
 
 function toApiError(response, data, fallbackPath) {
     const errorData = data && typeof data === 'object' ? data : {};
+    // 5xx mà không có body JSON của Backend = proxy của Vite không gọi được cổng 8080 (Backend / BE giả chưa chạy)
+    const unreachable = response.status >= 500 && !errorData.code && [500, 502, 503, 504].includes(response.status);
     return new ApiError({
         status: response.status,
-        code: errorData.code ?? 'HTTP_ERROR',
+        code: errorData.code ?? (unreachable ? 'BACKEND_UNREACHABLE' : 'HTTP_ERROR'),
         message: errorData.message ?? `Request thất bại (${response.status})`,
         path: errorData.path ?? fallbackPath,
         timestamp: errorData.timestamp ?? null,
@@ -86,12 +91,12 @@ export async function refreshAuthSession() {
 
 export async function apiRequest(
     path,
-    { method = 'GET', body, headers, auth = true, retryAuth = true, ...options } = {},
+    { method = 'GET', body, headers, auth = true, retryAuth = true, accept = 'application/json', ...options } = {},
 ) {
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
     const execute = async (accessToken) => {
         const requestHeaders = new Headers(headers);
-        requestHeaders.set('Accept', 'application/json');
+        requestHeaders.set('Accept', accept);
         if (body !== undefined) requestHeaders.set('Content-Type', 'application/json');
         if (auth && accessToken) requestHeaders.set('Authorization', `Bearer ${accessToken}`);
 

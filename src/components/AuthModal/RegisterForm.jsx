@@ -34,7 +34,6 @@ function RegisterForm({ onOtpSent, onSwitch, onNavigate, initialValues }) {
     password: '',
     confirmPassword: '',
     agree: false,
-    newsletter: true,
     ...initialValues,
   });
   const [errors, setErrors] = useState({});
@@ -71,7 +70,6 @@ function RegisterForm({ onOtpSent, onSwitch, onNavigate, initialValues }) {
         email: values.email.trim(),
         phone: values.phone.replace(/[\s.]/g, ''),
         password: values.password,
-        newsletter: values.newsletter,
       });
       onOtpSent(pending, values);
     } catch (error) {
@@ -182,10 +180,6 @@ function RegisterForm({ onOtpSent, onSwitch, onNavigate, initialValues }) {
           </p>
         )}
 
-        <label className="auth-check">
-          <input type="checkbox" checked={values.newsletter} onChange={update('newsletter')} />
-          <span>{t('auth.newsletterOptIn')}</span>
-        </label>
 
       </div>
 

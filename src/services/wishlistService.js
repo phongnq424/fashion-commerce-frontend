@@ -1,8 +1,7 @@
 import { apiClient } from './apiClient';
 
 // =====================================================================
-// DANH SÁCH YÊU THÍCH — theo backend (HIỆN CHƯA DÙNG: đang giả lập trong contexts/WishlistProvider.jsx).
-// Khi nối backend, WishlistProvider gọi các hàm dưới đây:
+// DANH SÁCH YÊU THÍCH — API thật, được contexts/WishlistProvider.jsx gọi:
 //   GET    /wishlist?limit=&offset=      -> SliceResponse<WishlistItemResponse>
 //   PUT    /wishlist/items/{productId}   -> WishlistItemResponse (thêm, gọi lại nhiều lần vẫn an toàn)
 //   DELETE /wishlist/items/{productId}   -> 204

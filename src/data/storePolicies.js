@@ -1,63 +1,36 @@
 // =====================================================================
-// NỘI DUNG DÙNG CHUNG CHO TRANG CHI TIẾT SẢN PHẨM
-// (hướng dẫn sử dụng, giới thiệu thương hiệu, cam kết, chính sách, bảng size)
+// NỘI DUNG CHUNG CỦA SÀN CHO TRANG CHI TIẾT SẢN PHẨM (chính sách chung, bảng size tham khảo)
 // ---------------------------------------------------------------------
-// Đây là NỘI DUNG của shop (sau này Backend / trang quản trị trả về), giống mô tả sản phẩm
-// -> viết 1 ngôn ngữ, KHÔNG đưa vào vi.js / en.js.
+// Mô tả, chất liệu, dáng, hướng dẫn bảo quản là của TỪNG SẢN PHẨM (Backend: description, material, fitType,
+// careInstructions). Đã bỏ phần "Giới thiệu về TrendyLab / TrendyLab cam kết" vì trên sàn mỗi sản phẩm
+// thuộc một shop khác nhau, không phải của 1 thương hiệu.
 // Tiêu đề các mục ("Mô tả sản phẩm", "Chính sách đổi trả"...) là chữ giao diện -> nằm trong vi.js / en.js.
-//
-// Sản phẩm nào cần nội dung riêng thì ghi đè trong mockProducts.js:
-//   care: [...]  -> thay hướng dẫn sử dụng mặc định bên dưới
 // =====================================================================
-
-// Hướng dẫn sử dụng mặc định (sản phẩm không có trường "care" thì dùng danh sách này)
-export const DEFAULT_CARE = [
-  'Giặt máy ở chế độ nhẹ, nhiệt độ thường.',
-  'Không sử dụng hoá chất tẩy có chứa Clo.',
-  'Phơi trong bóng mát.',
-  'Sấy thùng, chế độ nhẹ nhàng.',
-  'Là ở nhiệt độ trung bình 150 độ C.',
-  'Giặt với sản phẩm cùng màu.',
-  'Không là lên chi tiết trang trí.',
-];
 
 export const COLOR_NOTE = 'Màu sắc có phần chênh lệch so với thực tế do ánh sáng khi chụp.';
 
-export const BRAND_INTRO =
-  'TrendyLab là thương hiệu thời trang trẻ, mang đến những thiết kế Ready-to-wear đa dạng phong cách: từ năng động, trẻ trung đến dịu dàng, nữ tính. Chúng tôi chú trọng chuẩn size cho từng dáng người, chất lượng sản phẩm và dịch vụ tận tâm, với mức giá phải chăng. Ghé TrendyLab để trải nghiệm thật nhiều sản phẩm xinh, luôn sẵn hàng nhé!';
-
-export const COMMITMENTS = [
-  'Hàng đúng mô tả sản phẩm',
-  'Hình ảnh do TrendyLab tự chụp',
-  'Giao hàng nhanh',
-  'Tư vấn nhiệt tình, tận tâm',
-];
-
-// 3 chính sách trong phần xổ xuống (accordion) của trang chi tiết
+// Chính sách CHUNG CỦA SÀN (áp dụng cho mọi shop), theo đúng luồng Backend đang có.
+// Thông tin riêng từng shop (số ngày xử lý, số ngày cho trả hàng) nằm trong cài đặt shop — Backend chưa có API
+// công khai để khách xem, nên ở đây chỉ ghi quy định chung.
 export const POLICIES = {
   returns: {
     items: [
-      'Trường hợp đổi size: khách vui lòng thanh toán phí vận chuyển 2 chiều (22.000₫ hoặc 44.000₫ tuỳ khu vực).',
-      'Sản phẩm bị lỗi, giao sai hoặc giao thiếu: TrendyLab chịu hoàn toàn phí.',
-      'Đổi sang sản phẩm khác: vui lòng chọn sản phẩm có giá bằng hoặc cao hơn và thanh toán phần chênh lệch cùng phí vận chuyển.',
-      'Không nhận đổi / trả sản phẩm Freesize và hàng Sale (nếu muốn đổi hàng Sale, sản phẩm được tính theo giá gốc).',
+      'Yêu cầu trả hàng tại Tài khoản → Trả hàng / hoàn tiền, chọn đúng sản phẩm và số lượng cần trả trong đơn đã giao.',
+      'Shop xem xét và duyệt / từ chối yêu cầu. Được duyệt thì bạn gửi hàng về shop và nhập mã vận đơn trả hàng.',
+      'Shop nhận lại hàng, kiểm tra rồi hoàn tiền. Đơn COD được hoàn bằng chuyển khoản (shop ghi nhận mã giao dịch).',
+      'Thời hạn được trả hàng do từng shop cài đặt, tính từ ngày nhận hàng.',
     ],
     notes: [
-      'Sản phẩm chưa qua sử dụng và giặt ủi.',
-      'Sản phẩm còn nguyên tem và hoá đơn.',
-      'Chỉ giải quyết khiếu nại khi có video quay lúc mở hàng.',
-      'Hỗ trợ đổi trả trong vòng 3 ngày kể từ ngày nhận hàng.',
+      'Sản phẩm chưa qua sử dụng và giặt ủi, còn nguyên tem.',
+      'Nên quay video lúc mở hàng để làm bằng chứng khi khiếu nại.',
     ],
-    footer:
-      'Nếu có ý kiến đóng góp hoặc khiếu nại về chất lượng sản phẩm, quý khách vui lòng liên hệ đường dây chăm sóc khách hàng của TrendyLab.',
+    footer: 'Nếu shop không phản hồi hoặc có tranh chấp, liên hệ bộ phận hỗ trợ của sàn TrendyLab.',
   },
   shipping:
-    'Đơn hàng được giao trong vòng 05 - 07 ngày làm việc kể từ ngày đặt. Quý khách có thể liên hệ TrendyLab qua Email, Điện thoại hoặc Facebook để theo dõi lộ trình đơn hàng.',
+    'Mỗi shop tự đóng gói và giao cho hãng vận chuyển (GHN, GHTK, Viettel Post...). Đơn có hàng của nhiều shop sẽ được tách thành nhiều kiện, giao riêng. Theo dõi trạng thái và mã vận đơn tại Tài khoản → Đơn mua.',
   payment: [
-    'Thanh toán khi nhận hàng (COD)',
-    'Chuyển khoản ngân hàng',
-    'Thẻ tín dụng',
-    'Thẻ ATM nội địa',
+    'Thanh toán khi nhận hàng (COD) — hiện có trên mọi shop',
+    'Ví MoMo, ZaloPay, VNPay — hiển thị khi sàn đã cấu hình cổng thanh toán',
   ],
 };
 

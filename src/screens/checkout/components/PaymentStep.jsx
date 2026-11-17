@@ -1,245 +1,142 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Button from '../../../components/common/Button';
 import Icon from '../../../components/common/Icon';
+import Textarea from '../../../components/common/Textarea';
 import { useLanguage } from '../../../hooks/useLanguage';
 import { formatPrice } from '../../../utils/format';
-import { BANK_TRANSFER } from '../../../data/paymentInfo';
-import QrCode from '../../../components/common/QrCode';
-import { buildVietQrPayload } from '../../../utils/vietqr';
-import { cardLast4, detectCardBrand, validateCard } from '../../../utils/cardValidation';
-import CardPaymentForm from './CardPaymentForm';
-
-// Dữ liệu thẻ chỉ nằm trong bộ nhớ của trang (không localStorage), rời trang là mất
-const EMPTY_CARD = { number: '', expiry: '', cvc: '', holder: '', issueDate: '', save: false };
-
-// Các cách thanh toán. Chữ hiển thị nằm ở vi.js / en.js: checkout.methods.<id> và <id>Desc
-const PAYMENT_METHODS = ['cod', 'bank', 'card'];
-
-// 1 dòng thông tin chuyển khoản, có nút "Sao chép" (số tài khoản, nội dung CK)
-function BankRow({ label, value, copyable = false }) {
-  const { t } = useLanguage();
-  const [copied, setCopied] = useState(false);
-
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    } catch {
-      // Trình duyệt chặn clipboard -> khách tự bôi đen để chép
-    }
-  };
-
-  return (
-    <div className="bank-info__row">
-      <dt>{label}</dt>
-      <dd>
-        <strong>{value}</strong>
-        {copyable && (
-          <button type="button" className="bank-info__copy" onClick={copy} aria-label={t('checkout.bankTransfer.copyLabel', { field: label })}>
-            <Icon name={copied ? 'check' : 'copy'} size={14} />
-            {copied ? t('checkout.bankTransfer.copied') : t('checkout.bankTransfer.copy')}
-          </button>
-        )}
-      </dd>
-    </div>
-  );
-}
-
-// Khối hướng dẫn chuyển khoản (thay cho mô tả ngắn khi chọn "Chuyển khoản ngân hàng")
-// Trái: thông tin tài khoản (có nút Sao chép) | Phải: mã VietQR điền sẵn số tiền + nội dung
-function BankTransferInfo({ phone, amount }) {
-  const { t, language } = useLanguage();
-  const amountText = formatPrice(amount, language);
-  const qrValue = BANK_TRANSFER.showQr
-    ? buildVietQrPayload({
-        bankBin: BANK_TRANSFER.bankBin,
-        accountNumber: BANK_TRANSFER.accountNumber,
-        amount,
-        note: phone,
-      })
-    : null;
-
-  return (
-    <div className="payment-method__desc bank-info">
-      <p className="bank-info__intro">{t('checkout.bankTransfer.intro')}</p>
-      <div className={`bank-info__body ${qrValue ? 'bank-info__body--qr' : ''}`}>
-        <dl className="bank-info__list">
-          <BankRow label={t('checkout.bankTransfer.bank')} value={BANK_TRANSFER.bankName} />
-          <BankRow label={t('checkout.bankTransfer.accountNumber')} value={BANK_TRANSFER.accountNumber} copyable />
-          <BankRow label={t('checkout.bankTransfer.accountName')} value={BANK_TRANSFER.accountName} />
-          <BankRow label={t('checkout.bankTransfer.amount')} value={amountText} />
-          <BankRow
-            label={t('checkout.bankTransfer.content')}
-            value={phone || t('checkout.bankTransfer.contentFallback')}
-            copyable={Boolean(phone)}
-          />
-        </dl>
-        {qrValue && (
-          <figure className="bank-info__qr">
-            <QrCode value={qrValue} size={168} label={t('checkout.bankTransfer.qrLabel', { amount: amountText })} />
-            <figcaption>{t('checkout.bankTransfer.qrCaption')}</figcaption>
-          </figure>
-        )}
-      </div>
-      <p className="bank-info__outro">{t('checkout.bankTransfer.outro')}</p>
-    </div>
-  );
-}
+import { formatAddressLine } from '../../../services/addressService';
+import { getPaymentMethods, newIdempotencyKey } from '../../../services/orderService';
 
 /**
- * Bước 2: Phương thức thanh toán.
- *   [Liên hệ ......... Thay đổi]
- *   [Giao đến ........ Thay đổi]
- *   [Vận chuyển ...... phí ship]
- *   ( ) COD   ( ) Chuyển khoản   ( ) Thẻ
- *   ‹ Quay lại thông tin giao hàng          [ HOÀN TẤT ĐƠN HÀNG ]
- * - onPlaceOrder(paymentDetails): trả về Promise; lỗi -> hiện thông báo ngay trên nút
- *     paymentDetails (chỉ khi trả bằng thẻ) = { cardBrand, cardLast4, saveCard } — KHÔNG có số thẻ đầy đủ
+ * Bước "Phương thức thanh toán".
+ * Danh sách phương thức lấy từ Backend: GET /checkout/{snapshotId}/payment-methods
+ * (COD | MOMO | ZALOPAY | VNPAY, mỗi cái có available / unavailableReason).
+ * - onPlaceOrder({ paymentMethod, buyerNote, idempotencyKey }) -> Promise
  */
-function PaymentStep({
-  shipping,
-  total,
-  shippingFee,
-  shippingDiscount,
-  method,
-  onMethodChange,
-  onEditShipping,
-  onPlaceOrder,
-}) {
+function PaymentStep({ preview, onEditShipping, onPlaceOrder }) {
   const { t, language } = useLanguage();
+  const [methods, setMethods] = useState(null);
+  const [method, setMethod] = useState(null);
+  const [note, setNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [failed, setFailed] = useState(false);
-  const [card, setCard] = useState(EMPTY_CARD);
-  const [cardErrors, setCardErrors] = useState({});
-  const formRef = useRef(null);
+  const [error, setError] = useState(null);
+  // Giữ nguyên khoá chống đặt trùng cho cùng 1 lần xem trước đơn
+  const keyRef = useRef({ snapshotId: null, key: null });
+  if (keyRef.current.snapshotId !== preview.snapshotId) keyRef.current = { snapshotId: preview.snapshotId, key: newIdempotencyKey() };
 
-  // Sửa ô nào -> xoá lỗi của ô đó
-  const changeCard = (next) => {
-    setCardErrors((current) => {
-      const remaining = { ...current };
-      Object.keys(next).forEach((key) => {
-        if (next[key] !== card[key]) delete remaining[key];
-      });
-      return remaining;
-    });
-    setCard(next);
-  };
+  useEffect(() => {
+    let active = true;
+    setMethods(null);
+    getPaymentMethods(preview.snapshotId)
+      .then((list) => {
+        if (!active) return;
+        setMethods(list);
+        setMethod((current) => current ?? list.find((item) => item.available)?.code ?? null);
+      })
+      .catch(() => active && setMethods([]));
+    return () => {
+      active = false;
+    };
+  }, [preview.snapshotId]);
 
-  const contact = [shipping.fullName, shipping.phone, shipping.email].filter(Boolean).join(' · ');
-  const address = [shipping.address, shipping.wardName, shipping.districtName, shipping.provinceName]
-    .filter(Boolean)
-    .join(', ');
-  const finalFee = Math.max(0, (shippingFee ?? 0) - shippingDiscount);
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    let details = null;
-    if (method === 'card') {
-      const errors = validateCard(card);
-      setCardErrors(errors);
-      if (Object.keys(errors).length > 0) {
-        // Đưa con trỏ tới ô thẻ lỗi đầu tiên
-        requestAnimationFrame(() => formRef.current?.querySelector('.card-form [aria-invalid="true"]')?.focus());
-        return;
-      }
-      details = { cardBrand: detectCardBrand(card.number), cardLast4: cardLast4(card.number), saveCard: card.save };
-    }
+  const submit = async () => {
+    if (!method) return;
     setSubmitting(true);
-    setFailed(false);
+    setError(null);
     try {
-      await onPlaceOrder(details);
-    } catch {
-      setFailed(true);
+      await onPlaceOrder({ paymentMethod: method, buyerNote: note, idempotencyKey: keyRef.current.key });
+    } catch (err) {
+      console.error(err);
+      setError(err?.code ?? 'UNKNOWN');
       setSubmitting(false);
     }
   };
 
+  const recipient = preview.recipient;
+
   return (
     <section className="checkout-section" aria-labelledby="payment-title">
-      <h1 id="payment-title" className="checkout-section__title">
-        {t('checkout.stepPayment')}
-      </h1>
-
-      {/* Tóm tắt thông tin đã nhập ở bước 1 */}
       <dl className="checkout-review">
         <div className="checkout-review__row">
-          <dt>{t('checkout.contact')}</dt>
-          <dd>{contact}</dd>
-          <button
-            type="button"
-            className="checkout-link"
-            onClick={onEditShipping}
-            aria-label={t('checkout.changeLabel', { field: t('checkout.contact') })}
-          >
-            {t('checkout.change')}
-          </button>
-        </div>
-        <div className="checkout-review__row">
           <dt>{t('checkout.shipTo')}</dt>
-          <dd>{address}</dd>
-          <button
-            type="button"
-            className="checkout-link"
-            onClick={onEditShipping}
-            aria-label={t('checkout.changeLabel', { field: t('checkout.shipTo') })}
-          >
-            {t('checkout.change')}
+          <dd>
+            <strong>{recipient?.recipientName}</strong> · {recipient?.recipientPhone}
+            <br />
+            {formatAddressLine(recipient)}
+          </dd>
+          <button type="button" className="checkout-link" onClick={onEditShipping}>
+            {t('market.checkout.change')}
           </button>
-        </div>
-        <div className="checkout-review__row">
-          <dt>{t('checkout.shippingMethod')}</dt>
-          <dd>{t('checkout.standardShipping')}</dd>
-          <strong className="checkout-review__fee">
-            {finalFee === 0 ? t('checkout.free') : formatPrice(finalFee, language)}
-          </strong>
         </div>
       </dl>
 
-      <form ref={formRef} className="payment-form" onSubmit={handleSubmit} noValidate>
+      <h2 id="payment-title" className="checkout-section__title">
+        {t('checkout.stepPayment')}
+      </h2>
+
+      {methods === null ? (
+        <p>{t('market.common.loading')}</p>
+      ) : methods.length === 0 ? (
+        <p className="checkout-alert">{t('market.checkout.noPaymentMethods')}</p>
+      ) : (
         <fieldset className="payment-methods">
-          <legend className="payment-methods__legend">{t('checkout.paymentLegend')}</legend>
-          {PAYMENT_METHODS.map((id) => (
-            // Chỉ dòng có nút tròn là <label>; phần mô tả / thông tin chuyển khoản (có nút Sao chép) nằm ngoài
-            <div key={id} className={`payment-method ${method === id ? 'payment-method--active' : ''}`}>
-              <label className="payment-method__head">
+          <legend className="payment-methods__legend visually-hidden">{t('checkout.stepPayment')}</legend>
+          {methods.map((item) => (
+            <label
+              key={item.code}
+              className={`payment-method ${method === item.code ? 'payment-method--active' : ''}`}
+              aria-disabled={!item.available}
+              style={item.available ? undefined : { opacity: 0.55 }}
+            >
+              <span className="payment-method__head">
                 <input
                   type="radio"
-                  name="payment-method"
-                  value={id}
-                  checked={method === id}
-                  onChange={() => onMethodChange(id)}
                   className="payment-method__radio"
+                  name="payment-method"
+                  value={item.code}
+                  checked={method === item.code}
+                  disabled={!item.available}
+                  onChange={() => setMethod(item.code)}
                 />
-                <span className="payment-method__title">{t(`checkout.methods.${id}`)}</span>
-              </label>
-              {/* Mô tả chỉ hiện ở cách đang chọn. Chuyển khoản -> hiện đủ thông tin tài khoản */}
-              {method === id && id === 'bank' && <BankTransferInfo phone={shipping.phone?.trim()} amount={total} />}
-              {method === id && id === 'card' && (
-                <CardPaymentForm value={card} onChange={changeCard} errors={cardErrors} />
-              )}
-              {method === id && id === 'cod' && <p className="payment-method__desc">{t(`checkout.methods.${id}Desc`)}</p>}
-            </div>
+                <span className="payment-method__title">{t(`market.paymentMethods.${item.code}`, { defaultValue: item.displayName })}</span>
+              </span>
+              <span className="payment-method__desc">
+                {item.available ? t(`market.paymentMethodsDesc.${item.code}`) : t(`market.paymentStatus.${item.status}`)}
+              </span>
+            </label>
           ))}
         </fieldset>
+      )}
 
-        {failed && (
-          <p className="checkout-alert" role="alert">
-            <Icon name="alert" size={18} />
-            {t('checkout.errors.placeOrderFailed')}
-          </p>
-        )}
+      <Textarea
+        label={t('market.checkout.buyerNote')}
+        value={note}
+        maxLength={500}
+        rows={3}
+        onChange={(event) => setNote(event.target.value)}
+      />
 
-        <div className="checkout-actions">
-          <button type="button" className="checkout-link checkout-actions__back" onClick={onEditShipping}>
-            <Icon name="chevronLeft" size={16} />
-            {t('checkout.backToShipping')}
-          </button>
-          <Button type="submit" className="checkout-actions__next" disabled={submitting} aria-busy={submitting}>
-            {submitting ? t('checkout.placing') : t('checkout.placeOrder')}
-          </Button>
-        </div>
-      </form>
+      {preview.issues?.length > 0 && (
+        <p className="checkout-alert" role="alert">{t('market.checkout.hasIssues')}</p>
+      )}
+      {error && (
+        <p className="checkout-alert" role="alert">
+          {t(`market.errors.${error}`, { defaultValue: t('checkout.errors.placeOrderFailed') })}
+        </p>
+      )}
+
+      <div className="checkout-actions">
+        <button type="button" className="checkout-link" onClick={onEditShipping}>
+          <Icon name="chevronLeft" size={14} /> {t('market.checkout.backToAddress')}
+        </button>
+        <Button
+          className="checkout-actions__next"
+          onClick={submit}
+          disabled={!method || submitting || !preview.readyForOrder}
+        >
+          {submitting ? t('checkout.placing') : `${t('checkout.placeOrder')} · ${formatPrice(preview.grandTotalMinor, language)}`}
+        </Button>
+      </div>
     </section>
   );
 }

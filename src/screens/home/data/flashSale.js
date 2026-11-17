@@ -1,8 +1,9 @@
 // =====================================================================
 // CẤU HÌNH FLASH SALE TRANG CHỦ  (giao diện: components/FlashSaleSection.jsx)
 // ---------------------------------------------------------------------
-// Sản phẩm: lấy các sản phẩm đang giảm giá (giá gốc > giá bán) từ getSaleProducts().
-//   Hiện là dữ liệu mock (data/mockProducts.js -> sản phẩm có originalPrice).
+// Sản phẩm: lấy các sản phẩm đang giảm giá (giá gốc > giá bán) của MỌI SHOP từ getSaleProducts().
+// Giờ chạy là giờ hiển thị phía FE (Backend chưa có chương trình flash sale), giá là giá thật của shop.
+//   Lấy từ Backend: sản phẩm có compareAtPriceMinor > giá bán (services/productService.js).
 //   Backend chưa có API flash sale -> khi có thì chỉ cần đổi hàm lấy dữ liệu trong FlashSaleSection.jsx.
 // Chữ hiển thị: vi.js / en.js -> home.flashSale
 // =====================================================================
@@ -20,8 +21,9 @@ export const FLASH_SALE = {
   hideWhenEnded: false, // true -> hết giờ thì ẩn khối, false -> vẫn hiện với nhãn "đã kết thúc"
 
   limit: 10, // tối đa bao nhiêu sản phẩm
-  quota: 1000, // số suất của mỗi sản phẩm -> thanh "Đã bán": soldCount / quota
-  almostGonePercent: 80, // bán từ 80% suất trở lên -> "Sắp cháy hàng"
+  // Backend chưa có số lượng đã bán -> thanh tiến độ tính theo tồn kho còn lại (availableQuantity)
+  fullStock: 50, // còn từ 50 sản phẩm trở lên -> thanh gần như trống
+  almostGoneStock: 10, // còn <= 10 sản phẩm -> "Sắp cháy hàng"
   // nút "Xem thêm sản phẩm" -> trang Danh mục sản phẩm (Trang chủ › Danh mục sản phẩm)
   // Muốn mở sẵn chỉ các sản phẩm đang giảm giá -> đổi thành '/products?offer=sale'
   seeAllHref: '/products',

@@ -4,6 +4,33 @@
 // =====================================================================
 const adminVi = {
   admin: {
+    platform: {
+      subtitle: 'Tình hình kinh doanh và các việc đang chờ xử lý của toàn sàn (mọi shop).',
+      gmv: 'Tổng giá trị đơn (GMV)',
+      gmvHint: 'Tổng tiền khách trả của các đơn trên toàn sàn, không tính đơn đã hủy.',
+      gmvTitle: 'Giá trị đơn toàn sàn',
+      todo: 'Việc cần xử lý',
+      truncated: 'tính trên {count} đơn gần nhất',
+      noOrderAccess: 'Tài khoản này không có quyền xem đơn hàng nên không hiển thị số liệu kinh doanh.',
+      shopsTitle: 'Shop trên sàn',
+      shopsTotal: '{count} shop · {fresh} shop mới mở trong kỳ',
+      casesTitle: 'Báo cáo vi phạm mới',
+      noCases: 'Không có báo cáo nào đang chờ xử lý.',
+      shopRef: {
+        shop: 'Shop',
+        ofShop: 'Sản phẩm của shop',
+        shopOrders: 'Đơn con theo shop',
+        subOrder: 'Đơn con',
+        unknown: 'Shop {id}…',
+        open: 'Xem shop này',
+        manage: 'Quản lý shop (tạm khóa / đóng)',
+        openCases: '{count} báo cáo đang mở của shop',
+        filter: 'Lọc theo shop',
+        allShops: 'Tất cả shop ({count})',
+        clear: 'Bỏ lọc shop',
+        splitNote: 'Đơn này gồm hàng của {count} shop — mỗi shop là 1 đơn con, shop tự xác nhận và giao phần của mình.',
+      },
+    },
     brandTag: 'Quản trị',
     openMenu: 'Mở menu',
     menuLabel: 'Menu quản trị',

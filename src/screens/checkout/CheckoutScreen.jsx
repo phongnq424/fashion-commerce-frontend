@@ -1,147 +1,142 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import Logo from '../../components/layout/Logo';
 import Icon from '../../components/common/Icon';
+import Button from '../../components/common/Button';
 import CheckoutSteps from './components/CheckoutSteps';
-import ShippingForm from './components/ShippingForm';
+import AddressStep from './components/AddressStep';
 import PaymentStep from './components/PaymentStep';
-import OrderSummary from './components/OrderSummary';
+import CheckoutSummary from './components/CheckoutSummary';
 import OrderSuccess from './components/OrderSuccess';
 import CheckoutEmpty from './components/CheckoutEmpty';
 import { useCart } from '../../hooks/useCart';
 import { useAuth } from '../../hooks/useAuth';
 import { useLanguage } from '../../hooks/useLanguage';
-import { calculateTotals, placeOrder } from '../../services/orderService';
+import { placeOrder, previewCheckout } from '../../services/orderService';
 import { formatPrice } from '../../utils/format';
 import './CheckoutScreen.css';
 
-// Thông tin giao hàng ban đầu (trống). *Name lưu tên để hiện lại ở bước thanh toán.
-const EMPTY_SHIPPING = {
-  fullName: '',
-  email: '',
-  phone: '',
-  address: '',
-  provinceId: '',
-  provinceName: '',
-  districtId: '',
-  districtName: '',
-  wardId: '',
-  wardName: '',
-};
-
-// Đã đăng nhập -> tự điền họ tên / email / SĐT vào các ô còn TRỐNG (không ghi đè chữ khách đã gõ)
-const fillFromUser = (shipping, user) => ({
-  ...shipping,
-  fullName: shipping.fullName || user?.name || '',
-  email: shipping.email || user?.email || '',
-  phone: shipping.phone || user?.phone || '',
-});
-
 /**
- * Trang thanh toán /checkout. Bố cục 2 cột:
- *   TRÁI: logo, các bước (Giỏ hàng > Thông tin giao hàng > Phương thức thanh toán), nội dung bước
- *   PHẢI: sản phẩm đang mua, quà tặng kèm, mã giảm giá, tổng tiền
- * Bước đang mở nằm trên đường dẫn: /checkout (giao hàng) | /checkout?step=payment (thanh toán)
- * -> bấm Back của trình duyệt là quay về bước trước.
- *
- * SẢN PHẨM ĐƯỢC THANH TOÁN:
- *   - Từ giỏ hàng / popup giỏ hàng: các sản phẩm ĐANG ĐƯỢC TICK (selectedItems) — món bỏ tick vẫn nằm lại trong giỏ
- *   - Từ nút "Mua ngay": CHỈ đúng món vừa bấm (App gửi buyNowKey qua state của đường dẫn)
- * Đặt hàng xong chỉ xoá các món vừa mua khỏi giỏ.
+ * Trang thanh toán /checkout — theo luồng Backend (sàn nhiều shop):
+ *   1. Chọn địa chỉ đã lưu  -> POST /checkout/preview (server tính tiền hàng, phí ship, giảm giá theo TỪNG SHOP)
+ *   2. Chọn phương thức thanh toán (GET /checkout/{snapshotId}/payment-methods) -> POST /orders
+ * Backend chỉ thanh toán các dòng giỏ đang được CHỌN. "Mua ngay" -> chọn riêng đúng món đó trước khi xem trước.
+ * Cần đăng nhập (giỏ khách vãng lai được chuyển lên Backend sau khi đăng nhập).
  */
 function CheckoutScreen({ onNotify }) {
   const { t, language } = useLanguage();
-  const { items: cartItems, selectedItems, removeItems } = useCart();
+  const { items: cartItems, selectedItems, selectOnly, reload, isServerCart } = useCart();
   const { user, openAuth } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
-  // Giữ buyNowKey trong state: đổi bước (?step=payment) sẽ làm mất state của đường dẫn
   const [buyNowKey] = useState(() => location.state?.buyNowKey ?? null);
 
-  // Các dòng giỏ được mua lần này (dữ liệu gốc của giỏ, dùng để xoá sau khi đặt)
   const buyingLines = useMemo(() => {
     const buyNowLine = buyNowKey && cartItems.find((item) => item.key === buyNowKey && item.purchasable);
     return buyNowLine ? [buyNowLine] : selectedItems;
   }, [buyNowKey, cartItems, selectedItems]);
 
-  // Đổi sang dạng các khối thanh toán dùng: { key, id, name, image, price, color, size, quantity, gift }
-  const items = useMemo(
-    () =>
-      buyingLines.map((line) => ({
-        key: line.key,
-        id: line.productId,
-        name: line.name,
-        image: line.image,
-        price: line.unitPrice,
-        color: line.color,
-        size: line.size,
-        quantity: line.quantity,
-        gift: line.gift ?? null,
-      })),
-    [buyingLines],
-  );
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const [addressId, setAddressId] = useState(null);
+  const [voucherCodes, setVoucherCodes] = useState([]);
+  const [preview, setPreview] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [previewError, setPreviewError] = useState(null);
+  const [placedOrder, setPlacedOrder] = useState(null);
+  const [summaryOpen, setSummaryOpen] = useState(false);
 
-  const [shipping, setShipping] = useState(() => fillFromUser(EMPTY_SHIPPING, user));
-  const [shippingDone, setShippingDone] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('cod');
-  const [voucher, setVoucher] = useState(null);
-  const [placedOrder, setPlacedOrder] = useState(null); // đơn vừa đặt xong (giữ lại để hiện sau khi xoá giỏ)
-  const [summaryOpen, setSummaryOpen] = useState(false); // chỉ dùng trên mobile
-
-  // Khách bấm "Đăng nhập" ngay tại trang này -> đăng nhập xong thì tự điền thông tin.
-  // So sánh user trong lúc render (cách React khuyên dùng thay cho useEffect khi cần cập nhật state theo prop/context)
-  const [prevUser, setPrevUser] = useState(user);
-  if (user !== prevUser) {
-    setPrevUser(user);
-    if (user) setShipping((current) => fillFromUser(current, user));
-  }
-
-  // Chưa điền xong form giao hàng mà mở thẳng ?step=payment -> vẫn hiện bước giao hàng
-  const step = searchParams.get('step') === 'payment' && shippingDone ? 'payment' : 'shipping';
-
+  const step = searchParams.get('step') === 'payment' && preview ? 'payment' : 'shipping';
   const goToStep = (next) => {
     setSearchParams(next === 'payment' ? { step: 'payment' } : {});
     window.scrollTo(0, 0);
   };
 
-  const totals = calculateTotals({ subtotal, voucher, provinceId: shipping.provinceId });
+  // Xem trước đơn. codes: mã giảm giá muốn áp dụng. Trả về preview hoặc ném lỗi.
+  const runPreview = useCallback(
+    async (codes) => {
+      const cart = await selectOnly(buyingLines);
+      const expectedUnitPrices = Object.fromEntries(buyingLines.map((line) => [line.variantId, line.unitPrice]));
+      return previewCheckout({ cartVersion: cart?.version, addressId, voucherCodes: codes, expectedUnitPrices });
+    },
+    [selectOnly, buyingLines, addressId],
+  );
 
-  const handleShippingSubmit = () => {
-    setShippingDone(true);
-    goToStep('payment');
+  const handleAddressSubmit = async () => {
+    setBusy(true);
+    setPreviewError(null);
+    try {
+      const result = await runPreview(voucherCodes);
+      setPreview(result);
+      goToStep('payment');
+    } catch (error) {
+      console.error(error);
+      // Mã giảm giá không còn hợp lệ -> bỏ hết mã, thử lại
+      if (String(error?.code ?? '').startsWith('VOUCHER_') && voucherCodes.length) {
+        setVoucherCodes([]);
+        onNotify?.('warning', t(`market.errors.${error.code}`, { defaultValue: t('market.errors.UNKNOWN') }));
+      }
+      setPreviewError(error?.code ?? 'UNKNOWN');
+    } finally {
+      setBusy(false);
+    }
   };
 
-  const handleApplyVoucher = (nextVoucher) => {
-    setVoucher(nextVoucher);
-    onNotify?.('success', t('checkout.voucherApplied', { code: nextVoucher.code }));
+  // Thêm / bỏ mã -> xem trước lại. Mã bị Backend từ chối -> giữ mã cũ, báo lỗi.
+  const handleVoucherCodesChange = async (codes) => {
+    if (!preview) {
+      setVoucherCodes(codes);
+      return;
+    }
+    setBusy(true);
+    try {
+      const result = await runPreview(codes);
+      setVoucherCodes(codes);
+      setPreview(result);
+    } catch (error) {
+      onNotify?.('error', t(`market.errors.${error?.code}`, { defaultValue: t('market.errors.UNKNOWN') }));
+    } finally {
+      setBusy(false);
+    }
   };
 
-  // Lỗi (mất mạng...) được PaymentStep bắt và hiện ngay trên nút
-  // paymentDetails: { cardBrand, cardLast4, saveCard } khi trả bằng thẻ (không bao giờ có số thẻ đầy đủ)
-  const handlePlaceOrder = async (paymentDetails = null) => {
-    const { orderCode, orderId } = await placeOrder({
-      items,
-      shipping,
-      totals,
-      paymentMethod,
-      paymentDetails,
-      voucherCode: voucher?.code,
-      owner: user?.email ?? shipping.email,
-    });
-    setPlacedOrder({ orderCode, orderId, items, totals, voucher, shipping, paymentMethod });
+  const handlePlaceOrder = async ({ paymentMethod, buyerNote, idempotencyKey }) => {
+    const returnUrl = `${window.location.origin}/account/orders`;
+    const order = await placeOrder({ snapshotId: preview.snapshotId, paymentMethod, buyerNote, returnUrl, idempotencyKey });
+    reload(); // Backend đã xoá các dòng vừa mua khỏi giỏ
+    // Ví điện tử: chuyển sang trang cổng thanh toán
+    if (order?.payment?.checkoutUrl) {
+      window.location.assign(order.payment.checkoutUrl);
+      return;
+    }
+    setPlacedOrder({ order, preview });
     window.scrollTo(0, 0);
-    // Chỉ xoá các món VỪA MUA khỏi giỏ (món khách bỏ tick vẫn giữ lại). Lỗi xoá không ảnh hưởng đơn đã đặt.
-    removeItems(buyingLines).catch((error) => console.warn('[Checkout] Không xoá được món đã mua khỏi giỏ', error));
   };
 
-  // Giỏ trống (và chưa vừa đặt đơn) -> không có gì để thanh toán
-  if (!placedOrder && items.length === 0) {
+  if (!user) {
+    return (
+      <div className="checkout">
+        <header className="checkout__header">
+          <Logo />
+        </header>
+        <div className="checkout__main">
+          <section className="checkout-section checkout-empty">
+            <span className="checkout-empty__icon" aria-hidden="true">
+              <Icon name="user" size={32} />
+            </span>
+            <h1 className="checkout-section__title">{t('market.checkout.loginTitle')}</h1>
+            <p className="checkout-empty__text">{t('market.checkout.loginText')}</p>
+            <Button onClick={() => openAuth('login')}>{t('market.checkout.login')}</Button>
+          </section>
+        </div>
+      </div>
+    );
+  }
+
+  if (!placedOrder && (buyingLines.length === 0 || !isServerCart)) {
     return <CheckoutEmpty />;
   }
 
-  // Sau khi đặt hàng: cột phải hiện lại đơn vừa đặt (giỏ đã được xoá)
-  const summary = placedOrder ?? { items, totals, voucher };
+  const shownPreview = placedOrder?.preview ?? preview;
+  const total = shownPreview?.grandTotalMinor ?? buyingLines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
 
   return (
     <div className={`checkout ${summaryOpen ? 'checkout--summary-open' : ''}`}>
@@ -149,7 +144,6 @@ function CheckoutScreen({ onNotify }) {
         <Logo />
       </header>
 
-      {/* Mobile: cột đơn hàng thu gọn, bấm để mở */}
       <button
         type="button"
         className="checkout__summary-toggle"
@@ -162,48 +156,47 @@ function CheckoutScreen({ onNotify }) {
           {summaryOpen ? t('checkout.hideSummary') : t('checkout.showSummary')}
           <Icon name="chevronDown" size={16} className="checkout__summary-toggle-icon" />
         </span>
-        <span className="checkout__summary-toggle-total">{formatPrice(summary.totals.total, language)}</span>
+        <span className="checkout__summary-toggle-total">{formatPrice(total, language)}</span>
       </button>
 
-      <aside id="checkout-summary" className="checkout__aside" aria-labelledby="order-summary-title">
+      <aside id="checkout-summary" className="checkout__aside" aria-labelledby="order-summary-title" aria-busy={busy}>
         <div className="checkout__aside-inner">
-          <OrderSummary
-            items={summary.items}
-            totals={summary.totals}
-            voucher={summary.voucher}
+          <CheckoutSummary
+            preview={shownPreview}
+            lines={buyingLines}
+            voucherCodes={voucherCodes}
+            onVoucherCodesChange={handleVoucherCodesChange}
             readOnly={Boolean(placedOrder)}
-            onApplyVoucher={handleApplyVoucher}
-            onRemoveVoucher={() => setVoucher(null)}
           />
+          {shownPreview?.issues?.length > 0 && (
+            <ul className="checkout-alert">
+              {shownPreview.issues.map((issue) => (
+                <li key={`${issue.cartItemId}-${issue.code}`}>{t(`market.checkoutIssues.${issue.code}`, { defaultValue: issue.message })}</li>
+              ))}
+            </ul>
+          )}
         </div>
       </aside>
 
       <div className="checkout__main">
         {placedOrder ? (
-          <OrderSuccess order={placedOrder} />
+          <OrderSuccess order={placedOrder.order} />
         ) : (
           <>
             <CheckoutSteps current={step} onStepChange={goToStep} />
-
             {step === 'shipping' ? (
-              <ShippingForm
-                value={shipping}
-                onChange={setShipping}
-                onSubmit={handleShippingSubmit}
-                user={user}
-                onLogin={() => openAuth('login')}
+              <AddressStep
+                selectedId={addressId}
+                onSelect={(id) => {
+                  setAddressId(id);
+                  setPreview(null);
+                }}
+                onSubmit={handleAddressSubmit}
+                busy={busy}
+                error={previewError}
               />
             ) : (
-              <PaymentStep
-                shipping={shipping}
-                total={totals.total}
-                shippingFee={totals.shippingFee}
-                shippingDiscount={totals.shippingDiscount}
-                method={paymentMethod}
-                onMethodChange={setPaymentMethod}
-                onEditShipping={() => goToStep('shipping')}
-                onPlaceOrder={handlePlaceOrder}
-              />
+              <PaymentStep preview={preview} onEditShipping={() => goToStep('shipping')} onPlaceOrder={handlePlaceOrder} />
             )}
           </>
         )}

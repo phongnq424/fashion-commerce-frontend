@@ -5,9 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "dev:admin": "vite --config vite.admin.config.js",
+    "mock": "node mock-server/server.js",
+    "demo": "node scripts/demo.js",
+    "build": "vite build && vite build --config vite.admin.config.js",
+    "build:web": "vite build",
+    "build:admin": "vite build --config vite.admin.config.js",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "preview:admin": "vite preview --config vite.admin.config.js"
   },
   "dependencies": {
     "react": "^19.3.1",

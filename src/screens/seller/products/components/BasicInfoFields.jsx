@@ -1,5 +1,5 @@
 import Input from '../../../../components/common/Input';
-import Select from '../../../../components/common/Select';
+import Select from '../../../../components/common/FieldSelect';
 import Textarea from '../../../../components/common/Textarea';
 import { useLanguage } from '../../../../hooks/useLanguage';
 import { TARGET_GENDERS } from '../../../../services/seller/sellerProductService';

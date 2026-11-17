@@ -4,8 +4,8 @@ import Breadcrumb from '../../components/common/Breadcrumb';
 import ProductGrid from '../../components/ProductGrid/ProductGrid';
 import NotFoundScreen from '../notFound/NotFoundScreen';
 import { useLanguage } from '../../hooks/useLanguage';
-import { getBestSellers, getNewArrivals, getSaleProducts } from '../../services/productService';
-import '../category/CategoryScreen.css'; // dùng lại kiểu tiêu đề của trang danh mục
+import { getNewArrivals, getRecommendations, getSaleProducts } from '../../services/productService';
+import './CollectionScreen.css';
 
 // Trang "Xem tất cả" của các mục trên trang chủ: /collections/<id>
 //   load:      hàm lấy dữ liệu trong productService
@@ -13,8 +13,8 @@ import '../category/CategoryScreen.css'; // dùng lại kiểu tiêu đề của
 //   (nhãn trên ảnh chỉ dùng ở mục "Gợi ý cho bạn", nên các trang này không gắn nhãn)
 const COLLECTIONS = {
   'new-arrivals': { load: () => getNewArrivals(50), textKey: 'home.newArrivals' },
-  'best-sellers': { load: () => getBestSellers(50), textKey: 'home.bestSellers' },
-  sale: { load: () => getSaleProducts(50), textKey: 'collection.sale' }, // nút của banner khuyến mãi
+  sale: { load: () => getSaleProducts(50), textKey: 'market.home.sale' }, // mục "Đang giảm giá" + banner khuyến mãi
+  recommendations: { load: () => getRecommendations(50), textKey: 'home.recommendations' },
 };
 
 function CollectionScreen({ onAddToCart }) {

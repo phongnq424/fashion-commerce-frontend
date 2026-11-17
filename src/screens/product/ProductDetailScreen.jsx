@@ -7,6 +7,7 @@ import NotFoundScreen from '../notFound/NotFoundScreen';
 import ProductDetail from './components/ProductDetail';
 import ProductDetailSkeleton from './components/ProductDetailSkeleton';
 import ProductReviews from './components/ProductReviews';
+import ProductShopInfo from './components/ProductShopInfo';
 import RelatedProducts from './components/RelatedProducts';
 import { useLanguage } from '../../hooks/useLanguage';
 import { findCategory } from '../../constants/navigation';
@@ -73,7 +74,8 @@ function ProductDetailScreen({ onAddToCart, onNotify }) {
         {status === 'success' && (
           <>
             <ProductDetail onNotify={onNotify} key={product.id} product={product} onAddToCart={onAddToCart} />
-            {/* Dưới phần chi tiết: đánh giá của khách, rồi tới gợi ý sản phẩm khác */}
+            {/* Dưới phần chi tiết: thông tin shop bán -> đánh giá của khách -> gợi ý sản phẩm khác */}
+            <ProductShopInfo key={`shop-${product.shopId}`} shop={product.shop} product={product} />
             <ProductReviews key={`reviews-${product.id}`} product={product} />
             <RelatedProducts product={product} onAddToCart={onAddToCart} />
           </>

@@ -10,6 +10,7 @@ import { AUTH_SESSION_CHANGED_EVENT, readAuthSession } from '../services/authSes
  *   openAuth(view)       mở popup (mặc định màn đăng nhập)
  *   closeAuth()          đóng popup
  *   login / register (gửi OTP) / verifyRegistration (nhập OTP) / resendOtp / logout
+ *   updateProfile({ displayName, email, phone, currentPassword }) / changePassword({ currentPassword, newPassword })
  */
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => readAuthSession()?.user ?? null);
@@ -25,7 +26,7 @@ export function AuthProvider({ children }) {
         if (active) setUser(restoredUser);
       })
       .catch((error) => {
-        if (active && error.code !== 'NETWORK_ERROR') setUser(null);
+        if (active && !['NETWORK_ERROR', 'BACKEND_UNREACHABLE'].includes(error.code)) setUser(null);
       })
       .finally(() => {
         if (active) setIsAuthLoading(false);
@@ -81,6 +82,19 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  // Sửa hồ sơ (PATCH /users/me) -> cập nhật luôn user đang hiển thị
+  const updateProfile = useCallback(async (data) => {
+    const updated = await authService.updateProfile(data);
+    setUser(updated);
+    return updated;
+  }, []);
+
+  // Đổi mật khẩu: Backend thu hồi MỌI phiên -> phải đăng nhập lại bằng mật khẩu mới
+  const changePassword = useCallback(async (data) => {
+    await authService.changePassword(data);
+    setUser(null);
+  }, []);
+
   const value = useMemo(
     () => ({
       user,
@@ -93,8 +107,10 @@ export function AuthProvider({ children }) {
       verifyRegistration,
       resendOtp,
       logout,
+      updateProfile,
+      changePassword,
     }),
-    [user, isAuthLoading, authView, openAuth, closeAuth, login, register, verifyRegistration, resendOtp, logout],
+    [user, isAuthLoading, authView, openAuth, closeAuth, login, register, verifyRegistration, resendOtp, logout, updateProfile, changePassword],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -50,6 +50,9 @@ const sellerEn = {
       pendingText: 'This usually takes 1–2 business days. We will notify you once there is a result.',
     },
     dashboard: {
+      myShops: 'Your shops ({count})',
+      editShop: 'Edit shop profile',
+      noOrders: 'No orders yet.',
       title: 'Dashboard',
       subtitle: "Today's to-do list for your shop.",
       revenue: 'Revenue this month',

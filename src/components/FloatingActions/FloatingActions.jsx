@@ -4,13 +4,11 @@ import ShopChatPanel from '../ShopChat/ShopChatPanel';
 import { useAuth } from '../../hooks/useAuth';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useShopChat } from '../../hooks/useShopChat';
-import { getShopContact } from '../../services/shopChatService';
 import './FloatingActions.css';
 
 const SHOW_AFTER_PX = 400; // cuộn xuống quá 400px mới hiện nút lên đầu trang
 
 // Icon 2 bong bóng chat chồng nhau (bong bóng sau chỉ viền, bong bóng trước tô màu + 3 chấm).
-// width/height ghi thẳng vào thẻ -> icon luôn đúng cỡ, kể cả khi CSS chưa tải / chưa cập nhật.
 function ChatBubblesIcon({ size = 31 }) {
   return (
     <svg className="fab__icon" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
@@ -22,11 +20,7 @@ function ChatBubblesIcon({ size = 31 }) {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path
-        d="M4 13a3 3 0 0 1 3-3h13a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-7.5L7.5 28v-4H7a3 3 0 0 1-3-3z"
-        fill="currentColor"
-      />
-      {/* 3 chấm cùng màu nền nút (trắng) */}
+      <path d="M4 13a3 3 0 0 1 3-3h13a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-7.5L7.5 28v-4H7a3 3 0 0 1-3-3z" fill="currentColor" />
       <circle className="fab__icon-dot" cx="9.5" cy="17" r="1.5" fill="#fff" />
       <circle className="fab__icon-dot" cx="13.5" cy="17" r="1.5" fill="#fff" />
       <circle className="fab__icon-dot" cx="17.5" cy="17" r="1.5" fill="#fff" />
@@ -35,38 +29,24 @@ function ChatBubblesIcon({ size = 31 }) {
 }
 
 /**
- * Các nút nổi cố định ở đáy màn hình (đặt 1 lần trong App.jsx -> có trên mọi trang):
- *   - Góc TRÁI:  nút ↑ "Lên đầu trang" — chỉ hiện khi đã cuộn xuống.
- *   - Góc PHẢI:  nút "Nhắn shop" — mở khung chat (cần đăng nhập).
- *                Đang ở trang chi tiết sản phẩm -> nhắn shop bán sản phẩm đó, kèm thẻ sản phẩm.
- * - showChat: false -> ẩn nút chat (trang quản trị, thanh toán), vẫn giữ nút lên đầu trang.
+ * Các nút nổi cố định ở đáy màn hình (đặt 1 lần trong App.jsx):
+ *   - Góc TRÁI:  nút ↑ "Lên đầu trang" — chỉ hiện khi đã cuộn xuống (đẩy lên trên thanh DEMO nếu có).
+ *   - Góc PHẢI:  nút chat — mở khung chat với shop (cần đăng nhập, chưa đăng nhập thì mở popup đăng nhập).
+ *                Đang ở trang chi tiết sản phẩm -> mở sẵn shop bán sản phẩm đó, kèm thẻ sản phẩm.
+ * - showChat: false -> ẩn nút chat (trang thanh toán, kênh người bán), vẫn giữ nút lên đầu trang.
  */
 function FloatingActions({ showChat = true }) {
   const { t } = useLanguage();
   const { user, openAuth } = useAuth();
-  const { product, isOpen, openChat, closeChat } = useShopChat();
+  const { context, target, isOpen, openChat, closeChat } = useShopChat();
   const [showTop, setShowTop] = useState(false);
-  const [shop, setShop] = useState(null);
-  const loggedIn = Boolean(user);
 
-  // Hiện / ẩn nút lên đầu trang theo vị trí cuộn
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > SHOW_AFTER_PX);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-
-  // Shop đang nhắn: shop của sản phẩm đang xem, hoặc TrendyLab
-  useEffect(() => {
-    let active = true;
-    getShopContact(product, { loggedIn }).then((value) => {
-      if (active) setShop(value);
-    });
-    return () => {
-      active = false;
-    };
-  }, [product, loggedIn]);
 
   // Đăng xuất khi đang mở chat -> đóng khung
   useEffect(() => {
@@ -78,7 +58,9 @@ function FloatingActions({ showChat = true }) {
     window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
   };
 
-  const handleChat = () => (user ? openChat() : openAuth('login'));
+  const handleChat = () => (user ? openChat(context ?? {}) : openAuth('login'));
+  // Shop + sản phẩm mở sẵn: nơi gọi openChat chỉ định (nút "Chat" ở thông tin shop) hoặc trang đang xem
+  const opened = target ?? context;
 
   return (
     <>
@@ -94,21 +76,19 @@ function FloatingActions({ showChat = true }) {
       </button>
 
       {showChat && !isOpen && (
-        // Chỉ có icon -> chữ "Nhắn shop" vẫn có cho trình đọc màn hình (aria-label) + hiện khi rê chuột (title)
-        <button
-          type="button"
-          className="fab fab--chat"
-          onClick={handleChat}
-          aria-haspopup="dialog"
-          aria-label={t('floating.chat')}
-          title={t('floating.chat')}
-        >
+        <button type="button" className="fab fab--chat" onClick={handleChat} aria-haspopup="dialog" aria-label={t('floating.chat')} title={t('floating.chat')}>
           <ChatBubblesIcon />
         </button>
       )}
 
-      {showChat && isOpen && user && shop && (
-        <ShopChatPanel key={shop.id} shop={shop} product={product} user={user} onClose={closeChat} />
+      {isOpen && user && (
+        <ShopChatPanel
+          key={opened?.shop?.id ?? 'chat'}
+          user={user}
+          initialShop={opened?.shop ?? null}
+          product={opened?.product ?? null}
+          onClose={closeChat}
+        />
       )}
     </>
   );

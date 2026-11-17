@@ -13,6 +13,8 @@ import './CartScreen.css';
 
 /**
  * Trang giỏ hàng: /cart (khai báo trong App.jsx).
+ * - Sản phẩm NHÓM THEO SHOP (giống CartResponse.shops[] của Backend): mỗi shop 1 khối, có ô chọn cả shop
+ *   và link "Xem shop". Khi đặt hàng, Backend tách mỗi shop thành 1 đơn con, phí ship + voucher tính theo shop.
  * - Tick chọn sản phẩm muốn mua (tổng tiền chỉ tính sản phẩm được chọn)
  * - Tăng / giảm số lượng, xoá từng sản phẩm hoặc xoá các sản phẩm đã chọn
  * - Nút bút: đổi màu / size của sản phẩm ngay trong giỏ (components/CartOptionEditor.jsx)
@@ -32,6 +34,7 @@ function CartScreen({ onCheckout, onCartError, onNotify }) {
     changeItemOptions,
     toggleSelected,
     setAllSelected,
+    setItemsSelected,
     removeItem,
     removeItems,
     reload,
@@ -40,6 +43,17 @@ function CartScreen({ onCheckout, onCartError, onNotify }) {
   const closeEditor = useCallback(() => setEditingKey(null), []);
 
   const purchasable = items.filter((item) => item.purchasable);
+  // Nhóm theo shop, giữ thứ tự xuất hiện. Dòng chưa rõ shop (giỏ tạm cũ) gom vào 1 nhóm riêng.
+  const groups = [];
+  items.forEach((item) => {
+    const id = item.shopId ?? 'unknown';
+    let group = groups.find((entry) => entry.id === id);
+    if (!group) {
+      group = { id, name: item.shopName, items: [] };
+      groups.push(group);
+    }
+    group.items.push(item);
+  });
   const allSelected = purchasable.length > 0 && purchasable.every((item) => item.selected);
   const selectedSavings = selectedItems.reduce(
     (sum, item) => sum + Math.max(0, (item.originalPrice ?? item.unitPrice) - item.unitPrice) * item.quantity,
@@ -57,6 +71,7 @@ function CartScreen({ onCheckout, onCartError, onNotify }) {
   const changeQuantity = run(updateQuantity);
   const toggle = run(toggleSelected);
   const toggleAll = run(setAllSelected);
+  const toggleGroup = run(setItemsSelected);
   const remove = run(removeItem);
   const removeSelected = run(() => removeItems(items.filter((item) => item.selected)));
 
@@ -139,8 +154,33 @@ function CartScreen({ onCheckout, onCartError, onNotify }) {
                 <span className="cart-table__col-actions" />
               </div>
 
+              {groups.map((group) => {
+                const groupPurchasable = group.items.filter((item) => item.purchasable);
+                const groupSelected = groupPurchasable.length > 0 && groupPurchasable.every((item) => item.selected);
+                return (
+              <section key={group.id} className="cart-shop" aria-label={group.name ?? t('market.shop.unknown')}>
+                <header className="cart-shop__head">
+                  <label className="cart-check">
+                    <input
+                      type="checkbox"
+                      checked={groupSelected}
+                      onChange={(event) => toggleGroup(groupPurchasable, event.target.checked)}
+                      disabled={groupPurchasable.length === 0}
+                    />
+                    <span className="visually-hidden">{t('market.shop.selectShop', { name: group.name ?? '' })}</span>
+                  </label>
+                  <Icon name="store" size={18} />
+                  {group.id !== 'unknown' ? (
+                    <Link to={`/shop/${group.id}`} className="cart-shop__name">
+                      {group.name ?? t('market.shop.unknown')}
+                      <Icon name="chevronRight" size={14} />
+                    </Link>
+                  ) : (
+                    <span className="cart-shop__name">{t('market.shop.unknown')}</span>
+                  )}
+                </header>
               <ul className="cart-table__list">
-                {items.map((item) => (
+                {group.items.map((item) => (
                   <li
                     key={item.key}
                     className={`cart-row ${item.pending ? 'is-pending' : ''} ${item.purchasable ? '' : 'is-unavailable'}`}
@@ -248,6 +288,9 @@ function CartScreen({ onCheckout, onCartError, onNotify }) {
                   </li>
                 ))}
               </ul>
+              </section>
+                );
+              })}
 
               <div className="cart-table__foot">
                 <Button variant="ghost" size="sm" as={Link} to="/">

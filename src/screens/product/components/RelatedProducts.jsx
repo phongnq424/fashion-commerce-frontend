@@ -29,7 +29,7 @@ const safe = (promise) => promise.catch((error) => {
  * Thứ tự ưu tiên lấy sản phẩm:
  *   1. Cùng danh mục (Backend: GET /products?categoryId=...)
  *   2. Thiếu -> bù bằng hàng mới về (GET /products?sort=NEWEST)
- *   3. Vẫn trống (Backend chưa có dữ liệu / lỗi) -> dùng gợi ý mock
+ *   3. Vẫn trống -> dùng gợi ý (sản phẩm còn hàng, ưu tiên đang giảm giá)
  */
 function RelatedProducts({ product, onAddToCart }) {
   const { t } = useLanguage();

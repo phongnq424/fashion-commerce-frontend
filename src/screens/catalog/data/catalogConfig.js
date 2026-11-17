@@ -32,16 +32,6 @@ export const PRICE_RANGES = [
   { id: 'over-500', min: 500_000, max: Infinity },
 ];
 
-// ----- Bộ sưu tập (bộ lọc bên trái) -----
-// Mỗi bộ sưu tập = 1 ô tick. Tên hiển thị: vi.js / en.js -> catalog.collections.<id>
-// Sản phẩm thuộc bộ sưu tập khi:
-//   - id sản phẩm có trong productIds bên dưới, HOẶC
-//   - sản phẩm có trường collections: ['tet-2027'] (thêm vào data/mockProducts.js)
-// Muốn thêm bộ sưu tập: thêm 1 dòng ở đây + thêm tên trong vi.js / en.js
-export const COLLECTIONS = [
-  { id: 'tet-2027', productIds: ['p003', 'p006', 'p010', 'p014', 'p015'] },
-];
-
 // Lọc ưu đãi qua đường dẫn (không có ô tick bên trái), vd /products?offer=sale
 // Đang giữ để các link cũ vẫn chạy. sale = đang giảm giá, new = hàng mới, best = bán chạy
 export const OFFERS = ['sale', 'new', 'best'];

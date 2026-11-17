@@ -53,6 +53,9 @@ const sellerVi = {
       pendingText: 'Thường mất 1–2 ngày làm việc. Chúng tôi sẽ thông báo ngay khi có kết quả.',
     },
     dashboard: {
+      myShops: 'Các shop của bạn ({count})',
+      editShop: 'Sửa hồ sơ shop',
+      noOrders: 'Shop chưa có đơn hàng nào.',
       title: 'Tổng quan',
       subtitle: 'Những việc cần làm hôm nay của shop.',
       revenue: 'Doanh thu tháng này',

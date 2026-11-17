@@ -3,7 +3,7 @@ import Button from '../../../components/common/Button';
 import Dialog from '../../../components/common/Dialog';
 import EmptyState from '../../../components/common/EmptyState';
 import Icon from '../../../components/common/Icon';
-import Select from '../../../components/common/Select';
+import Select from '../../../components/common/FieldSelect';
 import StatusBadge from '../../../components/common/StatusBadge';
 import { useLanguage } from '../../../hooks/useLanguage';
 import { useSeller } from '../../../hooks/useSeller';

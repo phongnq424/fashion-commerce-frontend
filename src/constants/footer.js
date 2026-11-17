@@ -42,19 +42,18 @@ export const FOOTER_COLUMNS = [
   {
     titleKey: 'footer.aboutTitle',
     links: [
-      { key: 'footer.about', to: '/about' },
-      { key: 'footer.story', to: '/about#story' },
       { key: 'footer.contact', to: '/contact' },
-      { key: 'footer.careers', to: '/careers' },
+      { key: 'market.nav.sellOnTrendyLab', to: '/seller' }, // mời mở shop trên sàn
+      { key: 'market.nav.sellerCenter', to: '/seller' },
     ],
   },
   {
     titleKey: 'footer.supportTitle',
     links: [
-      { key: 'footer.howToBuy', to: '/help/how-to-buy' },
-      { key: 'footer.sizeGuide', to: '/help/size-guide' },
-      { key: 'footer.orderTracking', to: '/order-tracking' },
-      { key: 'footer.faq', to: '/help/faq' },
+      // Chỉ link tới trang đã có (trước đây có /help/..., /order-tracking chưa làm -> ra trang 404)
+      { key: 'footer.orderTracking', to: '/account/orders' },
+      { key: 'market.footer.myReturns', to: '/account/returns' },
+      { key: 'market.footer.myAddresses', to: '/account/addresses' },
     ],
   },
   {
@@ -65,7 +64,7 @@ export const FOOTER_COLUMNS = [
       { key: 'nav.tops', to: '/category/tops' },
       { key: 'nav.bottoms', to: '/category/bottoms' },
       { key: 'nav.dresses', to: '/category/dresses' },
-      { key: 'footer.collection', to: '/#lookbook' }, // cuộn tới khối Bộ sưu tập ở trang chủ
+      { key: 'market.footer.shops', to: '/#shops' }, // cuộn tới khối "Shop trên TrendyLab" ở trang chủ
       { key: 'footer.sale', to: '/collections/sale' },
     ],
   },

@@ -1,42 +1,17 @@
 /* =====================================================================
-   KHUNG CHAT VỚI SHOP (mở từ nút "Nhắn shop" góc phải dưới, mọi trang)
+   KHUNG CHAT VỚI SHOP (nút chat góc phải dưới / nút "Chat" ở thông tin shop)
+   Bố cục 2 cột: trái = thông tin shop + danh sách cuộc trò chuyện, phải = nội dung chat.
    ===================================================================== */
 
-/* Ảnh đại diện shop (đầu khung chat) */
-.shop-card__avatar {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  overflow: hidden;
-  background: var(--color-surface);
-  color: var(--color-brand);
-  border: 1px solid var(--color-border-strong);
-  border-radius: 50%;
-}
-
-.shop-card__avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.shop-card__avatar--sm {
-  width: 36px;
-  height: 36px;
-}
-
-/* ---------- Khung chat nổi ---------- */
 .shop-chat {
   position: fixed;
   right: var(--space-5);
   bottom: var(--space-5);
   z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  width: min(380px, calc(100vw - 2 * var(--space-5)));
-  height: min(600px, calc(100vh - 2 * var(--space-5)));
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  width: min(620px, calc(100vw - 2 * var(--space-5)));
+  height: min(550px, calc(100vh - 2 * var(--space-5)));
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -52,17 +27,200 @@
   }
 }
 
+/* ---------- Cột trái ---------- */
+.shop-chat__side {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--color-surface-muted);
+  border-right: 1px solid var(--color-border);
+}
+
+.shop-chat__side-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 60px;
+  padding: 0 var(--space-3) 0 var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.shop-chat__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-weight: var(--fw-bold);
+  color: var(--color-brand);
+}
+
+/* Desktop đã có nút ✕ ở đầu cột phải -> ẩn nút ✕ của cột trái (chỉ hiện trên mobile, khi đang xem danh sách) */
+.shop-chat__side .shop-chat__close--side {
+  display: none;
+  color: var(--color-text);
+}
+
+.shop-chat__info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.shop-chat__avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
+  font-weight: var(--fw-bold);
+}
+
+.shop-chat__avatar--lg {
+  width: 56px;
+  height: 56px;
+  font-size: var(--fs-xl);
+}
+
+.shop-chat__info-name {
+  margin: var(--space-1) 0 0;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+}
+
+.shop-chat__info-sub {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+}
+
+.shop-chat__info-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  padding: 4px var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.shop-chat__info-link:hover {
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+}
+
+.shop-chat__side-title {
+  margin: 0;
+  padding: var(--space-3) var(--space-4) var(--space-1);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.shop-chat__shops {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0 var(--space-2) var(--space-2);
+  overflow-y: auto;
+  list-style: none;
+}
+
+.shop-chat__shop {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.shop-chat__shop:hover {
+  background: var(--color-surface);
+}
+
+.shop-chat__shop.is-active {
+  background: var(--color-surface);
+  box-shadow: inset 3px 0 0 var(--color-brand);
+}
+
+.shop-chat__shop-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.shop-chat__shop-name,
+.shop-chat__shop-last {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.shop-chat__shop-name {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.shop-chat__shop-last {
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+}
+
+.shop-chat__shop-time {
+  flex: none;
+  align-self: flex-start;
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Cột phải ---------- */
+.shop-chat__main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
 .shop-chat__head {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
+  min-height: 60px;
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4);
   color: var(--color-on-brand);
   background: var(--color-brand);
 }
 
-.shop-chat__head .shop-card__avatar {
-  border-color: transparent;
+.shop-chat__back {
+  display: none; /* chỉ hiện trên mobile */
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  color: inherit;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 .shop-chat__title-wrap {
@@ -71,12 +229,14 @@
 }
 
 .shop-chat__title {
+  margin: 0;
   overflow: hidden;
   font-size: var(--fs-body);
   font-weight: var(--fw-semibold);
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
 
 .shop-chat__subtitle {
   font-size: 0.75rem;
@@ -350,20 +510,29 @@
   text-align: center;
 }
 
-/* Mobile: chat toàn màn hình */
-@media (max-width: 600px) {
+@media (prefers-reduced-motion: reduce) {
+  .shop-chat,
+  .shop-chat__typing span {
+    animation: none;
+  }
+}
+
+/* ---------- Mobile: toàn màn hình, xem danh sách HOẶC nội dung chat ---------- */
+@media (max-width: 720px) {
   .shop-chat {
     inset: 0;
+    grid-template-columns: 1fr;
     width: 100%;
     height: 100%;
     border: none;
     border-radius: 0;
   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .shop-chat,
-  .shop-chat__typing span {
-    animation: none;
+  .shop-chat--chat .shop-chat__side,
+  .shop-chat--list .shop-chat__main {
+    display: none;
+  }
+  .shop-chat__head .shop-chat__back,
+  .shop-chat__side .shop-chat__close--side {
+    display: grid;
   }
 }

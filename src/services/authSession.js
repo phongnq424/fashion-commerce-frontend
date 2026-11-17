@@ -85,7 +85,6 @@ export function clearAuthSession() {
       window.localStorage.removeItem(STORAGE_KEYS.authSession);
       window.sessionStorage.removeItem(STORAGE_KEYS.authSession);
       window.localStorage.removeItem(STORAGE_KEYS.user);
-      window.localStorage.removeItem(STORAGE_KEYS.mockUsers);
     } catch {
       // Storage có thể bị chặn trong chế độ riêng tư.
     }

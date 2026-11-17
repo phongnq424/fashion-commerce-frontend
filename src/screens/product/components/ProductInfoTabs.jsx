@@ -1,14 +1,21 @@
 import { useLanguage } from '../../../hooks/useLanguage';
-import { BRAND_INTRO, COLOR_NOTE, COMMITMENTS, DEFAULT_CARE, POLICIES } from '../../../data/storePolicies';
+import { COLOR_NOTE, POLICIES } from '../../../data/storePolicies';
 
 /**
  * 4 mục xổ xuống dưới nút mua: Mô tả sản phẩm | Chính sách đổi trả | giao hàng | thanh toán.
  * Dùng thẻ <details> gốc của HTML: bấm tiêu đề để mở / đóng, bàn phím dùng được sẵn.
- * Nội dung chính sách: data/storePolicies.js   |   Tiêu đề: vi.js / en.js (productDetail.tabs)
+ * Mô tả / chất liệu / bảo quản: dữ liệu của sản phẩm (Backend). Chính sách chung của sàn: data/storePolicies.js
+ * Tiêu đề: vi.js / en.js (productDetail.tabs)
  */
 function ProductInfoTabs({ product }) {
   const { t } = useLanguage();
-  const care = product.care?.length ? product.care : DEFAULT_CARE;
+  const care = product.care ?? []; // careInstructions của shop; không có thì không hiện mục này
+  // Backend trả description là 1 chuỗi, đoạn cách nhau bằng dòng trống -> tách thành nhiều <p>
+  const paragraphs = []
+    .concat(product.description ?? [])
+    .flatMap((text) => String(text).split(/\n{2,}/))
+    .map((text) => text.trim())
+    .filter(Boolean);
 
   return (
     <div className="info-tabs">
@@ -17,10 +24,7 @@ function ProductInfoTabs({ product }) {
         <summary className="info-tabs__summary">{t('productDetail.tabs.description')}</summary>
                 <div className="info-tabs__body">
           {/* 1. MÔ TẢ: description là chuỗi hoặc mảng, mỗi phần tử 1 đoạn <p> */}
-          {[]
-            .concat(product.description ?? [])
-            .filter(Boolean)
-            .map((paragraph) => (
+          {paragraphs.map((paragraph) => (
               <p key={paragraph} className="info-tabs__description">
                 {paragraph}
               </p>
@@ -45,25 +49,25 @@ function ProductInfoTabs({ product }) {
             </p>
           )}
 
-          <h3 className="info-tabs__heading">{t('productDetail.careTitle')}</h3>
-          <ul className="info-tabs__list">
-            {care.map((line) => (
-              <li key={line}>{line}</li>
-            ))}
-          </ul>
+          {product.fitType && (
+            <p>
+              <strong>{t('market.product.fitType')}:</strong> {product.fitType}
+            </p>
+          )}
+
+          {care.length > 0 && (
+            <>
+              <h3 className="info-tabs__heading">{t('productDetail.careTitle')}</h3>
+              <ul className="info-tabs__list">
+                {care.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            </>
+          )}
           <p>
             <strong>{t('productDetail.noteLabel')}:</strong> {COLOR_NOTE}
           </p>
-
-          <h3 className="info-tabs__heading">{t('productDetail.aboutTitle')}</h3>
-          <p>{BRAND_INTRO}</p>
-
-          <h3 className="info-tabs__heading">{t('productDetail.commitTitle')}</h3>
-          <ul className="info-tabs__checks">
-            {COMMITMENTS.map((line) => (
-              <li key={line}>{line}</li>
-            ))}
-          </ul>
         </div>
       </details>
 

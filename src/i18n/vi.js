@@ -427,23 +427,6 @@ const vi = {
     backToTop: 'Lên đầu trang',
     chat: 'Nhắn shop',
   },
-  shopChat: {
-    responseTime: 'Thường trả lời trong vài phút',
-    askingAbout: 'Bạn đang hỏi về',
-    welcome: 'Xin chào! {name} có thể giúp gì cho bạn? Hỏi shop về size, màu, giao hàng hay đổi trả nhé.',
-    you: 'Bạn',
-    typing: 'Shop đang soạn tin',
-    quickLabel: 'Câu hỏi nhanh',
-    quick: {
-      size: 'Tư vấn size giúp mình',
-      stock: 'Sản phẩm còn hàng không?',
-      shipping: 'Bao lâu thì nhận được hàng?',
-      returns: 'Đổi trả như thế nào?',
-    },
-    placeholder: 'Nhập tin nhắn...',
-    send: 'Gửi',
-    demoNote: 'Bản thử nghiệm: tin nhắn lưu trên trình duyệt này.',
-  },
   productDetail: {
     error: 'Không tải được sản phẩm. Kiểm tra kết nối mạng rồi bấm Thử lại.',
     outOfStock: 'Hết hàng',

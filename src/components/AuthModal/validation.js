@@ -52,6 +52,9 @@ export function getPasswordStrength(value) {
 export function serverErrorKey(error) {
   const map = {
     INVALID_CREDENTIALS: 'auth.errors.invalidCredentials',
+    AUTH_INVALID_CREDENTIALS: 'auth.errors.invalidCredentials', // mã thật của Backend khi sai tài khoản / mật khẩu
+    AUTH_ACCOUNT_SUSPENDED: 'market.errors.AUTH_ACCOUNT_SUSPENDED',
+    BACKEND_UNREACHABLE: 'market.errors.BACKEND_UNREACHABLE',
     AUTH_UNAUTHORIZED: 'auth.errors.invalidCredentials',
     EMAIL_TAKEN: 'auth.errors.emailTaken',
     AUTH_EMAIL_EXISTS: 'auth.errors.emailTaken',

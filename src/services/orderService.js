@@ -1,93 +1,51 @@
-import { MOCK_VOUCHERS } from '../data/mockVouchers';
-import { saveMockOrder } from './mockOrderStore';
+import { apiClient } from './apiClient';
 
 // =====================================================================
-// ĐƠN HÀNG: mã giảm giá, phí vận chuyển, tính tổng tiền, đặt hàng.
-// Frontend chỉ tính để HIỂN THỊ. Khi có Backend, server phải tính lại toàn bộ
-// (giá, phí ship, giảm giá) khi đặt hàng, không tin số tiền gửi lên từ trình duyệt.
+// THANH TOÁN / ĐẶT HÀNG — API thật (cần đăng nhập). Server tính toàn bộ tiền, frontend chỉ hiển thị.
+//   POST /checkout/preview                      { expectedCartVersion, addressId, expectedUnitPrices?, voucherCodes? }
+//        -> CheckoutPreviewResponse (snapshotId, shops[], tổng tiền, issues[], readyForOrder)
+//   GET  /checkout/{snapshotId}/payment-methods -> PaymentMethodResponse[] (COD | MOMO | ZALOPAY | VNPAY)
+//   POST /orders  (header Idempotency-Key)      { checkoutSnapshotId, paymentMethod, buyerNote?, returnUrl? }
+//        -> OrderResponse. Backend tự xoá các dòng đã mua khỏi giỏ.
+//   GET  /vouchers/available?shopId=&subtotalMinor=&shippingFeeMinor= -> AvailableVoucherResponse[]
+// Backend chỉ thanh toán các dòng ĐANG ĐƯỢC CHỌN (selected) trong giỏ.
 // =====================================================================
 
-const wait = (ms = 400) => new Promise((resolve) => setTimeout(resolve, ms));
+const newKey = () =>
+  typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `${Date.now().toString(16)}-${Math.random().toString(16).slice(2)}`;
 
-// ----- PHÍ VẬN CHUYỂN -----
-// Giao trong 2-4 ngày (trừ Chủ nhật), đồng giá 30.000đ cho mọi tỉnh / thành.
-// Chữ "Vận chuyển trong 2-4 ngày (trừ CN)": vi.js / en.js -> checkout.standardShipping
-export const SHIPPING_FEE = 30000;
-// Đơn từ mức này được miễn phí ship (khớp dòng thông báo trên Header "Miễn phí giao hàng cho đơn từ 499.000đ").
-// Không muốn miễn phí ship nữa -> đổi thành null
-export const FREE_SHIPPING_MIN = 499000;
-
-// Backend: GET `${API}/shipping/fee?provinceId=...&subtotal=...`
-export function getShippingFee({ subtotal }) {
-  if (FREE_SHIPPING_MIN != null && subtotal >= FREE_SHIPPING_MIN) return 0;
-  return SHIPPING_FEE;
+export function previewCheckout({ cartVersion, addressId, voucherCodes = [], expectedUnitPrices }) {
+  return apiClient.post('/checkout/preview', {
+    expectedCartVersion: cartVersion,
+    addressId,
+    expectedUnitPrices: expectedUnitPrices && Object.keys(expectedUnitPrices).length ? expectedUnitPrices : undefined,
+    voucherCodes: voucherCodes.length ? voucherCodes : undefined,
+  });
 }
 
-// Backend: GET `${API}/vouchers`
-export async function getVouchers() {
-  await wait(150);
-  return MOCK_VOUCHERS;
+export function getPaymentMethods(snapshotId) {
+  return apiClient.get(`/checkout/${encodeURIComponent(snapshotId)}/payment-methods`);
 }
 
-// Kiểm tra mã. Sai -> ném lỗi có error.code để giao diện chọn câu báo lỗi
-// Backend: POST `${API}/vouchers/validate` với { code, subtotal }
-export async function validateVoucher(code, subtotal) {
-  await wait(300);
-  const voucher = MOCK_VOUCHERS.find((item) => item.code === code.trim().toUpperCase());
-  if (!voucher) {
-    throw Object.assign(new Error('Voucher not found'), { code: 'VOUCHER_INVALID' });
-  }
-  if (subtotal < voucher.minSubtotal) {
-    throw Object.assign(new Error('Subtotal too low'), {
-      code: 'VOUCHER_MIN_SUBTOTAL',
-      minSubtotal: voucher.minSubtotal,
-    });
-  }
-  return voucher;
+// idempotencyKey: giữ nguyên khi bấm lại sau lỗi mạng để không tạo 2 đơn
+export function placeOrder({ snapshotId, paymentMethod, buyerNote, returnUrl, idempotencyKey = newKey() }) {
+  return apiClient.post(
+    '/orders',
+    {
+      checkoutSnapshotId: snapshotId,
+      paymentMethod,
+      buyerNote: buyerNote?.trim() || null,
+      returnUrl: returnUrl ?? null,
+    },
+    { headers: { 'Idempotency-Key': idempotencyKey } },
+  );
 }
 
-/**
- * Tính các dòng tiền ở cột "Đơn hàng":
- *   subtotal        tiền hàng
- *   discount        giảm trên tiền hàng (mã fixed / percent)
- *   shippingFee     phí ship gốc (null = chưa chọn địa chỉ)
- *   shippingDiscount  giảm phí ship (mã shipping)
- *   total           tổng phải trả
- */
-export function calculateTotals({ subtotal, voucher, provinceId }) {
-  const shippingFee = getShippingFee({ provinceId, subtotal });
-  let discount = 0;
-  let shippingDiscount = 0;
-
-  if (voucher && subtotal >= voucher.minSubtotal) {
-    if (voucher.type === 'fixed') discount = Math.min(voucher.value, subtotal);
-    if (voucher.type === 'percent') {
-      discount = Math.round((subtotal * voucher.value) / 100);
-      if (voucher.maxDiscount) discount = Math.min(discount, voucher.maxDiscount);
-    }
-    if (voucher.type === 'shipping' && shippingFee) {
-      shippingDiscount = Math.round((shippingFee * voucher.value) / 100);
-    }
-  }
-
-  const total = Math.max(0, subtotal - discount) + Math.max(0, (shippingFee ?? 0) - shippingDiscount);
-  return { subtotal, discount, shippingFee, shippingDiscount, total };
+export function getAvailableVouchers({ shopId, subtotalMinor, shippingFeeMinor = 0 }) {
+  const query = new URLSearchParams({ shopId, subtotalMinor: String(subtotalMinor), shippingFeeMinor: String(shippingFeeMinor) });
+  return apiClient.get(`/vouchers/available?${query}`);
 }
 
-// Đặt hàng (GIẢ LẬP): tạo mã đơn + LƯU đơn vào kho giả lập (services/mockOrderStore.js)
-// để trang "Đơn hàng của tôi" đọc lại được. Trả về { orderCode, orderId }.
-// Backend: POST `${API}/orders` với { items, shipping, paymentMethod, voucherCode }
-// paymentDetails (thẻ): { cardBrand, cardLast4, saveCard } — số thẻ đầy đủ KHÔNG BAO GIỜ đi qua đây.
-//   Khi có cổng thanh toán thật, thẻ được nhập trong ô / trang của cổng, Backend chỉ nhận mã giao dịch.
-// owner: email người đặt (đã đăng nhập: email tài khoản | khách: email trong form giao hàng)
-export async function placeOrder({ items, shipping, totals, paymentMethod, paymentDetails, voucherCode, owner }) {
-  await wait(800);
-  if (!items?.length || !shipping || !paymentMethod) {
-    throw Object.assign(new Error('Invalid order'), { code: 'ORDER_INVALID' });
-  }
-  void voucherCode;
-  void paymentDetails;
-  const orderCode = `TL${Date.now().toString().slice(-8)}`;
-  const order = saveMockOrder({ orderCode, items, shipping, totals, paymentMethod, owner });
-  return { orderCode, orderId: order.id };
-}
+export const newIdempotencyKey = newKey;

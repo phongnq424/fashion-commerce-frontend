@@ -1,15 +1,16 @@
-import { mockProducts } from '../data/mockProducts';
+import { getAllPublicProducts } from './catalogService';
+import { getCategories } from './productService';
+import { findCategoryForRoute } from '../mappers/categoryMapper';
 
 // =====================================================================
-// TÌM KIẾM SẢN PHẨM — dùng DỮ LIỆU GIẢ của frontend (data/mockProducts.js).
-// Không gọi backend. Lọc + sắp xếp chạy ngay trên trình duyệt.
+// TÌM KIẾM SẢN PHẨM — trên sản phẩm đang bán của mọi shop (GET /products, xem catalogService).
+// Lọc + sắp xếp chạy trên trình duyệt để tìm được cả khi gõ không dấu.
 //
 // Tìm theo từ khoá: bỏ dấu tiếng Việt, không phân biệt hoa thường
 //   ("ao khoac" vẫn ra "Áo Khoác"). Mọi từ trong ô tìm kiếm đều phải xuất hiện
 //   trong tên / mô tả / chất liệu / tên danh mục của sản phẩm.
 //
-// Sau này muốn tìm trên backend: chỉ cần thay thân hàm searchProducts(),
-// giữ nguyên dạng trả về { items, total } -> giao diện không phải sửa.
+// Backend có tham số q (GET /products?q=) nhưng chưa bỏ dấu tiếng Việt, nên frontend tự lọc.
 // =====================================================================
 
 export const SEARCH_PAGE_SIZE = 20;
@@ -25,7 +26,6 @@ export const SEARCH_PRICE_PRESETS = [
   { id: 'over1000', min: 1000000, max: null },
 ];
 
-const wait = (ms = 200) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // "Áo Khoác Đỏ" -> "ao khoac do"
 export function normalizeText(text) {
@@ -64,13 +64,13 @@ const SORTERS = {
  * Trả về: { items: product[], total: number }  (toàn bộ kết quả; trang tự chia "Xem thêm")
  */
 export async function searchProducts(filters, categoryLabels = {}) {
-  await wait();
   const words = normalizeText(filters.q).split(' ').filter(Boolean);
+  const [products, categories] = await Promise.all([getAllPublicProducts(), getCategories().catch(() => [])]);
+  const categoryId = filters.category ? findCategoryForRoute(categories, filters.category)?.id : null;
 
-  const results = mockProducts
-    .map((product, index) => ({ ...product, source: 'mock', order: index }))
+  const results = products
     .filter((product) => {
-      if (filters.category && product.category !== filters.category) return false;
+      if (filters.category && product.categoryRouteId !== filters.category && product.categoryId !== categoryId) return false;
       if (filters.minPrice != null && product.price < filters.minPrice) return false;
       if (filters.maxPrice != null && product.price > filters.maxPrice) return false;
       if (filters.inStock && !product.inStock) return false;
@@ -80,9 +80,8 @@ export async function searchProducts(filters, categoryLabels = {}) {
       const haystack = normalizeText(
         [
           product.name,
-          product.description,
-          product.material,
-          categoryLabels[product.category],
+          product.shopName,
+          categoryLabels[product.categoryRouteId],
         ].join(' '),
       );
       return words.every((word) => haystack.includes(word));

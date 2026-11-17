@@ -18,17 +18,18 @@ const MOCK_MAX_QUANTITY = 10;
 /**
  * Giỏ hàng cho toàn site. Có 2 nơi lưu, giao diện KHÔNG cần biết:
  *   - 'server': giỏ Backend (GET/POST/PUT/DELETE /cart...) khi ĐÃ đăng nhập và sản phẩm có variantId
- *   - 'local' : localStorage khi chưa đăng nhập, hoặc sản phẩm mock
+ *   - 'local' : localStorage khi chưa đăng nhập (đăng nhập xong được chuyển lên giỏ Backend)
  * Đăng nhập xong -> các dòng local có variantId được tự chuyển lên giỏ Backend.
  *
- * Mỗi dòng giỏ (item): { key, origin, id, productId, variantId, name, image, variantText,
+ * Mỗi dòng giỏ (item): { key, origin, id, productId, variantId, shopId, shopName, name, image, variantText,
  *   unitPrice, originalPrice, quantity, maxQuantity, selected, availability }
+ *   Giỏ Backend trả theo từng shop (CartResponse.shops[]) -> trang giỏ hàng nhóm lại theo shopId.
  *
  * Hàm:
  *   addItem(product, options)  -> { status: 'added', key } | { status: 'needsOptions' }  (lỗi Backend thì throw ApiError)
  *     key = mã dòng giỏ vừa thêm -> "Mua ngay" dùng để trang thanh toán chỉ lấy đúng món này
  *     options.gift = { name, image, originalPrice, option } -> quà tặng kèm (hiện ở trang thanh toán)
- *   updateQuantity(item, n) | toggleSelected(item, bool) | setAllSelected(bool)
+ *   updateQuantity(item, n) | toggleSelected(item, bool) | setAllSelected(bool) | setItemsSelected(items, bool)
  *   changeItemOptions(item, product, { size, colorId })  -> đổi màu / size của 1 dòng (nút bút ở trang giỏ)
  *   removeItem(item) | removeItems(items) | reload()
  */
@@ -236,6 +237,8 @@ export function CartProvider({ children }) {
             id: key,
             productId: product.id,
             variantId: variant?.id ?? null,
+            shopId: product.shopId ?? null,
+            shopName: product.shopName ?? null,
             name: product.name,
             image,
             size: size ?? null,
@@ -346,6 +349,8 @@ export function CartProvider({ children }) {
           id: key,
           productId: item.productId,
           variantId: variant?.id ?? null,
+          shopId: item.shopId ?? product.shopId ?? null,
+          shopName: item.shopName ?? product.shopName ?? null,
           name: item.name,
           image,
           size: label.size,
@@ -382,10 +387,12 @@ export function CartProvider({ children }) {
     }));
   }, [serverCart, localItems, labels, pendingKeys]);
 
-  const setAllSelected = useCallback(
-    async (selected) => {
-      setLocalItems((lines) => lines.map((line) => ({ ...line, selected })));
-      const serverItems = items.filter((item) => item.origin === 'server' && item.selected !== selected);
+  // Chọn / bỏ chọn nhiều dòng một lúc (cả giỏ, hoặc mọi dòng của 1 shop). Dòng Backend gửi 1 lần PUT /cart/selection.
+  const setItemsSelected = useCallback(
+    async (list, selected) => {
+      const keys = new Set(list.map((item) => item.key));
+      setLocalItems((lines) => lines.map((line) => (keys.has(line.key) ? { ...line, selected } : line)));
+      const serverItems = list.filter((item) => item.origin === 'server' && item.selected !== selected);
       if (!serverItems.length) return;
       await withPending(
         serverItems.map((item) => item.key),
@@ -395,7 +402,29 @@ export function CartProvider({ children }) {
           ),
       );
     },
-    [items, runServer, withPending],
+    [runServer, withPending],
+  );
+
+  const setAllSelected = useCallback((selected) => setItemsSelected(items, selected), [items, setItemsSelected]);
+
+  // Chỉ chọn đúng các dòng truyền vào (bỏ chọn phần còn lại) — dùng cho "Mua ngay" trước khi xem trước đơn.
+  // Backend chỉ thanh toán các dòng đang selected. Trả về cart mới (có version).
+  const selectOnly = useCallback(
+    async (keep) => {
+      const keepKeys = new Set(keep.map((item) => item.key));
+      const serverItems = items.filter((item) => item.origin === 'server');
+      const toSelect = serverItems.filter((item) => keepKeys.has(item.key) && !item.selected).map((item) => item.id);
+      const toUnselect = serverItems.filter((item) => !keepKeys.has(item.key) && item.selected).map((item) => item.id);
+      let cart = serverCart;
+      if (toUnselect.length) {
+        cart = await runServer((version) => updateCartSelection({ expectedVersion: version, itemIds: toUnselect, selected: false }));
+      }
+      if (toSelect.length) {
+        cart = await runServer((version) => updateCartSelection({ expectedVersion: version, itemIds: toSelect, selected: true }));
+      }
+      return cart;
+    },
+    [items, serverCart, runServer],
   );
 
   const removeItems = useCallback(
@@ -411,6 +440,7 @@ export function CartProvider({ children }) {
       items,
       status,
       isServerCart: Boolean(userKey),
+      cartVersion: serverCart?.version ?? null,
       lastAddedAt,
       totalQuantity: items.reduce((sum, item) => sum + item.quantity, 0),
       totalPrice: items.reduce((sum, item) => sum + item.lineTotal, 0),
@@ -422,8 +452,10 @@ export function CartProvider({ children }) {
       updateQuantity,
       toggleSelected,
       setAllSelected,
+      setItemsSelected,
       removeItem,
       removeItems,
+      selectOnly,
       reload,
     };
   }, [
@@ -436,8 +468,10 @@ export function CartProvider({ children }) {
     updateQuantity,
     toggleSelected,
     setAllSelected,
+    setItemsSelected,
     removeItem,
     removeItems,
+    selectOnly,
     reload,
   ]);
 

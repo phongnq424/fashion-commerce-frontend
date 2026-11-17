@@ -89,15 +89,14 @@ function OnboardingScreen({ onNotify }) {
   const backOf = (current) => () => setStep(STEPS[STEPS.indexOf(current) - 1]);
   const id = onboarding?.id;
 
-  const accept = (version) =>
-    run(async () => {
-      await acceptPolicy(id, version);
-      await loadPolicies();
-    });
-
-  const submit = async () => {
+  // Gửi duyệt: ghi nhận các chính sách đã tích (chưa gửi trước đó) rồi mới hoàn tất hồ sơ
+  const submit = async (checkedVersions = []) => {
     setSaving(true);
     try {
+      const already = new Set(policies.filter((p) => p.accepted).map((p) => p.version));
+      for (const version of checkedVersions) {
+        if (!already.has(version)) await acceptPolicy(id, version);
+      }
       await completeOnboarding(id);
       await refreshOnboarding();
       onNotify?.('success', t('seller.onboarding.submitted'));
@@ -182,7 +181,6 @@ function OnboardingScreen({ onNotify }) {
                 policies={policies}
                 progress={progress}
                 saving={saving}
-                onAccept={accept}
                 onSubmit={submit}
                 onBack={backOf('policies')}
                 onGoto={setStep}

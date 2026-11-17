@@ -18,11 +18,11 @@ import AccountLayout from '../components/AccountLayout';
  *   - Thẻ thông tin cá nhân (GET /users/me: displayName, email, phone, emailVerifiedAt)
  *   - 4 ô số liệu nhanh: đơn hàng, chờ xử lý, yêu thích, thông báo chưa đọc
  *   - Đơn hàng gần đây (3 đơn) + địa chỉ mặc định
- * Backend chưa có API sửa hồ sơ -> chỉ hiển thị. "Đổi mật khẩu" dùng luồng quên mật khẩu bằng OTP.
+ * Sửa hồ sơ / đổi mật khẩu / phiên đăng nhập: trang /account/security (PATCH /users/me, POST /users/me/password...).
  */
 function ProfileScreen() {
   const { t, language } = useLanguage();
-  const { user, openAuth } = useAuth();
+  const { user } = useAuth();
   const { unreadCount } = useNotifications();
   const { count: wishlistCount } = useWishlist();
   const [orders, setOrders] = useState({ status: 'loading', items: [], hasMore: false });
@@ -63,9 +63,9 @@ function ProfileScreen() {
                 <Icon name="user" size={18} />
                 {t('account.profile.infoTitle')}
               </h2>
-              <Button variant="outline" size="sm" onClick={() => openAuth('forgot')}>
-                <Icon name="shield" size={16} />
-                {t('account.profile.changePassword')}
+              <Button as={Link} variant="outline" size="sm" to="/account/security">
+                <Icon name="edit" size={16} />
+                {t('market.security.editButton')}
               </Button>
             </div>
             <dl className="info-list">
@@ -89,9 +89,6 @@ function ProfileScreen() {
                 <dd>{user.phone ?? t('account.profile.notSet')}</dd>
               </div>
             </dl>
-            <p className="account-muted profile__note">
-              <Icon name="info" size={14} /> {t('account.profile.editNote')}
-            </p>
           </div>
 
           <ul className="profile-stats">

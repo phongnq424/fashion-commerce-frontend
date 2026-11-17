@@ -11,7 +11,7 @@ import { filterProducts, getCatalogProducts, sortProducts } from '../../services
 import CatalogBanner from './components/CatalogBanner';
 import CatalogFilters from './components/CatalogFilters';
 import SortMenu from './components/SortMenu';
-import { COLLECTIONS, OFFERS, PAGE_SIZE, PRICE_RANGES, SORT_OPTIONS } from './data/catalogConfig';
+import { OFFERS, PAGE_SIZE, PRICE_RANGES, SORT_OPTIONS } from './data/catalogConfig';
 import './CatalogScreen.css';
 
 // Đổi qua lại giữa các danh mục không phải tải lại dữ liệu (giữ 60 giây)
@@ -60,7 +60,18 @@ function CatalogScreen({ onAddToCart }) {
 
   const priceIds = readList(searchParams.get('price'), PRICE_RANGES.map((range) => range.id));
   const offers = readList(searchParams.get('offer'), OFFERS); // chỉ đến từ link, không có ô tick
-  const collectionIds = readList(searchParams.get('collection'), COLLECTIONS.map((item) => item.id));
+  // Lọc theo shop bán (sàn nhiều shop): danh sách shop lấy từ chính các sản phẩm đang bán
+  const shops = useMemo(() => {
+    const map = new Map();
+    products.forEach((p) => {
+      if (!p.shopId) return;
+      const entry = map.get(p.shopId) ?? { id: p.shopId, name: p.shopName ?? '', count: 0 };
+      entry.count += 1;
+      map.set(p.shopId, entry);
+    });
+    return [...map.values()].sort((a, b) => b.count - a.count);
+  }, [products]);
+  const shopIds = readList(searchParams.get('shop'), shops.map((shop) => shop.id));
   const sortParam = searchParams.get('sort');
   const sort = SORT_OPTIONS.includes(sortParam) ? sortParam : 'default';
 
@@ -94,15 +105,14 @@ function CatalogScreen({ onAddToCart }) {
   }, [location.key, location.state]);
 
   // Đổi bộ lọc / danh mục -> hiện lại từ đầu
-  const filterKey = `${categoryId ?? ''}|${priceIds.join()}|${offers.join()}|${collectionIds.join()}|${sort}`;
+  const filterKey = `${categoryId ?? ''}|${priceIds.join()}|${offers.join()}|${shopIds.join()}|${sort}`;
   useEffect(() => {
     setVisible(PAGE_SIZE);
   }, [filterKey]);
 
   const priceRanges = PRICE_RANGES.filter((range) => priceIds.includes(range.id));
-  const collections = COLLECTIONS.filter((item) => collectionIds.includes(item.id));
   const filtered = useMemo(
-    () => sortProducts(filterProducts(products, { categoryId, priceRanges, offers, collections }), sort),
+    () => sortProducts(filterProducts(products, { categoryId, priceRanges, offers, shopIds }), sort),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- filterKey đã gồm đủ các bộ lọc
     [products, filterKey],
   );
@@ -132,12 +142,12 @@ function CatalogScreen({ onAddToCart }) {
   const toggleIn = (list, id) => (list.includes(id) ? list.filter((item) => item !== id) : [...list, id]);
   const togglePrice = (id) => updateParam('price', toggleIn(priceIds, id));
   const toggleOffer = (id) => updateParam('offer', toggleIn(offers, id));
-  const toggleCollection = (id) => updateParam('collection', toggleIn(collectionIds, id));
+  const toggleShop = (id) => updateParam('shop', toggleIn(shopIds, id));
   const clearFilters = () => {
     const next = new URLSearchParams(searchParams);
     next.delete('price');
     next.delete('offer');
-    next.delete('collection');
+    next.delete('shop');
     setSearchParams(next, { replace: true });
   };
 
@@ -161,11 +171,9 @@ function CatalogScreen({ onAddToCart }) {
       label: t(`catalog.price.${range.id}`),
       remove: () => togglePrice(range.id),
     })),
-    ...collections.map((collection) => ({
-      key: `collection-${collection.id}`,
-      label: t(`catalog.collections.${collection.id}`),
-      remove: () => toggleCollection(collection.id),
-    })),
+    ...shops
+      .filter((shop) => shopIds.includes(shop.id))
+      .map((shop) => ({ key: `shop-${shop.id}`, label: shop.name, remove: () => toggleShop(shop.id) })),
     // Lọc ưu đãi chỉ đến từ link (vd ?offer=sale) -> vẫn hiện chip để khách bỏ được
     ...offers.map((offer) => ({
       key: `offer-${offer}`,
@@ -228,9 +236,10 @@ function CatalogScreen({ onAddToCart }) {
             open={filtersOpen}
             onClose={() => setFiltersOpen(false)}
             priceIds={priceIds}
-            collectionIds={collectionIds}
+            shops={shops}
+            shopIds={shopIds}
             onTogglePrice={togglePrice}
-            onToggleCollection={toggleCollection}
+            onToggleShop={toggleShop}
             onClear={clearFilters}
             hasFilters={activeChips.length > 0}
             resultCount={filtered.length}

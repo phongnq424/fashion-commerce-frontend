@@ -39,6 +39,8 @@ export function LanguageProvider({ children }) {
       const text =
         getByPath(dictionaries[language], key) ?? getByPath(dictionaries[DEFAULT_LANGUAGE], key);
       if (typeof text !== 'string') {
+        // params.defaultValue: chữ dự phòng khi chưa có bản dịch (vd mã lỗi Backend mới)
+        if (params?.defaultValue !== undefined) return interpolate(String(params.defaultValue), params);
         if (import.meta.env.DEV) console.warn(`[i18n] Thiếu bản dịch cho key: "${key}"`);
         return key;
       }

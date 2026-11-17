@@ -1,47 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { WishlistContext } from './WishlistContext';
-import { STORAGE_KEYS } from '../constants/storageKeys';
 import { useAuth } from '../hooks/useAuth';
+import {
+  addToWishlist,
+  getWishlist,
+  mapWishlistItem,
+  removeFromWishlist as removeWishlistItem,
+} from '../services/wishlistService';
 
 // =====================================================================
-// DANH SÁCH YÊU THÍCH (GIẢ LẬP ở frontend) — lưu trong localStorage, tách theo email người dùng:
-//   { "ngoc.anh@gmail.com": [ { id, name, price, originalPrice, image, inStock, isNew, addedAt }, ... ] }
-// Lưu kèm "ảnh chụp" thông tin sản phẩm lúc bấm ♥, để trang Yêu thích hiện được ngay.
-// Sau này dùng backend: thay phần đọc/ghi bằng services/wishlistService.js
-//   (GET /wishlist, PUT/DELETE /wishlist/items/{productId}) — giao diện giữ nguyên.
+// DANH SÁCH YÊU THÍCH — API thật (services/wishlistService.js, cần đăng nhập)
+//   GET /wishlist | PUT /wishlist/items/{productId} | DELETE /wishlist/items/{productId}
+// Đổi trạng thái ♥ ngay trên giao diện, lỗi thì trả lại như cũ.
 // =====================================================================
-
-function readAll() {
-  try {
-    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.mockWishlist) ?? '{}');
-    return data && typeof data === 'object' ? data : {};
-  } catch {
-    return {};
-  }
-}
-
-function writeAll(data) {
-  try {
-    localStorage.setItem(STORAGE_KEYS.mockWishlist, JSON.stringify(data));
-  } catch {
-    /* bỏ qua nếu không lưu được */
-  }
-}
-
-const ownerKey = (user) => String(user?.email ?? '').trim().toLowerCase();
-
-// Chỉ giữ các trường ProductCard cần
-const snapshot = (product) => ({
-  id: product.id,
-  source: product.source ?? 'mock',
-  name: product.name,
-  price: product.price,
-  originalPrice: product.originalPrice ?? null,
-  image: product.image ?? product.images?.[0] ?? null,
-  inStock: product.inStock !== false,
-  isNew: Boolean(product.isNew),
-  addedAt: new Date().toISOString(),
-});
 
 /**
  * Dùng chung toàn site (nút ♥ trên thẻ sản phẩm, trang chi tiết, trang Yêu thích).
@@ -50,61 +21,79 @@ const snapshot = (product) => ({
  *   isWishlisted(id)        true/false
  *   toggleWishlist(product) thêm/bỏ. Trả về 'added' | 'removed' | 'needsLogin'
  *   removeFromWishlist(id)
- * Chưa đăng nhập -> 'needsLogin' (nơi gọi tự mở popup đăng nhập).
  */
 export function WishlistProvider({ children }) {
   const { user } = useAuth();
-  const key = ownerKey(user);
-  const [items, setItems] = useState(() => (key ? readAll()[key] ?? [] : []));
+  const userKey = user ? (user.id ?? user.email) : null;
+  const [items, setItems] = useState([]);
 
-  // Đổi tài khoản / đăng xuất -> nạp lại danh sách của người đó
+  const reload = useCallback(async () => {
+    if (!userKey) {
+      setItems([]);
+      return;
+    }
+    try {
+      const page = await getWishlist({ limit: 100 });
+      setItems(page.items);
+    } catch (error) {
+      console.warn('[Wishlist] Không tải được danh sách yêu thích', error);
+    }
+  }, [userKey]);
+
   useEffect(() => {
-    setItems(key ? readAll()[key] ?? [] : []);
-  }, [key]);
-
-  // Đồng bộ giữa các tab đang mở
-  useEffect(() => {
-    const onStorage = (event) => {
-      if (event.key === STORAGE_KEYS.mockWishlist && key) setItems(readAll()[key] ?? []);
-    };
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, [key]);
-
-  const save = useCallback(
-    (next) => {
-      setItems(next);
-      const all = readAll();
-      all[key] = next;
-      writeAll(all);
-    },
-    [key],
-  );
+    reload();
+  }, [reload]);
 
   const ids = useMemo(() => new Set(items.map((item) => item.id)), [items]);
   const isWishlisted = useCallback((productId) => ids.has(productId), [ids]);
 
   const toggleWishlist = useCallback(
     async (product) => {
-      if (!key) return 'needsLogin';
+      if (!userKey) return 'needsLogin';
+      const previous = items;
       if (ids.has(product.id)) {
-        save(items.filter((item) => item.id !== product.id));
+        setItems(items.filter((item) => item.id !== product.id));
+        try {
+          await removeWishlistItem(product.id);
+        } catch (error) {
+          setItems(previous);
+          throw error;
+        }
         return 'removed';
       }
-      save([snapshot(product), ...items]);
+      setItems([
+        { id: product.id, source: 'api', name: product.name, price: product.price, originalPrice: product.originalPrice ?? null, image: product.image ?? product.images?.[0] ?? null, inStock: product.inStock !== false },
+        ...items,
+      ]);
+      try {
+        const saved = await addToWishlist(product.id);
+        if (saved) setItems((list) => list.map((item) => (item.id === product.id ? mapWishlistItem(saved) : item)));
+      } catch (error) {
+        setItems(previous);
+        throw error;
+      }
       return 'added';
     },
-    [ids, items, key, save],
+    [ids, items, userKey],
   );
 
   const removeFromWishlist = useCallback(
-    (productId) => save(items.filter((item) => item.id !== productId)),
-    [items, save],
+    async (productId) => {
+      const previous = items;
+      setItems(items.filter((item) => item.id !== productId));
+      try {
+        await removeWishlistItem(productId);
+      } catch (error) {
+        setItems(previous);
+        throw error;
+      }
+    },
+    [items],
   );
 
   const value = useMemo(
-    () => ({ items, ids, count: items.length, isWishlisted, toggleWishlist, removeFromWishlist }),
-    [items, ids, isWishlisted, toggleWishlist, removeFromWishlist],
+    () => ({ items, ids, count: items.length, isWishlisted, toggleWishlist, removeFromWishlist, reload }),
+    [items, ids, isWishlisted, toggleWishlist, removeFromWishlist, reload],
   );
 
   return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;

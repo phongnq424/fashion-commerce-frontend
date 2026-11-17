@@ -34,6 +34,8 @@
 /* ---------- ↑ Lên đầu trang (góc trái) ---------- */
 .fab--top {
   left: var(--fab-offset);
+  /* Thanh DEMO (chỉ có khi chạy BE giả) cũng ở góc trái dưới -> nút ↑ đẩy lên trên nó (DemoBar đặt biến này) */
+  bottom: calc(var(--fab-offset) + var(--demo-bar-space, 0px));
   width: var(--fab-top-size);
   height: var(--fab-top-size);
   color: var(--color-on-brand);

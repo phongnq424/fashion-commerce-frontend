@@ -11,6 +11,7 @@ import '../AccountScreens.css';
 // Menu bên trái khu vực tài khoản. Thêm mục mới: thêm 1 dòng + chữ trong i18n (account.nav.<id>)
 export const ACCOUNT_NAV = [
   { id: 'profile', to: '/account', icon: 'user', end: true },
+  { id: 'security', to: '/account/security', icon: 'shield' },
   { id: 'orders', to: '/account/orders', icon: 'package' },
   { id: 'returns', to: '/account/returns', icon: 'refresh' },
   { id: 'addresses', to: '/account/addresses', icon: 'mapPin' },

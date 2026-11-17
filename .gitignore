@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 
 .env
+
+# Dữ liệu của BE giả
+mock-server/.data
+dist-admin

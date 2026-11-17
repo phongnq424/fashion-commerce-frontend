@@ -1,6 +1,33 @@
 // Admin UI text (English). Merged into en.js in i18n/index.js.
 const adminEn = {
   admin: {
+    platform: {
+      subtitle: 'Business overview and pending work across the whole marketplace (all shops).',
+      gmv: 'Gross merchandise value (GMV)',
+      gmvHint: 'Total paid by buyers for orders across the marketplace, excluding cancelled orders.',
+      gmvTitle: 'Marketplace order value',
+      todo: 'Needs attention',
+      truncated: 'based on the latest {count} orders',
+      noOrderAccess: 'This account cannot view orders, so business figures are hidden.',
+      shopsTitle: 'Shops on the marketplace',
+      shopsTotal: '{count} shops · {fresh} opened in this period',
+      casesTitle: 'New product reports',
+      noCases: 'No reports waiting for review.',
+      shopRef: {
+        shop: 'Shop',
+        ofShop: 'Product of shop',
+        shopOrders: 'Shop orders',
+        subOrder: 'Shop order',
+        unknown: 'Shop {id}…',
+        open: 'View this shop',
+        manage: 'Manage shop (suspend / close)',
+        openCases: '{count} open reports for this shop',
+        filter: 'Filter by shop',
+        allShops: 'All shops ({count})',
+        clear: 'Clear shop filter',
+        splitNote: 'This order contains items from {count} shops — each shop has its own shop order and handles its part.',
+      },
+    },
     brandTag: 'Admin',
     openMenu: 'Open menu',
     menuLabel: 'Admin menu',

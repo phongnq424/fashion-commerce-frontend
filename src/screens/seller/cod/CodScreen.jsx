@@ -9,7 +9,7 @@ import StatusBadge from '../../../components/common/StatusBadge';
 import Textarea from '../../../components/common/Textarea';
 import { useLanguage } from '../../../hooks/useLanguage';
 import { useSeller } from '../../../hooks/useSeller';
-import { collectCod, COD_STATUSES, failCod, getCodCollection, getCodCollections, reconcileCod } from '../../../services/seller/codService';
+import { collectCod, COD_STATUSES, failCod, getAllCodCollections, getCodCollection, reconcileCod } from '../../../services/seller/codService';
 import { formatPrice } from '../../../utils/format';
 import { formatDateTime, statusTone } from '../../../utils/status';
 import RequireShop from '../components/RequireShop';
@@ -37,7 +37,7 @@ function CodTable({ shopId, onNotify }) {
 
   const load = useCallback(async () => {
     try {
-      setItems((await getCodCollections(shopId)).items);
+      setItems((await getAllCodCollections(shopId)).items);
       setStatus('success');
     } catch (error) {
       console.error(error);
@@ -120,7 +120,7 @@ function CodTable({ shopId, onNotify }) {
               <thead>
                 <tr>
                   <th>{t('seller.orders.columns.code')}</th>
-                  <th>{t('seller.orders.columns.buyer')}</th>
+                  <th>{t('seller.orders.columns.status')}</th>
                   <th className="num">{t('seller.cod.expected')}</th>
                   <th className="num">{t('seller.cod.collected')}</th>
                   <th>{t('seller.cod.orderStatus')}</th>
@@ -140,7 +140,7 @@ function CodTable({ shopId, onNotify }) {
                         </Link>
                         <span className="cell-sub">{item.orderNumber}</span>
                       </td>
-                      <td>{item.recipientName}</td>
+                      <td>{item.shopOrderStatus ? t(`shopOrderStatus.${item.shopOrderStatus}`) : '—'}</td>
                       <td className="num">{formatPrice(item.expectedAmountMinor, language)}</td>
                       <td className="num">{item.collectedAmountMinor != null ? formatPrice(item.collectedAmountMinor, language) : '—'}</td>
                       <td>{item.shopOrderStatus ? t(`shopOrderStatus.${item.shopOrderStatus}`) : '—'}</td>
